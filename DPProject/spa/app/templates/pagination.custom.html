@@ -1,0 +1,39 @@
+﻿<style type="text/css">
+    .select-page {
+      width: 50px;
+      text-align: center;
+    }
+    .pagination li a input {
+      padding: 0;
+      margin: -5px 0;
+    }
+    ul.pagination {
+        margin: 0px !important;
+    }
+    .st-pagination {
+        text-align: right;
+    }
+</style>
+
+<nav ng-if="pages.length >= 0" class="st-pagination">
+    <ul class="pagination">
+        <li><a>Total: {{totalItemCount}} filas</a></li>
+        <li>
+            <a ng-click="selectPage(1)">Primera Pagina</a>
+        </li>
+        <li>
+            <a ng-click="selectPage(currentPage - 1)">&lt;</a>
+        </li>
+        <li>
+            <a>
+                <input page-select type="text" class="select-page" ng-model="inputPage">
+                de {{numPages}} Paginas
+            </a>
+        </li>
+        <li>
+            <a ng-click="selectPage(currentPage + 1)">&gt;</a>
+        </li>
+        <li><a ng-click="selectPage(numPages)">Ultima Pagina</a></li>
+       
+    </ul>
+</nav>

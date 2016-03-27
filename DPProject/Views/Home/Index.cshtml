@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html ng-app="homer">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page title set in pageTitle directive -->
+    <title page-title></title>
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!--<link rel="shortcut icon" type="image/ico" href="favicon.ico" />-->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="~/spa/bower_components/fontawesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/spa/bower_components/animate.css/animate.css" />
+    <link rel="stylesheet" href="~/spa/bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/spa/bower_components/sweetalert/lib/sweet-alert.css" />
+    <link rel="stylesheet" href="~/spa/bower_components/angular-notify/dist/angular-notify.min.css" />
+    <link rel="stylesheet" href="~/spa/bower_components/ng-table/dist/ng-table.min.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css({.tmp,app}) styles/style.css -->
+    <link rel="stylesheet" href="~/spa/app/fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css" />
+    <link rel="stylesheet" href="~/spa/app/fonts/pe-icon-7-stroke/css/helper.css" />
+    <link rel="stylesheet" href="~/spa/app/styles/style.css">
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    <!-- endbuild -->
+
+</head>
+
+<!-- Body -->
+<!-- appCtrl controller with serveral data used in theme on diferent view -->
+<body ng-controller="appCtrl" class="{{cofig.bodyClass}}">
+
+    <!-- Simple splash screen-->
+    <div class="splash"> <div class="color-line"></div><div class="splash-title"><h1>Homer - Responsive Admin Theme</h1><p>Special AngularJS Admin Theme for small and medium webapp with very clean and aesthetic style and feel. </p><img src="~/spa/app/images/loading-bars.svg" width="64" height="64" /> </div> </div>
+    <!--[if lt IE 7]>
+    <p class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    
+
+    <!-- Header -->
+    <div id="header" ng-include="'spa/app/templates/common/header.html'"></div>
+
+    <!-- Navigation -->
+    <aside id="menu" ng-include="'spa/app/templates/common/navigation.html'"></aside>
+
+    <!-- Main Wrapper -->
+    <div id="wrapper" >
+        <div small-header="" class="normalheader transition" ng-show="toolBar.visible">
+            <div class="hpanel ng-scope" tour-step="" order="1" title="Page header" content="" placement="bottom">
+                <div class="panel-body">
+
+                    <div class="pull-left">
+                        <h2 class="font-light m-b-xs ng-binding"> {{toolBar.subTitle}} </h2>
+                        <small class="ng-binding">{{toolBar.subTitleDesc}}</small>
+                    </div>
+
+                    
+                    <div class="pull-right tool-bar-top" ng-show="toolBar.buttonToolbar.length > 0">
+                        <button ng-repeat="item in toolBar.buttonToolbar" class="btn {{item.cls}}" type="button" ng-click="item.fn();" ng-disabled="item.disabled();">
+                            <span class="{{item.icon}}"></span>
+                            <span class="bold">{{item.text}}</span> 
+                        </button>
+                    </div>
+
+                    <div class="pull-right tool-bar-top" ng-show="toolBar.optionToolbar.length > 0" ng-repeat="opt in toolBar.optionToolbar">
+                        <div class="{{opt.cls}}">
+                            <h4 class="col-sm-3 control-label">{{opt.label}}:</h4>
+                            <div class="col-sm-9 input-group">
+                                {{opt.model}}
+                                <select class="form-control" ng-show="opt.type=='select'" ng-model="$root.periodDate" ng-change="opt.change()">
+                                    <option value="{{item.key}}" ng-repeat="item in opt.data">{{item.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <a ng-click="small()" href="">
+                        <div class="clip-header">
+                            <i class="fa fa-arrow-up"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content" animate-panel effect="zoomIn">
+                <!-- Page view wrapper -->
+                <div class="uiview" ui-view></div>
+        </div>
+    </div>
+
+</body>
+
+<!-- build:js(.) scripts/vendor.js -->
+<script src="~/spa/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="~/spa/bower_components/angular/angular.min.js"></script>
+<script src="~/spa/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="~/spa/bower_components/angular-resource/angular-resource.min.js"></script>
+<script src="~/spa/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="~/spa/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/spa/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="~/spa/bower_components/Smart-Table-master/dist/smart-table.js"></script>
+<script src="~/spa/bower_components/sweetalert/lib/sweet-alert.js"></script>
+<script src="~/spa/bower_components/sweetalert/lib/sweet-alert.min.js"></script>
+<script src="~/spa/bower_components/angular-notify/dist/angular-notify.min.js"></script>
+<script src="~/spa/bower_components/moment/min/moment.min.js"></script>
+<script src="~/spa/bower_components/lodash/dist/lodash.js"></script>
+<script src="~/spa/bower_components/ng-table/dist/ng-table.js"></script>
+<script src="~/spa/app/scripts/modules/nggrid/tableDemos.js"></script>
+<script src="~/spa/app/scripts/modules/nggrid/nggridDemo.js"></script>
+<!-- endbuild -->
+<!-- build:js({.tmp,app}) scripts/scripts.js -->
+<script src="~/spa/app/scripts/homer.js"></script>
+<script src="~/spa/app/scripts/app.js"></script>
+<script src="~/spa/app/scripts/config.js"></script>
+<script src="~/spa/app/scripts/directives.js"></script>
+<script src="~/spa/app/scripts/directives/directives.js"></script>
+<script src="~/spa/app/scripts/factories/sweet-alert.js"></script>
+<script src="~/spa/app/scripts/controllers/main.js"></script>
+<script src="~/spa/app/scripts/modules/dashboard/dashboard.js"></script>
+<script src="~/spa/app/scripts/modules/customer/costumer.js"></script>
+<script src="~/spa/app/scripts/modules/customer/customerService.js"></script>
+<script src="~/spa/app/scripts/modules/operations/operations.js"></script>
+<script src="~/spa/app/scripts/modules/operations/operationsServices.js"></script>
+<!-- endbuild -->
+
+</html>

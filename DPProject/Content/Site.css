@@ -1,0 +1,60 @@
+﻿.navbar-title-custom 
+{
+    padding-top: 8px;
+}
+
+.tool-bar-top {
+    margin-right: 20px;
+}
+.tool-bar-top .btn
+{
+    margin: 0px 3px;
+}
+
+/*--> overwriting theme styles */
+.color-line {
+    /*background: #337ab7;*/
+    background-image: linear-gradient(to right, #337ab7, #f1f3f6 100%);
+}
+#logo.light-version {
+    background-color: #337ab7 !important;
+}
+
+#logo.light-version span {
+    font-weight: bold !important;
+    color: white !important;
+}
+/*<--*/
+
+/*smart table selected row*/
+.st-selected td{
+    background-color: #337ab7 !important;
+    color: white !important;
+}
+
+.st-selected td * { 
+    color: white !important;
+}
+
+/*Modal Header*/
+.modal-header {
+    padding: 10px 30px !important;
+}
+
+.error-msg {
+    color:red;
+}
+
+
+.tabs-left > .nav-tabs, .tabs-right > .nav-tabs {
+    width: 9% !important;
+}
+
+.tabs-left .panel-body {
+    width: 80%;
+    margin-left: 9% !important;
+}
+
+.operations-period-list {
+    margin-top: 10px;
+}

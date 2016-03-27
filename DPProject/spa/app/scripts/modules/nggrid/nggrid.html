@@ -1,0 +1,15 @@
+﻿
+    <div class="row">
+        <div class="col-md-6" ng-controller="demoController">
+            <h3>ngTable directive</h3>
+            <table ng-table="tableParams" class="table table-condensed table-bordered table-striped">
+                {{tableParams}}
+                <tr ng-repeat="row in $data">
+                    <td data-title="'Name'" sortable="'name'">{{row.name}}</td>
+                    <td data-title="'Age'" sortable="'age'">{{row.age}}</td>
+                    <td data-title="'Money'">{{row.money}}</td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>

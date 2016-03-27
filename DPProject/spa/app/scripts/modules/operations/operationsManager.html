@@ -1,0 +1,38 @@
+﻿<div ng-controller="operationsCtrl">
+    <h1>{{moduleTitle}}</h1>
+
+    <tabset>
+        <tab>
+            <tab-heading>
+                Semanas
+            </tab-heading>
+            <div class="hpanel hblue">
+                <div class="panel-body">
+                    <tabset class="tabs-left" >
+                        <tab ng-repeat="w in weeksOfMonth" select="getWeekDate(periodDate, $index)">
+                            <tab-heading>
+                                Semana: {{$index + 1}}
+                            </tab-heading>
+                            <div class="hpanel">
+                                <div class="panel-body">
+                                    <div ng-include="'/spa/app/scripts/modules/operations/weeklyOperations.html'"></div>
+                                </div>
+                            </div>
+                        </tab>
+                        
+                    </tabset>
+                </div>
+            </div>
+        </tab>
+        <tab>
+            <tab-heading>
+                Gastos del Periodo
+            </tab-heading>
+            <div class="hpanel hblue">
+                <div class="panel-body">
+                    
+                </div>
+            </div>
+        </tab>
+    </tabset>
+</div>

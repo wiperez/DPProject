@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="62b55b1e6c9b459fa4d221240bcb443b" Name="Diagram1">
+        <EntityTypeShape EntityType="DPModel.Account" Width="1.5" PointX="3.875" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.CustomerGroup" Width="1.5" PointX="1.5" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.ExpencesByPeriod" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.Expens" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.ExpensesCategory" Width="1.5" PointX="1.5" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.JournalOperation" Width="2.125" PointX="6" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.Period" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.Purchase" Width="1.5" PointX="3.75" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DPModel.Vendor" Width="1.5" PointX="1.5" PointY="13.625" IsExpanded="true" />
+        <AssociationConnector Association="DPModel.FK_JournalOperations_Accounts" ManuallyRouted="false" />
+        <AssociationConnector Association="DPModel.FK_ExpencesByPeriod_Expenses" ManuallyRouted="false" />
+        <AssociationConnector Association="DPModel.FK_ExpencesByPeriod_Periods" ManuallyRouted="false" />
+        <AssociationConnector Association="DPModel.FK_Expenses_ExpensesCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="DPModel.FK_JournalOperations_Periods" ManuallyRouted="false" />
+        <AssociationConnector Association="DPModel.FK_JournalOperations_Purchases" ManuallyRouted="false" />
+        <AssociationConnector Association="DPModel.FK_Purchases_Vendors" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="DPModel.Customer" Width="1.5" PointX="3.75" PointY="10.75" />
+        <AssociationConnector Association="DPModel.FK_Customers_CustomerGroup" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
