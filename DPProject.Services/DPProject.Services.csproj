@@ -50,6 +50,7 @@
     <Compile Include="Models\SmartTableParamModel.cs" />
     <Compile Include="Models\PredicateModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SPService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DPProject.Data\DPProject.Data.csproj">
