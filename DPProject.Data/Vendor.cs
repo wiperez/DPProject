@@ -16,13 +16,13 @@ namespace DPProject.Data
     {
         public Vendor()
         {
-            this.Purchases = new HashSet<Purchase>();
+            this.JournalOperations = new HashSet<JournalOperation>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     
-        public virtual ICollection<Purchase> Purchases { get; set; }
+        public virtual ICollection<JournalOperation> JournalOperations { get; set; }
     }
 }

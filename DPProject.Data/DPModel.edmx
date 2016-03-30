@@ -5,15 +5,24 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="DPModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Accounts">
+        <EntityType Name="Account">
           <Key>
             <PropertyRef Name="AccountId" />
           </Key>
-          <Property Name="AccountId" Type="int" Nullable="false" />
+          <Property Name="AccountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AccountCode" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="ParentAccount" Type="int" Nullable="false" />
           <Property Name="AccountName" Type="varchar" MaxLength="150" Nullable="false" />
           <Property Name="AccountDescription" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" />
+          <Property Name="Name" Type="varchar" MaxLength="250" />
+          <Property Name="GroupId" Type="int" />
         </EntityType>
         <EntityType Name="CustomerGroup">
           <Key>
@@ -23,26 +32,17 @@
           <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="250" />
         </EntityType>
-        <EntityType Name="Customers">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="250" Nullable="false" />
-          <Property Name="GroupId" Type="int" Nullable="false" />
-        </EntityType>
         <EntityType Name="ExpencesByPeriod">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ExpenceId" Type="int" Nullable="false" />
           <Property Name="PeriodId" Type="int" Nullable="false" />
-          <Property Name="ammount" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Ammount" Type="decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="250" />
         </EntityType>
-        <EntityType Name="Expenses">
+        <EntityType Name="Expense">
           <Key>
             <PropertyRef Name="ExpensesID" />
           </Key>
@@ -55,62 +55,69 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Category" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="varbinary" MaxLength="150" />
         </EntityType>
-        <EntityType Name="JournalOperations">
+        <EntityType Name="JournalOperation">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AccountId" Type="int" Nullable="false" />
           <Property Name="PeriodId" Type="int" Nullable="false" />
           <Property Name="OperationDate" Type="date" Nullable="false" />
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="500" />
         </EntityType>
-        <EntityType Name="Periods">
+        <EntityType Name="Period">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="EndDate" Type="date" Nullable="false" />
           <Property Name="Status" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="Purchases">
+        <EntityType Name="Purchase">
           <Key>
             <PropertyRef Name="OperationId" />
           </Key>
           <Property Name="OperationId" Type="int" Nullable="false" />
           <Property Name="VendorId" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="Vendors">
+        <EntityType Name="Sale">
+          <Key>
+            <PropertyRef Name="OperationId" />
+          </Key>
+          <Property Name="OperationId" Type="int" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Vendor">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="Description" Type="nchar" MaxLength="10" />
         </EntityType>
         <Association Name="FK_Customers_CustomerGroup">
-          <End Role="CustomerGroup" Type="Self.CustomerGroup" Multiplicity="1" />
-          <End Role="Customers" Type="Self.Customers" Multiplicity="*" />
+          <End Role="CustomerGroup" Type="Self.CustomerGroup" Multiplicity="0..1" />
+          <End Role="Customer" Type="Self.Customer" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="CustomerGroup">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Customers">
+            <Dependent Role="Customer">
               <PropertyRef Name="GroupId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ExpencesByPeriod_Expenses">
-          <End Role="Expenses" Type="Self.Expenses" Multiplicity="1" />
+          <End Role="Expense" Type="Self.Expense" Multiplicity="1" />
           <End Role="ExpencesByPeriod" Type="Self.ExpencesByPeriod" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Expenses">
+            <Principal Role="Expense">
               <PropertyRef Name="ExpensesID" />
             </Principal>
             <Dependent Role="ExpencesByPeriod">
@@ -119,10 +126,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ExpencesByPeriod_Periods">
-          <End Role="Periods" Type="Self.Periods" Multiplicity="1" />
+          <End Role="Period" Type="Self.Period" Multiplicity="1" />
           <End Role="ExpencesByPeriod" Type="Self.ExpencesByPeriod" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Periods">
+            <Principal Role="Period">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="ExpencesByPeriod">
@@ -132,129 +139,216 @@
         </Association>
         <Association Name="FK_Expenses_ExpensesCategory">
           <End Role="ExpensesCategory" Type="Self.ExpensesCategory" Multiplicity="1" />
-          <End Role="Expenses" Type="Self.Expenses" Multiplicity="*" />
+          <End Role="Expense" Type="Self.Expense" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ExpensesCategory">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Expenses">
+            <Dependent Role="Expense">
               <PropertyRef Name="CategoryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_JournalOperations_Accounts">
-          <End Role="Accounts" Type="Self.Accounts" Multiplicity="1" />
-          <End Role="JournalOperations" Type="Self.JournalOperations" Multiplicity="*" />
+          <End Role="Account" Type="Self.Account" Multiplicity="1" />
+          <End Role="JournalOperation" Type="Self.JournalOperation" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Accounts">
+            <Principal Role="Account">
               <PropertyRef Name="AccountId" />
             </Principal>
-            <Dependent Role="JournalOperations">
+            <Dependent Role="JournalOperation">
               <PropertyRef Name="AccountId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_JournalOperations_Periods">
-          <End Role="Periods" Type="Self.Periods" Multiplicity="1" />
-          <End Role="JournalOperations" Type="Self.JournalOperations" Multiplicity="*" />
+          <End Role="Period" Type="Self.Period" Multiplicity="1" />
+          <End Role="JournalOperation" Type="Self.JournalOperation" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Periods">
+            <Principal Role="Period">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="JournalOperations">
+            <Dependent Role="JournalOperation">
               <PropertyRef Name="PeriodId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_JournalOperations_Purchases">
-          <End Role="Purchases" Type="Self.Purchases" Multiplicity="1" />
-          <End Role="JournalOperations" Type="Self.JournalOperations" Multiplicity="0..1" />
+        <Association Name="FK_Purchases_JournalOperations">
+          <End Role="JournalOperation" Type="Self.JournalOperation" Multiplicity="1" />
+          <End Role="Purchase" Type="Self.Purchase" Multiplicity="0..1" />
           <ReferentialConstraint>
-            <Principal Role="Purchases">
-              <PropertyRef Name="OperationId" />
-            </Principal>
-            <Dependent Role="JournalOperations">
+            <Principal Role="JournalOperation">
               <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Purchase">
+              <PropertyRef Name="OperationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Purchases_Vendors">
-          <End Role="Vendors" Type="Self.Vendors" Multiplicity="1" />
-          <End Role="Purchases" Type="Self.Purchases" Multiplicity="*" />
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
+          <End Role="Purchase" Type="Self.Purchase" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Vendors">
+            <Principal Role="Vendor">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Purchases">
+            <Dependent Role="Purchase">
               <PropertyRef Name="VendorId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Sale_Customers">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Sale" Type="Self.Sale" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Sale">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sale_JournalOperations">
+          <End Role="JournalOperation" Type="Self.JournalOperation" Multiplicity="1" />
+          <End Role="Sale" Type="Self.Sale" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="JournalOperation">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Sale">
+              <PropertyRef Name="OperationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="DPModelStoreContainer">
-          <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerGroup" EntityType="Self.CustomerGroup" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExpencesByPeriod" EntityType="Self.ExpencesByPeriod" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Expenses" EntityType="Self.Expenses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Expense" EntityType="Self.Expense" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExpensesCategory" EntityType="Self.ExpensesCategory" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="JournalOperations" EntityType="Self.JournalOperations" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Periods" EntityType="Self.Periods" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Purchases" EntityType="Self.Purchases" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Vendors" EntityType="Self.Vendors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="JournalOperation" EntityType="Self.JournalOperation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Period" EntityType="Self.Period" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Purchase" EntityType="Self.Purchase" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sale" EntityType="Self.Sale" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Customers_CustomerGroup" Association="Self.FK_Customers_CustomerGroup">
             <End Role="CustomerGroup" EntitySet="CustomerGroup" />
-            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Customer" EntitySet="Customer" />
           </AssociationSet>
           <AssociationSet Name="FK_ExpencesByPeriod_Expenses" Association="Self.FK_ExpencesByPeriod_Expenses">
-            <End Role="Expenses" EntitySet="Expenses" />
+            <End Role="Expense" EntitySet="Expense" />
             <End Role="ExpencesByPeriod" EntitySet="ExpencesByPeriod" />
           </AssociationSet>
           <AssociationSet Name="FK_ExpencesByPeriod_Periods" Association="Self.FK_ExpencesByPeriod_Periods">
-            <End Role="Periods" EntitySet="Periods" />
+            <End Role="Period" EntitySet="Period" />
             <End Role="ExpencesByPeriod" EntitySet="ExpencesByPeriod" />
           </AssociationSet>
           <AssociationSet Name="FK_Expenses_ExpensesCategory" Association="Self.FK_Expenses_ExpensesCategory">
             <End Role="ExpensesCategory" EntitySet="ExpensesCategory" />
-            <End Role="Expenses" EntitySet="Expenses" />
+            <End Role="Expense" EntitySet="Expense" />
           </AssociationSet>
           <AssociationSet Name="FK_JournalOperations_Accounts" Association="Self.FK_JournalOperations_Accounts">
-            <End Role="Accounts" EntitySet="Accounts" />
-            <End Role="JournalOperations" EntitySet="JournalOperations" />
+            <End Role="Account" EntitySet="Account" />
+            <End Role="JournalOperation" EntitySet="JournalOperation" />
           </AssociationSet>
           <AssociationSet Name="FK_JournalOperations_Periods" Association="Self.FK_JournalOperations_Periods">
-            <End Role="Periods" EntitySet="Periods" />
-            <End Role="JournalOperations" EntitySet="JournalOperations" />
+            <End Role="Period" EntitySet="Period" />
+            <End Role="JournalOperation" EntitySet="JournalOperation" />
           </AssociationSet>
-          <AssociationSet Name="FK_JournalOperations_Purchases" Association="Self.FK_JournalOperations_Purchases">
-            <End Role="Purchases" EntitySet="Purchases" />
-            <End Role="JournalOperations" EntitySet="JournalOperations" />
+          <AssociationSet Name="FK_Purchases_JournalOperations" Association="Self.FK_Purchases_JournalOperations">
+            <End Role="JournalOperation" EntitySet="JournalOperation" />
+            <End Role="Purchase" EntitySet="Purchase" />
           </AssociationSet>
           <AssociationSet Name="FK_Purchases_Vendors" Association="Self.FK_Purchases_Vendors">
-            <End Role="Vendors" EntitySet="Vendors" />
-            <End Role="Purchases" EntitySet="Purchases" />
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="Purchase" EntitySet="Purchase" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_Customers" Association="Self.FK_Sale_Customers">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Sale" EntitySet="Sale" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sale_JournalOperations" Association="Self.FK_Sale_JournalOperations">
+            <End Role="JournalOperation" EntitySet="JournalOperation" />
+            <End Role="Sale" EntitySet="Sale" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DPModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="domiprofEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Accounts" EntityType="DPModel.Account" />
+          <EntitySet Name="Customers" EntityType="DPModel.Customer" />
+          <EntitySet Name="CustomerGroups" EntityType="DPModel.CustomerGroup" />
+          <EntitySet Name="ExpencesByPeriods" EntityType="DPModel.ExpencesByPeriod" />
+          <EntitySet Name="Expenses" EntityType="DPModel.Expense" />
+          <EntitySet Name="ExpensesCategories" EntityType="DPModel.ExpensesCategory" />
+          <EntitySet Name="JournalOperations" EntityType="DPModel.JournalOperation" />
+          <EntitySet Name="Periods" EntityType="DPModel.Period" />
+          <EntitySet Name="Vendors" EntityType="DPModel.Vendor" />
+          <AssociationSet Name="FK_JournalOperations_Accounts" Association="DPModel.FK_JournalOperations_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="JournalOperation" EntitySet="JournalOperations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customers_CustomerGroup" Association="DPModel.FK_Customers_CustomerGroup">
+            <End Role="CustomerGroup" EntitySet="CustomerGroups" />
+            <End Role="Customer" EntitySet="Customers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExpencesByPeriod_Expenses" Association="DPModel.FK_ExpencesByPeriod_Expenses">
+            <End Role="Expense" EntitySet="Expenses" />
+            <End Role="ExpencesByPeriod" EntitySet="ExpencesByPeriods" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExpencesByPeriod_Periods" Association="DPModel.FK_ExpencesByPeriod_Periods">
+            <End Role="Period" EntitySet="Periods" />
+            <End Role="ExpencesByPeriod" EntitySet="ExpencesByPeriods" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Expenses_ExpensesCategory" Association="DPModel.FK_Expenses_ExpensesCategory">
+            <End Role="ExpensesCategory" EntitySet="ExpensesCategories" />
+            <End Role="Expense" EntitySet="Expenses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JournalOperations_Periods" Association="DPModel.FK_JournalOperations_Periods">
+            <End Role="Period" EntitySet="Periods" />
+            <End Role="JournalOperation" EntitySet="JournalOperations" />
+          </AssociationSet>
+          <AssociationSet Name="Purchase" Association="DPModel.Purchase">
+            <End Role="JournalOperation" EntitySet="JournalOperations" />
+            <End Role="Vendor" EntitySet="Vendors" />
+          </AssociationSet>
+          <AssociationSet Name="Sale" Association="DPModel.Sale">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="JournalOperation" EntitySet="JournalOperations" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Account">
           <Key>
             <PropertyRef Name="AccountId" />
           </Key>
-          <Property Name="AccountId" Type="Int32" Nullable="false" />
-          <Property Name="AccountCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AccountId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccountCode" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="ParentAccount" Type="Int32" Nullable="false" />
-          <Property Name="AccountName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AccountName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="AccountDescription" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="JournalOperations" Relationship="Self.FK_JournalOperations_Accounts" FromRole="Accounts" ToRole="JournalOperations" />
+          <NavigationProperty Name="JournalOperations" Relationship="DPModel.FK_JournalOperations_Accounts" FromRole="Account" ToRole="JournalOperation" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="GroupId" Type="Int32" />
+          <NavigationProperty Name="CustomerGroup" Relationship="DPModel.FK_Customers_CustomerGroup" FromRole="Customer" ToRole="CustomerGroup" />
+          <NavigationProperty Name="JournalOperations" Relationship="DPModel.Sale" FromRole="Customer" ToRole="JournalOperation" />
         </EntityType>
         <EntityType Name="CustomerGroup">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Customers" Relationship="DPModel.FK_Customers_CustomerGroup" FromRole="CustomerGroup" ToRole="Customer" />
         </EntityType>
@@ -262,217 +356,83 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ExpenceId" Type="Int32" Nullable="false" />
           <Property Name="PeriodId" Type="Int32" Nullable="false" />
-          <Property Name="ammount" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Ammount" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Expens" Relationship="Self.FK_ExpencesByPeriod_Expenses" FromRole="ExpencesByPeriod" ToRole="Expenses" />
-          <NavigationProperty Name="Period" Relationship="Self.FK_ExpencesByPeriod_Periods" FromRole="ExpencesByPeriod" ToRole="Periods" />
+          <NavigationProperty Name="Expense" Relationship="DPModel.FK_ExpencesByPeriod_Expenses" FromRole="ExpencesByPeriod" ToRole="Expense" />
+          <NavigationProperty Name="Period" Relationship="DPModel.FK_ExpencesByPeriod_Periods" FromRole="ExpencesByPeriod" ToRole="Period" />
         </EntityType>
-        <EntityType Name="Expens">
+        <EntityType Name="Expense">
           <Key>
             <PropertyRef Name="ExpensesID" />
           </Key>
           <Property Name="ExpensesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="CategoryId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="ExpencesByPeriods" Relationship="Self.FK_ExpencesByPeriod_Expenses" FromRole="Expenses" ToRole="ExpencesByPeriod" />
-          <NavigationProperty Name="ExpensesCategory" Relationship="Self.FK_Expenses_ExpensesCategory" FromRole="Expenses" ToRole="ExpensesCategory" />
+          <NavigationProperty Name="ExpencesByPeriods" Relationship="DPModel.FK_ExpencesByPeriod_Expenses" FromRole="Expense" ToRole="ExpencesByPeriod" />
+          <NavigationProperty Name="ExpensesCategory" Relationship="DPModel.FK_Expenses_ExpensesCategory" FromRole="Expense" ToRole="ExpensesCategory" />
         </EntityType>
         <EntityType Name="ExpensesCategory">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Category" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="Binary" MaxLength="150" FixedLength="false" />
-          <NavigationProperty Name="Expenses" Relationship="Self.FK_Expenses_ExpensesCategory" FromRole="ExpensesCategory" ToRole="Expenses" />
+          <NavigationProperty Name="Expenses" Relationship="DPModel.FK_Expenses_ExpensesCategory" FromRole="ExpensesCategory" ToRole="Expense" />
         </EntityType>
         <EntityType Name="JournalOperation">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="AccountId" Type="Int32" Nullable="false" />
           <Property Name="PeriodId" Type="Int32" Nullable="false" />
           <Property Name="OperationDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Account" Relationship="Self.FK_JournalOperations_Accounts" FromRole="JournalOperations" ToRole="Accounts" />
-          <NavigationProperty Name="Period" Relationship="Self.FK_JournalOperations_Periods" FromRole="JournalOperations" ToRole="Periods" />
-          <NavigationProperty Name="Purchase" Relationship="Self.FK_JournalOperations_Purchases" FromRole="JournalOperations" ToRole="Purchases" />
+          <NavigationProperty Name="Account" Relationship="DPModel.FK_JournalOperations_Accounts" FromRole="JournalOperation" ToRole="Account" />
+          <NavigationProperty Name="Period" Relationship="DPModel.FK_JournalOperations_Periods" FromRole="JournalOperation" ToRole="Period" />
+          <NavigationProperty Name="Vendor" Relationship="DPModel.Purchase" FromRole="JournalOperation" ToRole="Vendor" />
+          <NavigationProperty Name="Customer" Relationship="DPModel.Sale" FromRole="JournalOperation" ToRole="Customer" />
         </EntityType>
         <EntityType Name="Period">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Status" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="ExpencesByPeriods" Relationship="Self.FK_ExpencesByPeriod_Periods" FromRole="Periods" ToRole="ExpencesByPeriod" />
-          <NavigationProperty Name="JournalOperations" Relationship="Self.FK_JournalOperations_Periods" FromRole="Periods" ToRole="JournalOperations" />
-        </EntityType>
-        <EntityType Name="Purchase">
-          <Key>
-            <PropertyRef Name="OperationId" />
-          </Key>
-          <Property Name="OperationId" Type="Int32" Nullable="false" />
-          <Property Name="VendorId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="JournalOperation" Relationship="Self.FK_JournalOperations_Purchases" FromRole="Purchases" ToRole="JournalOperations" />
-          <NavigationProperty Name="Vendor" Relationship="Self.FK_Purchases_Vendors" FromRole="Purchases" ToRole="Vendors" />
+          <NavigationProperty Name="ExpencesByPeriods" Relationship="DPModel.FK_ExpencesByPeriod_Periods" FromRole="Period" ToRole="ExpencesByPeriod" />
+          <NavigationProperty Name="JournalOperations" Relationship="DPModel.FK_JournalOperations_Periods" FromRole="Period" ToRole="JournalOperation" />
         </EntityType>
         <EntityType Name="Vendor">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="Purchases" Relationship="Self.FK_Purchases_Vendors" FromRole="Vendors" ToRole="Purchases" />
+          <NavigationProperty Name="JournalOperations" Relationship="DPModel.Purchase" FromRole="Vendor" ToRole="JournalOperation" />
         </EntityType>
         <Association Name="FK_JournalOperations_Accounts">
-          <End Role="Accounts" Type="Self.Account" Multiplicity="1" />
-          <End Role="JournalOperations" Type="Self.JournalOperation" Multiplicity="*" />
+          <End Type="DPModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="DPModel.JournalOperation" Role="JournalOperation" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Accounts">
+            <Principal Role="Account">
               <PropertyRef Name="AccountId" />
             </Principal>
-            <Dependent Role="JournalOperations">
+            <Dependent Role="JournalOperation">
               <PropertyRef Name="AccountId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ExpencesByPeriod_Expenses">
-          <End Role="Expenses" Type="Self.Expens" Multiplicity="1" />
-          <End Role="ExpencesByPeriod" Type="Self.ExpencesByPeriod" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Expenses">
-              <PropertyRef Name="ExpensesID" />
-            </Principal>
-            <Dependent Role="ExpencesByPeriod">
-              <PropertyRef Name="ExpenceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ExpencesByPeriod_Periods">
-          <End Role="Periods" Type="Self.Period" Multiplicity="1" />
-          <End Role="ExpencesByPeriod" Type="Self.ExpencesByPeriod" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Periods">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ExpencesByPeriod">
-              <PropertyRef Name="PeriodId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Expenses_ExpensesCategory">
-          <End Role="ExpensesCategory" Type="Self.ExpensesCategory" Multiplicity="1" />
-          <End Role="Expenses" Type="Self.Expens" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ExpensesCategory">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Expenses">
-              <PropertyRef Name="CategoryId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_JournalOperations_Periods">
-          <End Role="Periods" Type="Self.Period" Multiplicity="1" />
-          <End Role="JournalOperations" Type="Self.JournalOperation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Periods">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="JournalOperations">
-              <PropertyRef Name="PeriodId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_JournalOperations_Purchases">
-          <End Role="Purchases" Type="Self.Purchase" Multiplicity="1" />
-          <End Role="JournalOperations" Type="Self.JournalOperation" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Purchases">
-              <PropertyRef Name="OperationId" />
-            </Principal>
-            <Dependent Role="JournalOperations">
-              <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Purchases_Vendors">
-          <End Role="Vendors" Type="Self.Vendor" Multiplicity="1" />
-          <End Role="Purchases" Type="Self.Purchase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Vendors">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Purchases">
-              <PropertyRef Name="VendorId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="domiprofEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Accounts" EntityType="Self.Account" />
-          <EntitySet Name="CustomerGroups" EntityType="Self.CustomerGroup" />
-          <EntitySet Name="ExpencesByPeriods" EntityType="Self.ExpencesByPeriod" />
-          <EntitySet Name="Expenses" EntityType="Self.Expens" />
-          <EntitySet Name="ExpensesCategories" EntityType="Self.ExpensesCategory" />
-          <EntitySet Name="JournalOperations" EntityType="Self.JournalOperation" />
-          <EntitySet Name="Periods" EntityType="Self.Period" />
-          <EntitySet Name="Purchases" EntityType="Self.Purchase" />
-          <EntitySet Name="Vendors" EntityType="Self.Vendor" />
-          <AssociationSet Name="FK_JournalOperations_Accounts" Association="Self.FK_JournalOperations_Accounts">
-            <End Role="Accounts" EntitySet="Accounts" />
-            <End Role="JournalOperations" EntitySet="JournalOperations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExpencesByPeriod_Expenses" Association="Self.FK_ExpencesByPeriod_Expenses">
-            <End Role="Expenses" EntitySet="Expenses" />
-            <End Role="ExpencesByPeriod" EntitySet="ExpencesByPeriods" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ExpencesByPeriod_Periods" Association="Self.FK_ExpencesByPeriod_Periods">
-            <End Role="Periods" EntitySet="Periods" />
-            <End Role="ExpencesByPeriod" EntitySet="ExpencesByPeriods" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Expenses_ExpensesCategory" Association="Self.FK_Expenses_ExpensesCategory">
-            <End Role="ExpensesCategory" EntitySet="ExpensesCategories" />
-            <End Role="Expenses" EntitySet="Expenses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_JournalOperations_Periods" Association="Self.FK_JournalOperations_Periods">
-            <End Role="Periods" EntitySet="Periods" />
-            <End Role="JournalOperations" EntitySet="JournalOperations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_JournalOperations_Purchases" Association="Self.FK_JournalOperations_Purchases">
-            <End Role="Purchases" EntitySet="Purchases" />
-            <End Role="JournalOperations" EntitySet="JournalOperations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Purchases_Vendors" Association="Self.FK_Purchases_Vendors">
-            <End Role="Vendors" EntitySet="Vendors" />
-            <End Role="Purchases" EntitySet="Purchases" />
-          </AssociationSet>
-          <EntitySet Name="Customers" EntityType="DPModel.Customer" />
-          <AssociationSet Name="FK_Customers_CustomerGroup" Association="DPModel.FK_Customers_CustomerGroup">
-            <End Role="CustomerGroup" EntitySet="CustomerGroups" />
-            <End Role="Customer" EntitySet="Customers" />
-          </AssociationSet>
-        </EntityContainer>
-        <EntityType Name="Customer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="GroupId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="CustomerGroup" Relationship="DPModel.FK_Customers_CustomerGroup" FromRole="Customer" ToRole="CustomerGroup" />
-        </EntityType>
         <Association Name="FK_Customers_CustomerGroup">
-          <End Type="DPModel.CustomerGroup" Role="CustomerGroup" Multiplicity="1" />
+          <End Type="DPModel.CustomerGroup" Role="CustomerGroup" Multiplicity="0..1" />
           <End Type="DPModel.Customer" Role="Customer" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="CustomerGroup">
@@ -483,6 +443,62 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ExpencesByPeriod_Expenses">
+          <End Type="DPModel.Expense" Role="Expense" Multiplicity="1" />
+          <End Type="DPModel.ExpencesByPeriod" Role="ExpencesByPeriod" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Expense">
+              <PropertyRef Name="ExpensesID" />
+            </Principal>
+            <Dependent Role="ExpencesByPeriod">
+              <PropertyRef Name="ExpenceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ExpencesByPeriod_Periods">
+          <End Type="DPModel.Period" Role="Period" Multiplicity="1" />
+          <End Type="DPModel.ExpencesByPeriod" Role="ExpencesByPeriod" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Period">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExpencesByPeriod">
+              <PropertyRef Name="PeriodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Expenses_ExpensesCategory">
+          <End Type="DPModel.ExpensesCategory" Role="ExpensesCategory" Multiplicity="1" />
+          <End Type="DPModel.Expense" Role="Expense" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ExpensesCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Expense">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JournalOperations_Periods">
+          <End Type="DPModel.Period" Role="Period" Multiplicity="1" />
+          <End Type="DPModel.JournalOperation" Role="JournalOperation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Period">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JournalOperation">
+              <PropertyRef Name="PeriodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Purchase">
+          <End Type="DPModel.JournalOperation" Role="JournalOperation" Multiplicity="*" />
+          <End Type="DPModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+        </Association>
+        <Association Name="Sale">
+          <End Type="DPModel.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="DPModel.JournalOperation" Role="JournalOperation" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -491,96 +507,18 @@
         <EntityContainerMapping StorageEntityContainer="DPModelStoreContainer" CdmEntityContainer="domiprofEntities">
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="DPModel.Account">
-              <MappingFragment StoreEntitySet="Accounts">
-                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
-                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
-                <ScalarProperty Name="ParentAccount" ColumnName="ParentAccount" />
-                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+              <MappingFragment StoreEntitySet="Account">
                 <ScalarProperty Name="AccountDescription" ColumnName="AccountDescription" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="CustomerGroups">
-            <EntityTypeMapping TypeName="DPModel.CustomerGroup">
-              <MappingFragment StoreEntitySet="CustomerGroup">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExpencesByPeriods">
-            <EntityTypeMapping TypeName="DPModel.ExpencesByPeriod">
-              <MappingFragment StoreEntitySet="ExpencesByPeriod">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ExpenceId" ColumnName="ExpenceId" />
-                <ScalarProperty Name="PeriodId" ColumnName="PeriodId" />
-                <ScalarProperty Name="ammount" ColumnName="ammount" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Expenses">
-            <EntityTypeMapping TypeName="DPModel.Expens">
-              <MappingFragment StoreEntitySet="Expenses">
-                <ScalarProperty Name="ExpensesID" ColumnName="ExpensesID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExpensesCategories">
-            <EntityTypeMapping TypeName="DPModel.ExpensesCategory">
-              <MappingFragment StoreEntitySet="ExpensesCategory">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Category" ColumnName="Category" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="JournalOperations">
-            <EntityTypeMapping TypeName="DPModel.JournalOperation">
-              <MappingFragment StoreEntitySet="JournalOperations">
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="ParentAccount" ColumnName="ParentAccount" />
+                <ScalarProperty Name="AccountCode" ColumnName="AccountCode" />
                 <ScalarProperty Name="AccountId" ColumnName="AccountId" />
-                <ScalarProperty Name="PeriodId" ColumnName="PeriodId" />
-                <ScalarProperty Name="OperationDate" ColumnName="OperationDate" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Periods">
-            <EntityTypeMapping TypeName="DPModel.Period">
-              <MappingFragment StoreEntitySet="Periods">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Purchases">
-            <EntityTypeMapping TypeName="DPModel.Purchase">
-              <MappingFragment StoreEntitySet="Purchases">
-                <ScalarProperty Name="OperationId" ColumnName="OperationId" />
-                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Vendors">
-            <EntityTypeMapping TypeName="DPModel.Vendor">
-              <MappingFragment StoreEntitySet="Vendors">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Customers">
             <EntityTypeMapping TypeName="DPModel.Customer">
-              <MappingFragment StoreEntitySet="Customers">
+              <MappingFragment StoreEntitySet="Customer">
                 <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
@@ -588,6 +526,94 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="CustomerGroups">
+            <EntityTypeMapping TypeName="DPModel.CustomerGroup">
+              <MappingFragment StoreEntitySet="CustomerGroup">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExpencesByPeriods">
+            <EntityTypeMapping TypeName="DPModel.ExpencesByPeriod">
+              <MappingFragment StoreEntitySet="ExpencesByPeriod">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Ammount" ColumnName="Ammount" />
+                <ScalarProperty Name="PeriodId" ColumnName="PeriodId" />
+                <ScalarProperty Name="ExpenceId" ColumnName="ExpenceId" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Expenses">
+            <EntityTypeMapping TypeName="DPModel.Expense">
+              <MappingFragment StoreEntitySet="Expense">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ExpensesID" ColumnName="ExpensesID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExpensesCategories">
+            <EntityTypeMapping TypeName="DPModel.ExpensesCategory">
+              <MappingFragment StoreEntitySet="ExpensesCategory">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JournalOperations">
+            <EntityTypeMapping TypeName="DPModel.JournalOperation">
+              <MappingFragment StoreEntitySet="JournalOperation">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="OperationDate" ColumnName="OperationDate" />
+                <ScalarProperty Name="PeriodId" ColumnName="PeriodId" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Periods">
+            <EntityTypeMapping TypeName="DPModel.Period">
+              <MappingFragment StoreEntitySet="Period">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="DPModel.Vendor">
+              <MappingFragment StoreEntitySet="Vendor">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Purchase" TypeName="DPModel.Purchase" StoreEntitySet="Purchase">
+            <EndProperty Name="Vendor">
+              <ScalarProperty Name="Id" ColumnName="VendorId" />
+            </EndProperty>
+            <EndProperty Name="JournalOperation">
+              <ScalarProperty Name="Id" ColumnName="OperationId" />
+            </EndProperty>
+            <Condition ColumnName="VendorId" IsNull="false" />
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Sale" TypeName="DPModel.Sale" StoreEntitySet="Sale">
+            <EndProperty Name="JournalOperation">
+              <ScalarProperty Name="Id" ColumnName="OperationId" />
+            </EndProperty>
+            <EndProperty Name="Customer">
+              <ScalarProperty Name="Id" ColumnName="CustomerId" />
+            </EndProperty>
+            <Condition ColumnName="CustomerId" IsNull="false" />
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

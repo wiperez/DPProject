@@ -23,6 +23,7 @@ namespace DPProject.Data
     
         public virtual Account Account { get; set; }
         public virtual Period Period { get; set; }
-        public virtual Purchase Purchase { get; set; }
+        public virtual Vendor Vendor { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

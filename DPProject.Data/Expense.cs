@@ -12,9 +12,9 @@ namespace DPProject.Data
     using System;
     using System.Collections.Generic;
     using Repository.Pattern.Ef6;
-    public partial class Expens : Entity
+    public partial class Expense : Entity
     {
-        public Expens()
+        public Expense()
         {
             this.ExpencesByPeriods = new HashSet<ExpencesByPeriod>();
         }

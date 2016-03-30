@@ -17,10 +17,10 @@ namespace DPProject.Data
         public int ID { get; set; }
         public int ExpenceId { get; set; }
         public int PeriodId { get; set; }
-        public decimal ammount { get; set; }
+        public decimal Ammount { get; set; }
         public string Description { get; set; }
     
-        public virtual Expens Expens { get; set; }
+        public virtual Expense Expense { get; set; }
         public virtual Period Period { get; set; }
     }
 }

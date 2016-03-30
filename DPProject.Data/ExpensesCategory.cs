@@ -16,13 +16,13 @@ namespace DPProject.Data
     {
         public ExpensesCategory()
         {
-            this.Expenses = new HashSet<Expens>();
+            this.Expenses = new HashSet<Expense>();
         }
     
         public int Id { get; set; }
         public string Category { get; set; }
         public byte[] Description { get; set; }
     
-        public virtual ICollection<Expens> Expenses { get; set; }
+        public virtual ICollection<Expense> Expenses { get; set; }
     }
 }
