@@ -59,6 +59,7 @@
     <Compile Include="Models\SmartTableModel.cs" />
     <Compile Include="Models\SmartTableParamModel.cs" />
     <Compile Include="Models\PredicateModels.cs" />
+    <Compile Include="PeriodService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SPService.cs" />
   </ItemGroup>

@@ -90,7 +90,7 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
-            $scope.saving = true;
+            $scope.processing = true;
             $scope.customers = [];
             $scope.vendors = [];
 
@@ -120,11 +120,14 @@ angular
                 sort: {}
             }).$promise.then(function (data) {
                 $scope.customers = data.Rows;
-                $scope.saving = false;
+                $timeout(function () {
+                    $scope.processing = false;
+                    $scope.focusFirstInput();
+                }, 2000);
             });
 
             $scope.ok = function () {
-                $scope.saving = true;
+                $scope.processing = true;
                 $scope.saleOperation.OperationDate = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
                 $scope.getCustomerByName();
             };
@@ -145,13 +148,13 @@ angular
             $scope.getAccountId = function () {
                 var Account = $resource('api/Accounts', { name: 'Ventas' });
                 Account.get().$promise.then(function (data) {
-                    $scope.saleOperation.AccountId = data.account.AccountId;
+                    $scope.saleOperation.AccountId = data.AccountId;
                     $scope.getPeriodId();
                 });
             };
 
             $scope.getPeriodId = function () {
-                var Period = $resource('api/period/belongs', {
+                var Period = $resource('api/Period/belongs', {
                     date: $filter('date')(new Date().getTime(), 'yyyy-MM-dd')
                 });
                 Period.get().$promise.then(function (data) {
@@ -163,7 +166,7 @@ angular
             $scope.saveSaleOperation = function () {
                 var ngTable = angular.element($('.sales-toolbar button:first')).scope().tableParams;
                 var dataset = ngTable.settings().dataset;
-                $scope.saving = false;
+                $scope.processing = false;
                 dataset.push({
                     customer: $scope.saleOperation.Customer,
                     amount: $scope.saleOperation.Amount,
@@ -175,7 +178,7 @@ angular
                 /*var SaleOperation = $resource('api/journaloperation');
                 SaleOperation.save($scope.saleOperation).$promise.then(function (data) {
                     $timeout(function () {
-                        $scope.saving = false;
+                        $scope.processing = false;
                         $scope.initSaleOperationData();
                         $scope.focusFirstInput();
                     }, 2000);
@@ -184,7 +187,7 @@ angular
             };
 
             $scope.focusFirstInput = function () {
-                $('div.modal-dialog:visible .form-control:first').focus();
+                $('div.modal-dialog:visible .form-control:first')[0].focus();
             }
         }
     ]);
