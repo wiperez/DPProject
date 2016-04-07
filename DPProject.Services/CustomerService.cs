@@ -21,17 +21,18 @@ namespace DPProject.Services
         IEnumerable<CustomerGroup> GetCustomerGroups();
         int Insert(CustomerModel M);
         void Update(CustomerModel M, int Id);
+        CustomerModel GetCustomer(string name);
     }
 
     public class CustomerService : Service<Customer>, ICustomerService
     {
-        private readonly IRepositoryAsync<Customer> Reporsitory;
+        private readonly IRepositoryAsync<Customer> Repository;
         private readonly IUnitOfWorkAsync UnitOfWorkAsync;
 
         public CustomerService(IRepositoryAsync<Customer> _Repository, IUnitOfWorkAsync _UnitOfWork)
             : base(_Repository)
         {
-            Reporsitory = _Repository;
+            Repository = _Repository;
             UnitOfWorkAsync = _UnitOfWork;
         }
 
@@ -39,7 +40,7 @@ namespace DPProject.Services
         public SmartTableModel<CustomerModel> GetCustomers(SmartTableParamModel<CustomerPredicateModel> M) 
         {
 
-            var RecordSet = Reporsitory.GetCustomers(M);
+            var RecordSet = Repository.GetCustomers(M);
 
             var TList = RecordSet.ToList();
 
@@ -61,7 +62,7 @@ namespace DPProject.Services
 
         public IEnumerable<CustomerGroup> GetCustomerGroups()
         {
-            return Reporsitory.GetRepository<CustomerGroup>()
+            return Repository.GetRepository<CustomerGroup>()
                 .Query().Select();
         }
 
@@ -81,13 +82,32 @@ namespace DPProject.Services
 
         public void Update(CustomerModel M, int Id)
         {
-            var Customer = Reporsitory.Find(Id);
+            var Customer = Repository.Find(Id);
             Customer.Code = M.Code;
             Customer.Name = M.Name;
             Customer.GroupId = M.GroupId;
 
             Update(Customer);
             UnitOfWorkAsync.SaveChanges();
+        }
+
+        public CustomerModel GetCustomer(string name)
+        {
+            var customers = Repository.Queryable();
+            var customerGroups = Repository.GetRepository<CustomerGroup>().Queryable();
+            var customerQuery = from c in customers
+                           join gn in customerGroups
+                           on c.GroupId equals gn.CustomerGroupId
+                           where c.Name == name
+                           select new CustomerModel()
+            {
+                Code = c.Code,
+                GroupId = c.GroupId,
+                GroupName = gn.Name,
+                Id = c.CustomerId,
+                Name = c.Name
+            };
+            return customerQuery.First();
         }
     }
 }

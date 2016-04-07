@@ -80,5 +80,19 @@ namespace DPProject.Controllers
                 return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
             }
         }
+
+        [HttpGet]
+        public IHttpActionResult GetByName(string name)
+        {
+            try
+            {
+                var c = Service.GetCustomer(name);
+                return Ok(c);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
     }
 }

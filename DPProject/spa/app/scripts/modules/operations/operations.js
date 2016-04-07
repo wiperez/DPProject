@@ -126,15 +126,15 @@ angular
             $scope.ok = function () {
                 $scope.saving = true;
                 $scope.saleOperation.OperationDate = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
-                $scope.getCustomerIdByName();
+                $scope.getCustomerByName();
             };
 
             $scope.cancel = function () {
                 $scope.salesOperationDialog.close();
             };
 
-            $scope.getCustomerIdByName = function () {
-                var Customer = $resource('api/Customer', { Name: $scope.saleOperation.Customer });
+            $scope.getCustomerByName = function () {
+                var Customer = $resource('api/Customer', { name: $scope.saleOperation.Customer });
                 Customer.get().$promise.then(function (data) {
                     $scope.saleOperation.CustomerId = data.Id;
                     $scope.saleOperation.CustomerGroup = data.GroupName;

@@ -90,7 +90,6 @@
     <Compile Include="Sale.cs">
       <DependentUpon>DPModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="StoredProcedures\IStoredProcedures.cs" />
     <Compile Include="StoredProcedures\SPDataContext.cs" />
     <Compile Include="Vendor.cs">
       <DependentUpon>DPModel.tt</DependentUpon>
