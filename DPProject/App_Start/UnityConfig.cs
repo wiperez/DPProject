@@ -44,13 +44,15 @@ namespace DPProject.App_Start
             // container.LoadConfiguration();
 
             // TODO: Register your types here
-            container    
+            container
                 .RegisterType<IDataContextAsync, domiprofEntities>(new PerRequestLifetimeManager())
+                .RegisterType<IStoredProcedures, domiprofEntities>(new PerRequestLifetimeManager())
                 .RegisterType<IUnitOfWorkAsync, UnitOfWork>(new PerRequestLifetimeManager())
 
                 .RegisterType<IRepositoryAsync<Customer>, Repository<Customer>>()
 
                 .RegisterType<ICustomerService, CustomerService>()
+                .RegisterType<IStoredProcedureService, StoredProcedureService>()
 
                 ;
 

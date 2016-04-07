@@ -8,6 +8,12 @@ using System.Data.SqlClient;
 
 namespace DPProject.Data
 {
+    public interface IStoredProcedures
+    {
+        //IEnumerable<CustomerOrderHistory> CustomerOrderHistory(string customerID);
+        //int CustOrdersDetail(int? orderID);
+    }
+
     public partial class domiprofEntities : IStoredProcedures
     {
         //public IEnumerable<CustomerOrderHistory> CustomerOrderHistory(string customerID)
