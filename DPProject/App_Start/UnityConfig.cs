@@ -58,6 +58,9 @@ namespace DPProject.App_Start
                 .RegisterType<IRepositoryAsync<Period>, Repository<Period>>()
                 .RegisterType<IPeriodService, PeriodService>()
 
+                .RegisterType<IRepositoryAsync<JournalOperation>, Repository<JournalOperation>>()
+                .RegisterType<IJournalService, JournalService>()
+
                 .RegisterType<IStoredProcedureService, StoredProcedureService>();
 
         }

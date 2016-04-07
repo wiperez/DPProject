@@ -164,9 +164,9 @@ angular
             };
 
             $scope.saveSaleOperation = function () {
+                $scope.processing = true;
                 var ngTable = angular.element($('.sales-toolbar button:first')).scope().tableParams;
                 var dataset = ngTable.settings().dataset;
-                $scope.processing = false;
                 dataset.push({
                     customer: $scope.saleOperation.Customer,
                     amount: $scope.saleOperation.Amount,
@@ -174,8 +174,8 @@ angular
                     customerGroup: $scope.saleOperation.CustomerGroup
                 });
                 ngTable.reload();
-                $scope.salesOperationDialog.close();
-                /*var SaleOperation = $resource('api/journaloperation');
+                if (console) console.log($scope.saleOperation);
+                var SaleOperation = $resource('api/Journal/sale');
                 SaleOperation.save($scope.saleOperation).$promise.then(function (data) {
                     $timeout(function () {
                         $scope.processing = false;
@@ -183,7 +183,7 @@ angular
                         $scope.focusFirstInput();
                     }, 2000);
                     if (console) console.log(data);
-                });*/
+                });
             };
 
             $scope.focusFirstInput = function () {
