@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerRepository.cs" />
+    <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\CustomerModel.cs" />
     <Compile Include="Models\PredicateModels.cs" />
     <Compile Include="Models\SmartTableParamModel.cs" />

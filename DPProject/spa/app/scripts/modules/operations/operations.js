@@ -143,7 +143,7 @@ angular
             };
 
             $scope.getAccountId = function () {
-                var Account = $resource('api/accounts', { name: 'Ventas' });
+                var Account = $resource('api/Accounts', { name: 'Ventas' });
                 Account.get().$promise.then(function (data) {
                     $scope.saleOperation.AccountId = data.account.AccountId;
                     $scope.getPeriodId();

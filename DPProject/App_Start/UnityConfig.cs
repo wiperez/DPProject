@@ -50,11 +50,12 @@ namespace DPProject.App_Start
                 .RegisterType<IUnitOfWorkAsync, UnitOfWork>(new PerRequestLifetimeManager())
 
                 .RegisterType<IRepositoryAsync<Customer>, Repository<Customer>>()
-
                 .RegisterType<ICustomerService, CustomerService>()
-                .RegisterType<IStoredProcedureService, StoredProcedureService>()
 
-                ;
+                .RegisterType<IRepositoryAsync<Account>, Repository<Account>>()
+                .RegisterType<IAccountService, AccountService>()
+
+                .RegisterType<IStoredProcedureService, StoredProcedureService>();
 
         }
     }
