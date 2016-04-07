@@ -28,14 +28,12 @@ namespace DPProject.Data
         }
     
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerGroup> CustomerGroups { get; set; }
-        public virtual DbSet<ExpencesByPeriod> ExpencesByPeriods { get; set; }
-        public virtual DbSet<Expens> Expenses { get; set; }
-        public virtual DbSet<ExpensesCategory> ExpensesCategories { get; set; }
         public virtual DbSet<JournalOperation> JournalOperations { get; set; }
         public virtual DbSet<Period> Periods { get; set; }
         public virtual DbSet<Purchase> Purchases { get; set; }
+        public virtual DbSet<Sale> Sales { get; set; }
         public virtual DbSet<Vendor> Vendors { get; set; }
-        public virtual DbSet<Customer> Customers { get; set; }
     }
 }

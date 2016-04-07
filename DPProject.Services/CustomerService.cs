@@ -76,7 +76,7 @@ namespace DPProject.Services
             Insert(Customer);
             UnitOfWorkAsync.SaveChanges();
 
-            return Customer.Id;
+            return Customer.CustomerId;
         }
 
         public void Update(CustomerModel M, int Id)

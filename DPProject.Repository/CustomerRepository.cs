@@ -22,7 +22,7 @@ namespace DPProject.Repository
                     )
                 )
                 .Select(i => new CustomerModel() { 
-                    Id = i.Id,
+                    Id = i.CustomerId,
                     Code = i.Code,
                     Name = i.Name,
                     GroupId = i.GroupId,

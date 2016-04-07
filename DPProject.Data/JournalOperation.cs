@@ -14,6 +14,12 @@ namespace DPProject.Data
     using Repository.Pattern.Ef6;
     public partial class JournalOperation : Entity
     {
+        public JournalOperation()
+        {
+            this.Purchases = new HashSet<Purchase>();
+            this.Sales = new HashSet<Sale>();
+        }
+    
         public int Id { get; set; }
         public int AccountId { get; set; }
         public int PeriodId { get; set; }
@@ -23,6 +29,7 @@ namespace DPProject.Data
     
         public virtual Account Account { get; set; }
         public virtual Period Period { get; set; }
-        public virtual Purchase Purchase { get; set; }
+        public virtual ICollection<Purchase> Purchases { get; set; }
+        public virtual ICollection<Sale> Sales { get; set; }
     }
 }

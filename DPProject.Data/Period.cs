@@ -16,7 +16,6 @@ namespace DPProject.Data
     {
         public Period()
         {
-            this.ExpencesByPeriods = new HashSet<ExpencesByPeriod>();
             this.JournalOperations = new HashSet<JournalOperation>();
         }
     
@@ -25,7 +24,6 @@ namespace DPProject.Data
         public System.DateTime EndDate { get; set; }
         public int Status { get; set; }
     
-        public virtual ICollection<ExpencesByPeriod> ExpencesByPeriods { get; set; }
         public virtual ICollection<JournalOperation> JournalOperations { get; set; }
     }
 }

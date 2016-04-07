@@ -14,7 +14,8 @@ namespace DPProject.Data
     using Repository.Pattern.Ef6;
     public partial class Purchase : Entity
     {
-        public int OperationId { get; set; }
+        public int PurchaseId { get; set; }
+        public int JournalOperation_Id { get; set; }
         public int VendorId { get; set; }
     
         public virtual JournalOperation JournalOperation { get; set; }

@@ -19,7 +19,7 @@ namespace DPProject.Data
             this.Purchases = new HashSet<Purchase>();
         }
     
-        public int Id { get; set; }
+        public int VendorId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     

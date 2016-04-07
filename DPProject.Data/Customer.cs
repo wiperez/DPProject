@@ -14,11 +14,17 @@ namespace DPProject.Data
     using Repository.Pattern.Ef6;
     public partial class Customer : Entity
     {
-        public int Id { get; set; }
+        public Customer()
+        {
+            this.Sales = new HashSet<Sale>();
+        }
+    
+        public int CustomerId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public int GroupId { get; set; }
     
         public virtual CustomerGroup CustomerGroup { get; set; }
+        public virtual ICollection<Sale> Sales { get; set; }
     }
 }
