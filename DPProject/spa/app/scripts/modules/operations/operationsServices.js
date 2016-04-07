@@ -11,7 +11,7 @@ angular
                 var end = moment(_month, "MM/DD/YYYY").endOf('month').format('DD');
                 var weeks = (end - start + 1) / 7;
                 return Math.ceil(weeks);
-            }
+            };
 
             srv.getWeeksOfMonth = function (_month) {
                 var weeks = new Array();
@@ -45,6 +45,12 @@ angular
 
                 return periods;
             };
+
+            // Added by Yordano
+            srv.getPeriod = function (date) {
+
+            };
+
             return srv;
         }
 
