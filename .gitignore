@@ -1,0 +1,21 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/DPProject/bin
+/DPProject/obj/Debug
+/DPProject.Data/bin/Debug
+/DPProject.Services/bin/Debug
+/DPProject.Services/obj/Debug
+/Framework/Repository.Pattern/obj/Debug
+/DPProject.Data/obj/Debug
+/DPProject.Repository/obj/Debug
+/Framework/Repository.Pattern/bin/Debug
+/DPProject.Repository/bin/Debug
+/Framework/Repository.Pattern.Ef6/bin/Debug
+/Framework/Service.Pattern/bin/Debug
+/Framework/Repository.Pattern.Ef6/obj/Debug
+/Framework/Service.Pattern/obj/Debug
+/packages
+/.vs/config/applicationhost.config
+/Framework/Repository.Pattern/packages.config
