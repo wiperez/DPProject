@@ -19,8 +19,10 @@ namespace DPProject.Services
     {
         ICollection<JournalModel> GetOperations(int page, int count);
         int Insert(JournalModel M);
+        int Insert(SaleOperationModel M);
         void Update(JournalModel M);
         JournalModel Get(int id);
+        ICollection<SaleListModel> GetSales(SaleListParams listParams);
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -43,6 +45,31 @@ namespace DPProject.Services
         public ICollection<JournalModel> GetOperations(int page, int count)
         {
             throw new NotImplementedException();
+        }
+
+        public ICollection<SaleListModel> GetSales(SaleListParams listParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Insert(SaleOperationModel M)
+        {
+            var journalId = Insert(new JournalModel()
+            {
+                AccountId = M.AccountId,
+                Amount = M.Amount,
+                Description = M.Description,
+                OperationDate = M.OperationDate,
+                PeriodId = M.PeriodId
+            });
+            var sales = UnitOfWorkAsync.Repository<Sale>();
+            sales.Insert(new Sale()
+            {
+                CustomerId = M.CustomerId,
+                JournalOperation_Id = journalId
+            });
+            UnitOfWorkAsync.SaveChanges();
+            return journalId;
         }
 
         public int Insert(JournalModel M)

@@ -11,26 +11,6 @@ using DPProject.Repository.Models;
 
 namespace DPProject.Controllers
 {
-    public class SaleOperationModel
-    {
-        public int AccountId { get; set; }
-        public decimal Amount { get; set; }
-        public string Customer { get; set; }
-        public string CustomerGroup { get; set; }
-        public int CustomerId { get; set; }
-        public string Description { get; set; }
-        public DateTime OperationDate { get; set; }
-        public int PeriodId { get; set; }
-    }
-
-    public class SaleListParams
-    {
-        public int page { get; set; }
-        public int count { get; set; }
-        public DateTime periodStart { get; set; }
-        public DateTime periodEnd { get; set; }
-    }
-
     [RoutePrefix("api/Journal")]
     public class JournalController : XBaseApiController
     {
@@ -48,22 +28,7 @@ namespace DPProject.Controllers
         {
             try
             {
-                var journalId = Service.Insert(new JournalModel()
-                {
-                    AccountId = M.AccountId,
-                    Amount = M.Amount,
-                    Description = M.Description,
-                    OperationDate = M.OperationDate,
-                    PeriodId = M.PeriodId
-                });
-                var sales = UnitOfWorkAsync.Repository<Sale>();
-                sales.Insert(new Sale()
-                {
-                    CustomerId = M.CustomerId,
-                    JournalOperation_Id = journalId
-                });
-                UnitOfWorkAsync.SaveChanges();
-                return Ok(journalId);
+                return Ok(Service.Insert(M));
             }
             catch (Exception ex)
             {
@@ -77,15 +42,21 @@ namespace DPProject.Controllers
         {
             try
             {
-                var c = Service.Query().Select().Count();
-                var pages = Convert.ToInt32( c / listParams.count );
-                
-                return Ok(pages);
+                var sales = Service.GetSales(listParams);
+                return Ok(sales);
             }
             catch (Exception ex)
             {
                 return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
             }
         }
+    }
+
+    public class SaleRecord
+    {
+        public string customer { get; set; }
+        public string date { get; set; }
+        public decimal amount { get; set; }
+        public string customerGroup { get; set; }
     }
 }
