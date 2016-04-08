@@ -53,7 +53,6 @@ angular
             }, {
                 dataset: simpleList
             });
-            //$scope.totalAge = sum(simpleList, "age");
             $scope.totalAmount = sum(simpleList, "amount");
 
             $scope.sum = sum;
@@ -164,7 +163,6 @@ angular
             };
 
             $scope.saveSaleOperation = function () {
-                $scope.processing = true;
                 var ngTable = angular.element($('.sales-toolbar button:first')).scope().tableParams;
                 var dataset = ngTable.settings().dataset;
                 dataset.push({

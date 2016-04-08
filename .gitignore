@@ -2,6 +2,8 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+/node_modules
+/.tmp
 /DPProject/bin
 /DPProject/obj/Debug
 /DPProject.Data/bin/Debug
