@@ -170,7 +170,8 @@ angular
             };
 
             $scope.saveSaleOperation = function () {
-                var ngTable = angular.element($('.sales-toolbar button:first')).scope().tableParams;
+                var ngTable = angular.element($('.sales-table')[0])
+                    .scope().tableParams;
                 var dataset = ngTable.settings().dataset;
                 dataset.push({
                     customer: $scope.saleOperation.Customer,
