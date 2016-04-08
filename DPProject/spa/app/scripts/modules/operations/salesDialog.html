@@ -28,7 +28,9 @@
                     <input class="form-control" name="date" ng-model="saleOperation.OperationDate"
                            ng-required="true" type="text" placeholder="Fecha" 
                            datepicker-popup="yyyy-MM-dd" is-open="calOpened"
-                           ng-disabled="processing" autocomplete="off" />
+                           ng-disabled="processing" autocomplete="off"
+                           date-disabled="datesDisabled(date, mode)" 
+                           datepicker-options="dateOptions" min-date="minDate" />
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" 
                                 ng-click="openCal($event)">

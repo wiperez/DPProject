@@ -16,15 +16,13 @@ angular
                 $scope.semana = service.getWeeksOfMonth(_month)[week];
             };
 
-
             $rootScope.toolBar = {
                 visible: true,
                 subTitle: "Operaciones",
                 subTitleDesc: "Administrador de operaciones diarias.",
                 optionToolbar: [
                     { type: "select", label: "Periodo", data: $scope.periods, cls: "", change: $scope.getWeeksOfMonth }
-                ]
-                ,
+                ],
                 buttonToolbar: [
                     { text: "Cerrar Periodo", cls: "btn-danger", icon: "fa fa-lock", fn: function () { alert("are you sure?") }, disabled: function () { return $scope.gridSelectedItem == null } }
                 ]
@@ -90,10 +88,35 @@ angular
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
             $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
+
+            $scope.getSelectedPeriod = function () {
+                var selected = $('#wrapper .tool-bar-top select option:selected')[0];
+                var selectedPeriod = $('#wrapper .tool-bar-top select option')
+                    .index(selected) + 1;
+                $scope.selectedPeriod = selectedPeriod;
+            };
+            $scope.getSelectedPeriod();
+
+            $scope.getMinDate = function () {
+                $scope.minDate = new Date(new Date().getFullYear(),
+                    $scope.selectedPeriod, 1);
+            };
+            $scope.getMinDate();
+
+            // Tomado de el fuente de Homer donde explica el datepicker
+            $scope.datesDisabled = function (date, mode) {
+                return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
+            };
+
+            $scope.dateOptions = {
+                formatYear: 'yyyy',
+                startingDay: 1
+            };
+
             $scope.processing = true;
             $scope.customers = [];
-            $scope.vendors = [];
 
+            // Tomado de el fuente de Homer donde explica el datepicker
             $scope.openCal = function ($event) {
                 $event.preventDefault();
                 $event.stopPropagation();
@@ -193,7 +216,7 @@ angular
             };
 
             $scope.focusFirstInput = function () {
-                $('div.modal-dialog:visible .form-control:first')[0].focus();
+                $('#sales-dialog .form-control:first')[0].focus();
             }
         }
     ]);
