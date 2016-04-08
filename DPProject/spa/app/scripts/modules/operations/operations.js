@@ -87,12 +87,16 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
+            $scope.getPeriodSelect = function () {
+                return $('#wrapper .tool-bar-top select')[0];
+            };
+
             $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
 
             $scope.getSelectedPeriod = function () {
-                var selected = $('#wrapper .tool-bar-top select option:selected')[0];
-                var selectedPeriod = $('#wrapper .tool-bar-top select option')
-                    .index(selected) + 1;
+                var selected = $($scope.getPeriodSelect()).find('option:selected')[0];
+                var selectedPeriod = $($scope.getPeriodSelect()).find('option')
+                    .index(selected);
                 $scope.selectedPeriod = selectedPeriod;
             };
             $scope.getSelectedPeriod();
@@ -102,6 +106,12 @@ angular
                     $scope.selectedPeriod, 1);
             };
             $scope.getMinDate();
+
+            $scope.getLastDayOfMonth = function () {
+                $scope.maxDate = new Date(new Date().getFullYear(),
+                    $scope.selectedPeriod + 1, 0);
+            };
+            $scope.getLastDayOfMonth();
 
             // Tomado de el fuente de Homer donde explica el datepicker
             $scope.datesDisabled = function (date, mode) {
