@@ -89,9 +89,16 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
+            $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
             $scope.processing = true;
             $scope.customers = [];
             $scope.vendors = [];
+
+            $scope.openCal = function ($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.calOpened = true;
+            };
 
             $scope.initSaleOperationData = function () {
                 $scope.saleOperation = {
@@ -102,7 +109,7 @@ angular
                     PeriodId: -1,
                     CustomerId: -1,
                     CustomerGroup: '',
-                    OperationDate: null
+                    OperationDate: $scope.today
                 };
             };
 
@@ -127,7 +134,7 @@ angular
 
             $scope.ok = function () {
                 $scope.processing = true;
-                $scope.saleOperation.OperationDate = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
+                $scope.saleOperation.OperationDate = $scope.today;
                 $scope.getCustomerByName();
             };
 
@@ -154,7 +161,7 @@ angular
 
             $scope.getPeriodId = function () {
                 var Period = $resource('api/Period/belongs', {
-                    date: $filter('date')(new Date().getTime(), 'yyyy-MM-dd')
+                    date: $scope.today
                 });
                 Period.get().$promise.then(function (data) {
                     $scope.saleOperation.PeriodId = data.periodId;
@@ -168,7 +175,7 @@ angular
                 dataset.push({
                     customer: $scope.saleOperation.Customer,
                     amount: $scope.saleOperation.Amount,
-                    date: $filter('date')(new Date().getTime(), 'yyyy-MM-dd'),
+                    date: $scope.today,
                     customerGroup: $scope.saleOperation.CustomerGroup
                 });
                 ngTable.reload();

@@ -23,6 +23,14 @@ namespace DPProject.Controllers
         public int PeriodId { get; set; }
     }
 
+    public class SaleListParams
+    {
+        public int page { get; set; }
+        public int count { get; set; }
+        public DateTime periodStart { get; set; }
+        public DateTime periodEnd { get; set; }
+    }
+
     [RoutePrefix("api/Journal")]
     public class JournalController : XBaseApiController
     {
@@ -56,6 +64,23 @@ namespace DPProject.Controllers
                 });
                 UnitOfWorkAsync.SaveChanges();
                 return Ok(journalId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("sales")]
+        public IHttpActionResult GetSales(SaleListParams listParams)
+        {
+            try
+            {
+                var c = Service.Query().Select().Count();
+                var pages = Convert.ToInt32( c / listParams.count );
+                
+                return Ok(pages);
             }
             catch (Exception ex)
             {

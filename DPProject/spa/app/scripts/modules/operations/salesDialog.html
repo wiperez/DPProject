@@ -22,7 +22,21 @@
                            ng-disabled="processing" autocomplete="off" />
                 </div>
             </div>
-
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Fecha: </label>
+                <div class="col-sm-9 input-group">
+                    <input class="form-control" name="date" ng-model="saleOperation.OperationDate"
+                           ng-required="true" type="text" placeholder="Fecha" 
+                           datepicker-popup="yyyy-MM-dd" is-open="calOpened"
+                           ng-disabled="processing" autocomplete="off" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" 
+                                ng-click="openCal($event)">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Descripci&oacute;n: </label>
                 <div class="col-sm-9 input-group">
