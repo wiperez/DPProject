@@ -6,14 +6,48 @@ angular
         function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource) {
             
             $scope.periods = service.getPeriods();
+
             $rootScope.periodDate = "05/01/2016";
+
+            // Added by Yordano
+            $scope.reloadSalesGrid = function () {
+                var Sales = $resource('api/Journal/sales', {
+                    page: 1,
+                    count: 10,
+                    week: $rootScope.week.toString().replace(/\ /g, '')
+                });
+                Sales.get().$promise.then(function (data) {
+                    $scope.tableParams = new NgTableParams({
+                        // initial grouping
+                        group: 'customerGroup'
+                    }, {
+                        dataset: data.saleList
+                    });
+                    function isLastPage() {
+                        return $scope.tableParams.page() === totalPages();
+                    }
+                    function sum(data, field) {
+                        var x = _.sumBy(data, field);
+                        return x;
+                    }
+                    function totalPages() {
+                        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+                    }
+                    $scope.totalAmount = sum(data.saleList, 'amount');
+                    $scope.sum = sum;
+                    $scope.isLastPage = isLastPage;
+                });
+            };
+
             $scope.getWeeksOfMonth = function () {
                 $scope.weeksOfMonth = service.getWeeksOfMonth($rootScope.periodDate);
             };
+
             $scope.getWeeksOfMonth();
 
             $scope.getWeekDate = function (_month, week) {
                 $rootScope.week = service.getWeeksOfMonth(_month)[week];
+                $scope.reloadSalesGrid();
             };
 
             $rootScope.toolBar = {
@@ -24,7 +58,8 @@ angular
                     type: "select",
                     label: "Periodo",
                     data: $scope.periods,
-                    cls: "",
+                    cls: '',
+                    'ng-controller': '',
                     change: $scope.getWeeksOfMonth
                 }],
                 buttonToolbar: [{
@@ -38,37 +73,6 @@ angular
                 }]
             };
 
-            // Added by Yordano
-            var Sales = $resource('api/Journal/sales', {
-                page: 1,
-                count: 10,
-                week: typeof $rootScope.week === 'undefined' ?
-                    '01/01/' + new Date().getFullYear() + ' - ' + 
-                    '07/01/' + new Date().getFullYear() :
-                    $rootScope.week
-            });
-            Sales.get().$promise.then(function (data) {
-                $scope.tableParams = new NgTableParams({
-                    // initial grouping
-                    group: 'customerGroup'
-                }, {
-                    dataset: data.saleList
-                });
-                function isLastPage() {
-                    return $scope.tableParams.page() === totalPages();
-                }
-                function sum(data, field) {
-                    var x = _.sumBy(data, field);
-                    return x;
-                }
-                function totalPages() {
-                    return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
-                }
-                $scope.totalAmount = sum(data.saleList, 'amount');
-                $scope.sum = sum;
-                $scope.isLastPage = isLastPage;
-            });
-            
             // Added by Yordano
             $scope.openSalesOperationDialog = function (salesAction) {
                 $rootScope.salesAction = salesAction;
