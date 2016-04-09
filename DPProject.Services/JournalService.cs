@@ -49,7 +49,22 @@ namespace DPProject.Services
 
         public ICollection<SaleListModel> GetSales(SaleListParams listParams)
         {
-            throw new NotImplementedException();
+            var operations = Repository.Queryable();
+            var customers = Repository.GetRepository<Customer>().Queryable();
+            var groups = Repository.GetRepository<CustomerGroup>().Queryable();
+            var sales = Repository.GetRepository<Sale>().Queryable();
+            var query = from o in operations
+                        join s in sales on o.Id equals s.JournalOperation_Id
+                        join c in customers on s.CustomerId equals c.CustomerId
+                        join g in groups on c.GroupId equals g.CustomerGroupId
+                        select new SaleListModel
+                        {
+                            amount = o.Amount,
+                            customer = c.Name,
+                            customerGroup = g.Name,
+                            date = o.OperationDate.ToString()
+                        };
+            return query.ToList();
         }
 
         public int Insert(SaleOperationModel M)

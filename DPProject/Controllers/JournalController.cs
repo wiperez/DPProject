@@ -43,7 +43,7 @@ namespace DPProject.Controllers
             try
             {
                 var sales = Service.GetSales(listParams);
-                return Ok(sales);
+                return Ok(new { saleList = sales });
             }
             catch (Exception ex)
             {

@@ -2,8 +2,8 @@
 
 angular
     .module('app.operations', [])
-    .controller('operationsCtrl', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal) {
+    .controller('operationsCtrl', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource) {
             
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = "05/01/2016";
@@ -29,9 +29,8 @@ angular
             };
 
             //////// Sales Data grid //////////
-            var simpleList = [
+            /*var simpleList = [
                 { "customer": "Karen", "date": "2016-01-23", "amount": 798, "customerGroup": "Piso" },
-                { "customer": "Cat", "date": "2016-01-23", "amount": 749, "customerGroup": "Piso" },
                 { "customer": "Bismark", "date": "2016-01-23", "amount": 672, "customerGroup": "Piso" },
                 { "customer": "Markus", "date": "2016-01-23", "amount": 695, "customerGroup": "Cash" },
                 { "customer": "Anthony", "date": "2016-01-23", "amount": 559, "customerGroup": "Piso" },
@@ -39,11 +38,7 @@ angular
                 { "customer": "Tony", "date": "2016-01-23", "amount": 540, "customerGroup": "Cash" },
                 { "customer": "Cat", "date": "2016-01-23", "amount": 746, "customerGroup": "Mercado" },
                 { "customer": "Christian", "date": "2016-01-23", "amount": 572, "customerGroup": "Cash" },
-                { "customer": "Stephane", "date": "2016-01-23", "amount": 674, "customerGroup": "Mercado" },
-                { "customer": "Markus", "date": "2016-01-23", "amount": 549, "customerGroup": "Cash" },
-                { "customer": "Therese", "date": "2016-01-23", "amount": 754, "customerGroup": "Mercado" },
-                { "customer": "Bismark", "date": "2016-01-23", "amount": 791, "customerGroup": "Cash" },
-                { "customer": "Markus", "date": "2016-01-23", "amount": 607, "customerGroup": "Mercado" }
+                { "customer": "Stephane", "date": "2016-01-23", "amount": 674, "customerGroup": "Mercado" }
             ];
             $scope.tableParams = new NgTableParams({
                 // initial grouping
@@ -51,9 +46,36 @@ angular
             }, {
                 dataset: simpleList
             });
-            $scope.totalAmount = sum(simpleList, "amount");
+            $scope.totalAmount = sum(simpleList, "amount");*/
+            var Sale = $resource('api/Journal/sales', {
+                page: 1,
+                count: 10,
+                period: 5,
+                week: 1
+            });
+            Sale.get().$promise.then(function (data) {
+                $scope.tableParams = new NgTableParams({
+                    // initial grouping
+                    group: 'customerGroup'
+                }, {
+                    dataset: data.saleList
+                });
+                function isLastPage() {
+                    return $scope.tableParams.page() === totalPages();
+                }
+                function sum(data, field) {
+                    var x = _.sumBy(data, field);
+                    return x;
+                }
+                function totalPages() {
+                    return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+                }
+                $scope.totalAmount = sum(data.saleList, 'amount');
+                $scope.sum = sum;
+                $scope.isLastPage = isLastPage;
+            });
 
-            $scope.sum = sum;
+            /*$scope.sum = sum;
             $scope.isLastPage = isLastPage;
 
             function isLastPage() {
@@ -67,7 +89,7 @@ angular
 
             function totalPages() {
                 return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
-            }
+            }*/
 
             // Added by Yordano
             $scope.openSalesOperationDialog = function (salesAction) {
@@ -167,7 +189,6 @@ angular
 
             $scope.ok = function () {
                 $scope.processing = true;
-                $scope.saleOperation.OperationDate = $scope.today;
                 $scope.getCustomerByName();
             };
 
@@ -194,7 +215,7 @@ angular
 
             $scope.getPeriodId = function () {
                 var Period = $resource('api/Period/belongs', {
-                    date: $scope.today
+                    date: $scope.saleOperation.OperationDate
                 });
                 Period.get().$promise.then(function (data) {
                     $scope.saleOperation.PeriodId = data.periodId;
@@ -209,7 +230,7 @@ angular
                 dataset.push({
                     customer: $scope.saleOperation.Customer,
                     amount: $scope.saleOperation.Amount,
-                    date: $scope.today,
+                    date: $scope.saleOperation.OperationDate,
                     customerGroup: $scope.saleOperation.CustomerGroup
                 });
                 ngTable.reload();
