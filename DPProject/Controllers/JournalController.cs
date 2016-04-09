@@ -36,7 +36,7 @@ namespace DPProject.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("sales")]
         public IHttpActionResult GetSales(SaleListParams listParams)
         {

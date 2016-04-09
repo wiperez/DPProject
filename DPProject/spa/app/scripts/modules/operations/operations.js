@@ -11,12 +11,12 @@ angular
 
             // Added by Yordano
             $scope.reloadSalesGrid = function () {
-                var Sales = $resource('api/Journal/sales', {
+                var Sales = $resource('api/Journal/sales');
+                Sales.save({
                     page: 1,
                     count: 10,
                     week: $rootScope.week.toString().replace(/\ /g, '')
-                });
-                Sales.get().$promise.then(function (data) {
+                }).$promise.then(function (data) {
                     $scope.tableParams = new NgTableParams({
                         // initial grouping
                         group: 'customerGroup'
