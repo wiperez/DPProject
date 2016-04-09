@@ -20,40 +20,32 @@ angular
                 visible: true,
                 subTitle: "Operaciones",
                 subTitleDesc: "Administrador de operaciones diarias.",
-                optionToolbar: [
-                    { type: "select", label: "Periodo", data: $scope.periods, cls: "", change: $scope.getWeeksOfMonth }
-                ],
-                buttonToolbar: [
-                    { text: "Cerrar Periodo", cls: "btn-danger", icon: "fa fa-lock", fn: function () { alert("are you sure?") }, disabled: function () { return $scope.gridSelectedItem == null } }
-                ]
+                optionToolbar: [{
+                    type: "select",
+                    label: "Periodo",
+                    data: $scope.periods,
+                    cls: "",
+                    change: $scope.getWeeksOfMonth
+                }],
+                buttonToolbar: [{
+                    text: "Cerrar Periodo",
+                    cls: "btn-danger",
+                    icon: "fa fa-lock",
+                    fn: function () { alert("are you sure?") },
+                    disabled: function () {
+                        return $scope.gridSelectedItem == null
+                    }
+                }]
             };
 
-            //////// Sales Data grid //////////
-            /*var simpleList = [
-                { "customer": "Karen", "date": "2016-01-23", "amount": 798, "customerGroup": "Piso" },
-                { "customer": "Bismark", "date": "2016-01-23", "amount": 672, "customerGroup": "Piso" },
-                { "customer": "Markus", "date": "2016-01-23", "amount": 695, "customerGroup": "Cash" },
-                { "customer": "Anthony", "date": "2016-01-23", "amount": 559, "customerGroup": "Piso" },
-                { "customer": "Alex", "date": "2016-01-23", "amount": 523, "customerGroup": "Mercado" },
-                { "customer": "Tony", "date": "2016-01-23", "amount": 540, "customerGroup": "Cash" },
-                { "customer": "Cat", "date": "2016-01-23", "amount": 746, "customerGroup": "Mercado" },
-                { "customer": "Christian", "date": "2016-01-23", "amount": 572, "customerGroup": "Cash" },
-                { "customer": "Stephane", "date": "2016-01-23", "amount": 674, "customerGroup": "Mercado" }
-            ];
-            $scope.tableParams = new NgTableParams({
-                // initial grouping
-                group: "customerGroup"
-            }, {
-                dataset: simpleList
-            });
-            $scope.totalAmount = sum(simpleList, "amount");*/
-            var Sale = $resource('api/Journal/sales', {
+            // Added by Yordano
+            var Sales = $resource('api/Journal/sales', {
                 page: 1,
                 count: 10,
                 period: 5,
                 week: 1
             });
-            Sale.get().$promise.then(function (data) {
+            Sales.get().$promise.then(function (data) {
                 $scope.tableParams = new NgTableParams({
                     // initial grouping
                     group: 'customerGroup'
@@ -74,22 +66,6 @@ angular
                 $scope.sum = sum;
                 $scope.isLastPage = isLastPage;
             });
-
-            /*$scope.sum = sum;
-            $scope.isLastPage = isLastPage;
-
-            function isLastPage() {
-                return $scope.tableParams.page() === totalPages();
-            }
-
-            function sum(data, field) {
-                var x = _.sumBy(data, field);
-                return x;
-            }
-
-            function totalPages() {
-                return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
-            }*/
 
             // Added by Yordano
             $scope.openSalesOperationDialog = function (salesAction) {
@@ -230,13 +206,16 @@ angular
                 dataset.push({
                     customer: $scope.saleOperation.Customer,
                     amount: $scope.saleOperation.Amount,
-                    date: $scope.saleOperation.OperationDate,
+                    date: $filter('date')($scope.saleOperation.OperationDate,
+                        'yyyy-MM-dd'),
                     customerGroup: $scope.saleOperation.CustomerGroup
                 });
                 ngTable.reload();
                 if (console) console.log($scope.saleOperation);
                 var SaleOperation = $resource('api/Journal/sale');
-                SaleOperation.save($scope.saleOperation).$promise.then(function (data) {
+                SaleOperation.save($scope.saleOperation).$promise
+                    .then(function (data)
+                {
                     $timeout(function () {
                         $scope.processing = false;
                         $scope.initSaleOperationData();
