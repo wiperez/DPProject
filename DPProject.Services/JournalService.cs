@@ -49,6 +49,8 @@ namespace DPProject.Services
 
         public ICollection<SaleListModel> GetSales(SaleListParams listParams)
         {
+            var startDate = listParams.week.Split('-')[0].Trim();
+            var endDate = listParams.week.Split('-')[1].Trim();
             var operations = Repository.Queryable();
             var customers = Repository.GetRepository<Customer>().Queryable();
             var groups = Repository.GetRepository<CustomerGroup>().Queryable();

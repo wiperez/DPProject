@@ -13,7 +13,7 @@ angular
             $scope.getWeeksOfMonth();
 
             $scope.getWeekDate = function (_month, week) {
-                $scope.semana = service.getWeeksOfMonth(_month)[week];
+                $rootScope.week = service.getWeeksOfMonth(_month)[week];
             };
 
             $rootScope.toolBar = {
@@ -39,25 +39,13 @@ angular
             };
 
             // Added by Yordano
-            $rootScope.getPeriodSelect = function () {
-                return $('#wrapper .tool-bar-top select')[0];
-            };
-
-            $rootScope.getSelectedPeriod = function () {
-                var selected = $($rootScope.getPeriodSelect()).find('option:selected')[0];
-                var selectedPeriod = $($rootScope.getPeriodSelect()).find('option')
-                    .index(selected);
-                $rootScope.selectedPeriod = selectedPeriod;
-            };
-
-            $rootScope.getSelectedPeriod();
-
             var Sales = $resource('api/Journal/sales', {
                 page: 1,
                 count: 10,
-                period: $rootScope.selectedPeriod === -1 ? 1 : 
-                    $rootScope.selectedPeriod,
-                week: 1
+                week: typeof $rootScope.week === 'undefined' ?
+                    '01/01/' + new Date().getFullYear() + ' - ' + 
+                    '07/01/' + new Date().getFullYear() :
+                    $rootScope.week
             });
             Sales.get().$promise.then(function (data) {
                 $scope.tableParams = new NgTableParams({
@@ -101,19 +89,17 @@ angular
         {
             $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
 
-            $rootScope.getSelectedPeriod();
-
             $scope.getMinDate = function () {
-                $scope.minDate = new Date(new Date().getFullYear(),
-                    $rootScope.selectedPeriod, 1);
+                $scope.minDate = $filter('date')($rootScope.week.split(' - ')[0],
+                    'MM-dd-yyyy');
             };
             $scope.getMinDate();
 
-            $scope.getLastDayOfMonth = function () {
-                $scope.maxDate = new Date(new Date().getFullYear(),
-                    $rootScope.selectedPeriod + 1, 0);
+            $scope.getLastDayOfWeek = function () {
+                $scope.maxDate = $filter('date')($rootScope.week.split(' - ')[1],
+                    'MM-dd-yyyy');
             };
-            $scope.getLastDayOfMonth();
+            $scope.getLastDayOfWeek();
 
             // Tomado de el fuente de Homer donde explica el datepicker
             $scope.datesDisabled = function (date, mode) {

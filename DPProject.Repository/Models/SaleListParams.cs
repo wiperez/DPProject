@@ -10,7 +10,6 @@ namespace DPProject.Repository.Models
     {
         public int page { get; set; }
         public int count { get; set; }
-        public int period { get; set; }
-        public int week { get; set; }
+        public string week { get; set; }
     }
 }
