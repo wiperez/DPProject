@@ -31,7 +31,7 @@ angular
                     text: "Cerrar Periodo",
                     cls: "btn-danger",
                     icon: "fa fa-lock",
-                    fn: function () { alert("are you sure?") },
+                    fn: function () { alert("Estas seguro?") },
                     disabled: function () {
                         return $scope.gridSelectedItem == null
                     }
@@ -39,10 +39,24 @@ angular
             };
 
             // Added by Yordano
+            $rootScope.getPeriodSelect = function () {
+                return $('#wrapper .tool-bar-top select')[0];
+            };
+
+            $rootScope.getSelectedPeriod = function () {
+                var selected = $($rootScope.getPeriodSelect()).find('option:selected')[0];
+                var selectedPeriod = $($rootScope.getPeriodSelect()).find('option')
+                    .index(selected);
+                $rootScope.selectedPeriod = selectedPeriod;
+            };
+
+            $rootScope.getSelectedPeriod();
+
             var Sales = $resource('api/Journal/sales', {
                 page: 1,
                 count: 10,
-                period: 5,
+                period: $rootScope.selectedPeriod === -1 ? 1 : 
+                    $rootScope.selectedPeriod,
                 week: 1
             });
             Sales.get().$promise.then(function (data) {
@@ -66,7 +80,7 @@ angular
                 $scope.sum = sum;
                 $scope.isLastPage = isLastPage;
             });
-
+            
             // Added by Yordano
             $scope.openSalesOperationDialog = function (salesAction) {
                 $rootScope.salesAction = salesAction;
@@ -85,29 +99,19 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
-            $scope.getPeriodSelect = function () {
-                return $('#wrapper .tool-bar-top select')[0];
-            };
-
             $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
 
-            $scope.getSelectedPeriod = function () {
-                var selected = $($scope.getPeriodSelect()).find('option:selected')[0];
-                var selectedPeriod = $($scope.getPeriodSelect()).find('option')
-                    .index(selected);
-                $scope.selectedPeriod = selectedPeriod;
-            };
-            $scope.getSelectedPeriod();
+            $rootScope.getSelectedPeriod();
 
             $scope.getMinDate = function () {
                 $scope.minDate = new Date(new Date().getFullYear(),
-                    $scope.selectedPeriod, 1);
+                    $rootScope.selectedPeriod, 1);
             };
             $scope.getMinDate();
 
             $scope.getLastDayOfMonth = function () {
                 $scope.maxDate = new Date(new Date().getFullYear(),
-                    $scope.selectedPeriod + 1, 0);
+                    $rootScope.selectedPeriod + 1, 0);
             };
             $scope.getLastDayOfMonth();
 
