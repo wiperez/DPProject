@@ -62,6 +62,7 @@ namespace DPProject.Services
                         where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
                         select new SaleListModel
                         {
+                            id = o.Id,
                             amount = o.Amount,
                             customer = c.Name,
                             customerGroup = g.Name,

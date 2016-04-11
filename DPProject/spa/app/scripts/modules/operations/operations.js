@@ -74,8 +74,9 @@ angular
             };
 
             // Added by Yordano
-            $scope.openSalesOperationDialog = function (salesAction) {
+            $scope.openSalesOperationDialog = function (salesAction, saleData) {
                 $rootScope.salesAction = salesAction;
+                $rootScope.editSaleData = saleData;
                 $rootScope.salesOperationDialog = $modal.open({
                     animation: true,
                     templateUrl: 'spa/app/scripts/modules/operations/salesDialog.html',
@@ -85,12 +86,19 @@ angular
                 });
             };
 
+            $scope.editSale = function ($event) {
+                var saleData = angular.element($event.target).scope().sale;
+                $scope.openSalesOperationDialog('edit', saleData);
+            };
+
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
+            console.log($scope.editSaleData);
+
             $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
 
             $scope.getMinDate = function () {
@@ -134,13 +142,13 @@ angular
                     PeriodId: -1,
                     CustomerId: -1,
                     CustomerGroup: '',
-                    OperationDate: $scope.today
+                    OperationDate: ''
                 };
             };
 
             $scope.initSaleOperationData();
 
-            var Customer = $resource("api/Customer/get-customers", null, { 'postQuery': { method: "POST", isArray: false } });
+            var Customer = $resource("api/Customer/get", null, { 'postQuery': { method: "POST", isArray: false } });
             Customer.postQuery({
                 pagination: {
                     start: 0,
@@ -220,7 +228,8 @@ angular
             };
 
             $scope.focusFirstInput = function () {
-                $('#sales-dialog .form-control:first')[0].focus();
+                var t = $('#sales-dialog .form-control:first')[0];
+                if (angular.isUndefined(t)) return; else t.focus();
             }
         }
     ]);

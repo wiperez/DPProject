@@ -25,10 +25,10 @@
             <colgroup>
                 <col width="50%" />
                 <col width="20%" />
-                <col width="30%" />
+                <col width="25%" />
             </colgroup>
             <tr class="ng-table-group" ng-repeat-start="group in $groups">
-                <td colspan="3">
+                <td colspan="4">
                     <a href="" ng-click="group.$hideRows = !group.$hideRows">
                         <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
                         <strong>{{ group.value }}</strong>
@@ -47,6 +47,9 @@
                 </td>
                 <td sortable="'amount'" data-title="'Date'">
                     {{sale.date}}
+                </td>
+                <td>
+                    <a ng-click="editSale($event)"><i class="fa fa-pencil"></i></a>
                 </td>
             </tr>
             <tr ng-repeat-end>

@@ -8,6 +8,7 @@ namespace DPProject.Repository.Models
 {
     public class SaleListModel
     {
+        public int id { get; set; }
         public string customer { get; set; }
         public string date { get; set; }
         public decimal amount { get; set; }

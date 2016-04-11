@@ -13,13 +13,13 @@ angular
                 pagination: _params.pagination,
                 sort: _params.sort
             }
-            var request = $resource("api/Customer/get-customers", null, { 'postQuery': { method: "POST", isArray: false } });
+            var request = $resource("api/Customer/get", null, { 'postQuery': { method: "POST", isArray: false } });
 
             return request.postQuery(params).$promise;
         }
 
         srv.getCustomerGroups = function () {
-            return $resource("api/Customer/get-groups").query().$promise;
+            return $resource("api/Customer/group").query().$promise;
         }
 
         srv.processCustomer = function (_scope) {

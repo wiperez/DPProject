@@ -24,7 +24,7 @@ namespace DPProject.Controllers
 
 
         [HttpPost]
-        [Route("get-customers")]
+        [Route("get")]
         public IHttpActionResult GetCustomers(SmartTableParamModel<CustomerPredicateModel> M)
         {
             try
@@ -67,7 +67,7 @@ namespace DPProject.Controllers
         }
 
         [HttpGet]
-        [Route("get-groups")]
+        [Route("group")]
         public IHttpActionResult GetCustomerGroups()
         {
             try
