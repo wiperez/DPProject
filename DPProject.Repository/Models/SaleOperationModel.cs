@@ -8,6 +8,8 @@ namespace DPProject.Repository.Models
 {
     public class SaleOperationModel
     {
+        public int OperationId { get; set; }
+        public int SaleId { get; set; }
         public int AccountId { get; set; }
         public decimal Amount { get; set; }
         public string Customer { get; set; }

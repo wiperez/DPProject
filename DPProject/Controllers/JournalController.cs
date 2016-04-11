@@ -50,6 +50,21 @@ namespace DPProject.Controllers
                 return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
             }
         }
+
+        [HttpPut]
+        [Route("sale")]
+        public IHttpActionResult EditSale(SaleOperationModel M)
+        {
+            try
+            {
+                var id = Service.Update(M);
+                return Ok(new { editedSale = id });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
     }
 
 }

@@ -134,6 +134,8 @@ angular
             $scope.initSaleOperationData = function () {
                 if ($rootScope.salesAction === 'insert') {
                     $scope.saleOperation = {
+                        OperationId: 0,
+                        SaleId: 0,
                         Customer: '',
                         Amount: '',
                         Description: '',
@@ -146,6 +148,7 @@ angular
                 }
                 else if ($rootScope.salesAction === 'edit') {
                     $scope.saleOperation = {
+                        OperationId: $rootScope.editSaleData.id,
                         Customer: $rootScope.editSaleData.customer,
                         Amount: $rootScope.editSaleData.amount,
                         Description: $rootScope.editSaleData.description,
@@ -179,12 +182,7 @@ angular
 
             $scope.ok = function () {
                 $scope.processing = true;
-                if ($rootScope.salesAction === 'insert') {
-                    $scope.getCustomerByName();
-                }
-                else if ($rootScope.salesAction === 'edit') {
-                    $scope.updateSaleData();
-                }
+                $scope.getCustomerByName();
             };
 
             $scope.updateSaleData = function () {
@@ -226,26 +224,51 @@ angular
                 var ngTable = angular.element($('.sales-table')[0])
                     .scope().tableParams;
                 var dataset = ngTable.settings().dataset;
-                dataset.push({
-                    customer: $scope.saleOperation.Customer,
-                    amount: $scope.saleOperation.Amount,
-                    date: $filter('date')($scope.saleOperation.OperationDate,
-                        'yyyy-MM-dd'),
-                    customerGroup: $scope.saleOperation.CustomerGroup
-                });
+                if ($rootScope.salesAction === 'insert') {
+                    dataset.push({
+                        customer: $scope.saleOperation.Customer,
+                        amount: $scope.saleOperation.Amount,
+                        date: $filter('date')($scope.saleOperation.OperationDate,
+                            'yyyy-MM-dd'),
+                        customerGroup: $scope.saleOperation.CustomerGroup
+                    });
+                }
+                else if ($rootScope.salesAction === 'edit') {
+                    angular.forEach(dataset, function (value, key) {
+                        if (value.$$hashKey === $rootScope.editSaleData.$$hashKey) {
+                            value.customer = $scope.saleOperation.Customer,
+                            value.amount = $scope.saleOperation.Amount,
+                            value.date = $filter('date')($scope.saleOperation.OperationDate,
+                                'yyyy-MM-dd'),
+                            value.customerGroup = $scope.saleOperation.CustomerGroup
+                        }
+                    });
+                }
                 ngTable.reload();
-                if (console) console.log($scope.saleOperation);
-                var SaleOperation = $resource('api/Journal/sale');
-                SaleOperation.save($scope.saleOperation).$promise
-                    .then(function (data)
-                {
-                    $timeout(function () {
-                        $scope.processing = false;
-                        $scope.initSaleOperationData();
-                        $scope.focusFirstInput();
-                    }, 2000);
-                    if (console) console.log(data);
+                var SaleOperation = $resource('api/Journal/sale',
+                    $scope.saleOperation, {
+                    edit: { method: 'PUT', params: $scope.saleOperation }
                 });
+                if ($rootScope.salesAction === 'insert') {
+                    SaleOperation.save($scope.saleOperation).$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                $scope.processing = false;
+                                $scope.initSaleOperationData();
+                                $scope.focusFirstInput();
+                            }, 2000);
+                        });
+                }
+                else if ($rootScope.salesAction === 'edit') {
+                    SaleOperation.edit($scope.saleOperation).$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                $scope.processing = false;
+                                $scope.initSaleOperationData();
+                                $scope.salesOperationDialog.close();
+                            }, 2000);
+                        });
+                }
             };
 
             $scope.focusFirstInput = function () {

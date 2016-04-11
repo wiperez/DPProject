@@ -23,6 +23,7 @@ namespace DPProject.Services
         void Update(JournalModel M);
         JournalModel Get(int id);
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
+        int Update(SaleOperationModel m);
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -67,6 +68,7 @@ namespace DPProject.Services
                             customer = c.Name,
                             customerId = c.CustomerId,
                             customerGroup = g.Name,
+                            saleId = s.SaleId,
                             date = o.OperationDate.ToString()
                         };
             return query.ToList();
@@ -106,6 +108,26 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
 
             return jOper.Id;
+        }
+
+        public int Update(SaleOperationModel m)
+        {
+            Update(new JournalModel()
+            {
+                AccountId = m.AccountId,
+                Amount = m.Amount,
+                Description = m.Description,
+                OperationDate = m.OperationDate,
+                PeriodId = m.PeriodId,
+                Id = m.OperationId
+            });
+            var sales = Repository.GetRepository<Sale>();
+            sales.Update(new Sale()
+            {
+                CustomerId = m.CustomerId,
+            });
+            UnitOfWorkAsync.SaveChanges();
+            return m.OperationId;
         }
 
         public void Update(JournalModel M)
