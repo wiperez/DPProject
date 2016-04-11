@@ -2,7 +2,7 @@
 
 angular
     .module('app.operations', [])
-    .controller('operationsCtrl', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource',
+    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource',
         function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource) {
             
             $scope.periods = service.getPeriods();
