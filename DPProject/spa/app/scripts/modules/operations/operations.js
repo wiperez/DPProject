@@ -97,8 +97,6 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
-            console.log($scope.editSaleData);
-
             $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
 
             $scope.getMinDate = function () {
@@ -134,16 +132,30 @@ angular
             };
 
             $scope.initSaleOperationData = function () {
-                $scope.saleOperation = {
-                    Customer: '',
-                    Amount: '',
-                    Description: '',
-                    AccountId: -1,
-                    PeriodId: -1,
-                    CustomerId: -1,
-                    CustomerGroup: '',
-                    OperationDate: ''
-                };
+                if ($rootScope.salesAction === 'insert') {
+                    $scope.saleOperation = {
+                        Customer: '',
+                        Amount: '',
+                        Description: '',
+                        AccountId: -1,
+                        PeriodId: -1,
+                        CustomerId: -1,
+                        CustomerGroup: '',
+                        OperationDate: ''
+                    };
+                }
+                else if ($rootScope.salesAction === 'edit') {
+                    $scope.saleOperation = {
+                        Customer: $rootScope.editSaleData.customer,
+                        Amount: $rootScope.editSaleData.amount,
+                        Description: $rootScope.editSaleData.description,
+                        AccountId: -1,
+                        PeriodId: -1,
+                        CustomerId: $rootScope.editSaleData.customerId,
+                        CustomerGroup: $rootScope.editSaleData.customerGroup,
+                        OperationDate: $rootScope.editSaleData.date
+                    };
+                }
             };
 
             $scope.initSaleOperationData();
@@ -167,7 +179,16 @@ angular
 
             $scope.ok = function () {
                 $scope.processing = true;
-                $scope.getCustomerByName();
+                if ($rootScope.salesAction === 'insert') {
+                    $scope.getCustomerByName();
+                }
+                else if ($rootScope.salesAction === 'edit') {
+                    $scope.updateSaleData();
+                }
+            };
+
+            $scope.updateSaleData = function () {
+
             };
 
             $scope.cancel = function () {

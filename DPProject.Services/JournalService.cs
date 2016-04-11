@@ -65,6 +65,7 @@ namespace DPProject.Services
                             id = o.Id,
                             amount = o.Amount,
                             customer = c.Name,
+                            customerId = c.CustomerId,
                             customerGroup = g.Name,
                             date = o.OperationDate.ToString()
                         };

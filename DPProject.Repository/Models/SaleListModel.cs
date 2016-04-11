@@ -10,8 +10,10 @@ namespace DPProject.Repository.Models
     {
         public int id { get; set; }
         public string customer { get; set; }
+        public int customerId { get; set; }
         public string date { get; set; }
         public decimal amount { get; set; }
         public string customerGroup { get; set; }
+        public string description { get; set; }
     }
 }
