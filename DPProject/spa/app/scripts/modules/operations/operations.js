@@ -156,7 +156,8 @@ angular
                         PeriodId: -1,
                         CustomerId: $rootScope.editSaleData.customerId,
                         CustomerGroup: $rootScope.editSaleData.customerGroup,
-                        OperationDate: $rootScope.editSaleData.date
+                        OperationDate: $rootScope.editSaleData.date,
+                        SaleId: $rootScope.editSaleData.saleId
                     };
                 }
             };
@@ -247,7 +248,7 @@ angular
                 ngTable.reload();
                 var SaleOperation = $resource('api/Journal/sale',
                     $scope.saleOperation, {
-                    edit: { method: 'PUT', params: $scope.saleOperation }
+                    update: { method: 'PUT', params: $scope.saleOperation }
                 });
                 if ($rootScope.salesAction === 'insert') {
                     SaleOperation.save($scope.saleOperation).$promise
@@ -260,7 +261,7 @@ angular
                         });
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    SaleOperation.edit($scope.saleOperation).$promise
+                    SaleOperation.update($scope.saleOperation).$promise
                         .then(function (data) {
                             $timeout(function () {
                                 $scope.processing = false;

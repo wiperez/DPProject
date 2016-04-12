@@ -53,7 +53,7 @@ namespace DPProject.Controllers
 
         [HttpPut]
         [Route("sale")]
-        public IHttpActionResult EditSale(SaleOperationModel M)
+        public IHttpActionResult UpdateSale(SaleOperationModel M)
         {
             try
             {

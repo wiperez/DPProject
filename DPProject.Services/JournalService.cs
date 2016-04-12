@@ -121,18 +121,24 @@ namespace DPProject.Services
                 PeriodId = m.PeriodId,
                 Id = m.OperationId
             });
-            var sales = Repository.GetRepository<Sale>();
-            sales.Update(new Sale()
-            {
-                CustomerId = m.CustomerId,
-            });
+            var sales = UnitOfWorkAsync.Repository<Sale>();
+            var s = sales.Find(m.SaleId);
+            s.CustomerId = m.CustomerId;
+            sales.Update(s);
             UnitOfWorkAsync.SaveChanges();
             return m.OperationId;
         }
 
         public void Update(JournalModel M)
         {
-            throw new NotImplementedException();
+            var j = Repository.Find(M.Id);
+            j.AccountId = M.AccountId;
+            j.Amount = M.Amount;
+            j.OperationDate = M.OperationDate;
+            j.PeriodId = M.PeriodId;
+            j.Description = M.Description;
+            Update(j);
+            UnitOfWorkAsync.SaveChanges();
         }
     }
 }

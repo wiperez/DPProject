@@ -61,7 +61,10 @@ namespace DPProject.Services
 
         public void Update(SaleModel M)
         {
-            throw new NotImplementedException();
+            var s = Repository.Find(M.SaleId);
+            s.CustomerId = M.CustomerId;
+            Update(s);
+            UnitOfWorkAsync.SaveChanges();
         }
     }
 }
