@@ -93,7 +93,22 @@ angular
 
             $scope.removeSale = function ($event) {
                 var saleData = angular.element($event.target).scope().sale;
-                
+                sweetAlert.swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No podrás recuperar los datos de esta venta!\n\n"
+                        + 'Cliente: ' + saleData.customer + '\n'
+                        + 'Fecha: ' + saleData.operationDate + '\n'
+                        + 'Monto: ' + saleData.amount,
+                    type: "error",
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, ¡elimínala!",
+                    closeOnConfirm: false
+                },
+                function () {
+                    sweetAlert.swal("¡Ayá tú con el jefe!");
+                });
             };
 
         }
