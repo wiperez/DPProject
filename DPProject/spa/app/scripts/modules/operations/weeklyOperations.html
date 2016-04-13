@@ -25,7 +25,8 @@
             <colgroup>
                 <col width="50%" />
                 <col width="20%" />
-                <col width="25%" />
+                <col width="18%" />
+                <col width="12%" />
             </colgroup>
             <tr class="ng-table-group" ng-repeat-start="group in $groups">
                 <td colspan="4">
@@ -39,17 +40,18 @@
                 <td sortable="'customerGroup'" data-title="'Group'" groupable="'customerGroup'" ng-if="false">
                     {{sale.customerGroup}}
                 </td>
-                <td sortable="'name'" data-title="'Customer'" groupable="'customer'">
+                <td sortable="'customer'" data-title="'Customer'" groupable="'customer'">
                     {{sale.customer}}
                 </td>
                 <td sortable="'amount'" data-title="'Amount'">
                     {{sale.amount}}
                 </td>
-                <td sortable="'amount'" data-title="'Date'">
-                    {{sale.operationDate}}
+                <td sortable="'operationDate'" data-title="'Date'">
+                    {{sale.operationDate | date : 'MMM-dd' }}
                 </td>
                 <td>
-                    <a ng-click="editSale($event)"><i class="fa fa-pencil"></i></a>
+                    <a ng-click="editSale($event)"><i class="fa fa-pencil"></i></a>&nbsp;
+                    <a ng-click="removeSale($event)"><i class="fa fa-trash-o"></i></a>
                 </td>
             </tr>
             <tr ng-repeat-end>

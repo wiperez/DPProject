@@ -91,6 +91,7 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
         }
 
+        // Added by Yordano
         public CustomerModel GetCustomer(string name)
         {
             var customers = Repository.Queryable();

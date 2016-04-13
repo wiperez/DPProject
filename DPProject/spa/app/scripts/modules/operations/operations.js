@@ -91,6 +91,11 @@ angular
                 $scope.openSalesOperationDialog('edit', saleData);
             };
 
+            $scope.removeSale = function ($event) {
+                var saleData = angular.element($event.target).scope().sale;
+                
+            };
+
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [
@@ -148,18 +153,6 @@ angular
                 }
                 else if ($rootScope.salesAction === 'edit') {
                     $scope.saleOperation = $rootScope.editSaleData;
-                    /*$scope.saleOperation = {
-                        OperationId: $rootScope.editSaleData.id,
-                        Customer: $rootScope.editSaleData.customer,
-                        Amount: $rootScope.editSaleData.amount,
-                        Description: $rootScope.editSaleData.description,
-                        AccountId: -1,
-                        PeriodId: -1,
-                        CustomerId: $rootScope.editSaleData.customerId,
-                        CustomerGroup: $rootScope.editSaleData.customerGroup,
-                        OperationDate: $rootScope.editSaleData.date,
-                        SaleId: $rootScope.editSaleData.saleId
-                    };*/
                 }
             };
 
@@ -252,7 +245,8 @@ angular
                     update: { method: 'PUT', params: $scope.saleOperation }
                 });
                 if ($rootScope.salesAction === 'insert') {
-                    SaleOperation.save($scope.saleOperation).$promise
+                    SaleOperation.save($scope.saleOperation)
+                        .$promise
                         .then(function (data) {
                             $timeout(function () {
                                 $scope.processing = false;
@@ -262,7 +256,8 @@ angular
                         });
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    SaleOperation.update($scope.saleOperation).$promise
+                    SaleOperation.update($scope.saleOperation)
+                        .$promise
                         .then(function (data) {
                             $timeout(function () {
                                 $scope.processing = false;
