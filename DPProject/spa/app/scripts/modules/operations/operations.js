@@ -6,7 +6,6 @@ angular
         function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource) {
             
             $scope.periods = service.getPeriods();
-
             $rootScope.periodDate = "05/01/2016";
 
             // Added by Yordano
@@ -17,6 +16,7 @@ angular
                     count: 10,
                     week: $rootScope.week.toString().replace(/\ /g, '')
                 }).$promise.then(function (data) {
+
                     $scope.tableParams = new NgTableParams({
                         // initial grouping
                         group: 'customerGroup'
@@ -134,20 +134,21 @@ angular
             $scope.initSaleOperationData = function () {
                 if ($rootScope.salesAction === 'insert') {
                     $scope.saleOperation = {
-                        OperationId: 0,
-                        SaleId: 0,
-                        Customer: '',
-                        Amount: '',
-                        Description: '',
-                        AccountId: -1,
-                        PeriodId: -1,
-                        CustomerId: -1,
-                        CustomerGroup: '',
-                        OperationDate: ''
+                        operationId: 0,
+                        saleId: 0,
+                        customer: '',
+                        amount: '',
+                        description: '',
+                        accountId: -1,
+                        periodId: -1,
+                        customerId: -1,
+                        customerGroup: '',
+                        operationDate: ''
                     };
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    $scope.saleOperation = {
+                    $scope.saleOperation = $rootScope.editSaleData;
+                    /*$scope.saleOperation = {
                         OperationId: $rootScope.editSaleData.id,
                         Customer: $rootScope.editSaleData.customer,
                         Amount: $rootScope.editSaleData.amount,
@@ -158,7 +159,7 @@ angular
                         CustomerGroup: $rootScope.editSaleData.customerGroup,
                         OperationDate: $rootScope.editSaleData.date,
                         SaleId: $rootScope.editSaleData.saleId
-                    };
+                    };*/
                 }
             };
 
@@ -195,10 +196,10 @@ angular
             };
 
             $scope.getCustomerByName = function () {
-                var Customer = $resource('api/Customer', { name: $scope.saleOperation.Customer });
+                var Customer = $resource('api/Customer', { name: $scope.saleOperation.customer });
                 Customer.get().$promise.then(function (data) {
-                    $scope.saleOperation.CustomerId = data.Id;
-                    $scope.saleOperation.CustomerGroup = data.GroupName;
+                    $scope.saleOperation.customerId = data.Id;
+                    $scope.saleOperation.customerGroup = data.GroupName;
                     $scope.getAccountId();
                 });
             };
@@ -206,17 +207,17 @@ angular
             $scope.getAccountId = function () {
                 var Account = $resource('api/Accounts', { name: 'Ventas' });
                 Account.get().$promise.then(function (data) {
-                    $scope.saleOperation.AccountId = data.AccountId;
+                    $scope.saleOperation.accountId = data.AccountId;
                     $scope.getPeriodId();
                 });
             };
 
             $scope.getPeriodId = function () {
                 var Period = $resource('api/Period/belongs', {
-                    date: $scope.saleOperation.OperationDate
+                    date: $scope.saleOperation.operationDate
                 });
                 Period.get().$promise.then(function (data) {
-                    $scope.saleOperation.PeriodId = data.periodId;
+                    $scope.saleOperation.periodId = data.periodId;
                     $scope.saveSaleOperation();
                 });
             };
@@ -226,22 +227,22 @@ angular
                     .scope().tableParams;
                 var dataset = ngTable.settings().dataset;
                 if ($rootScope.salesAction === 'insert') {
+                    var s = $scope.saleOperation;
                     dataset.push({
-                        customer: $scope.saleOperation.Customer,
-                        amount: $scope.saleOperation.Amount,
-                        date: $filter('date')($scope.saleOperation.OperationDate,
-                            'yyyy-MM-dd'),
-                        customerGroup: $scope.saleOperation.CustomerGroup
+                        customer: s.customer,
+                        amount: s.amount,
+                        date: $filter('date')(s.operationDate, 'yyyy-MM-dd'),
+                        customerGroup: s.customerGroup
                     });
                 }
                 else if ($rootScope.salesAction === 'edit') {
+                    var s = $scope.saleOperation;
                     angular.forEach(dataset, function (value, key) {
                         if (value.$$hashKey === $rootScope.editSaleData.$$hashKey) {
-                            value.customer = $scope.saleOperation.Customer,
-                            value.amount = $scope.saleOperation.Amount,
-                            value.date = $filter('date')($scope.saleOperation.OperationDate,
-                                'yyyy-MM-dd'),
-                            value.customerGroup = $scope.saleOperation.CustomerGroup
+                            value.customer = s.customer,
+                            value.amount = s.amount,
+                            value.date = $filter('date')(s.operationDate, 'yyyy-MM-dd'),
+                            value.customerGroup = s.customerGroup
                         }
                     });
                 }
@@ -267,9 +268,18 @@ angular
                                 $scope.processing = false;
                                 $scope.initSaleOperationData();
                                 $scope.salesOperationDialog.close();
+                                $timeout(function () {
+                                    $scope.recalcTotals();
+                                }, 2000);
                             }, 2000);
                         });
                 }
+            };
+
+            $scope.recalcTotals = function () {
+                var gridScope = angular.element($('.sales-table')[0]).scope();
+                var dataset = gridScope.tableParams.settings().dataset;
+                gridScope.totalAmount = gridScope.sum(dataset, 'amount');
             };
 
             $scope.focusFirstInput = function () {

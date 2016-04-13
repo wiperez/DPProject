@@ -8,15 +8,15 @@ namespace DPProject.Repository.Models
 {
     public class SaleOperationModel
     {
-        public int OperationId { get; set; }
-        public int SaleId { get; set; }
-        public int AccountId { get; set; }
-        public decimal Amount { get; set; }
-        public string Customer { get; set; }
-        public string CustomerGroup { get; set; }
-        public int CustomerId { get; set; }
-        public string Description { get; set; }
-        public DateTime OperationDate { get; set; }
-        public int PeriodId { get; set; }
+        public int operationId { get; set; }
+        public int saleId { get; set; }
+        public int accountId { get; set; }
+        public decimal amount { get; set; }
+        public string customer { get; set; }
+        public string customerGroup { get; set; }
+        public int customerId { get; set; }
+        public string description { get; set; }
+        public DateTime operationDate { get; set; }
+        public int periodId { get; set; }
     }
 }

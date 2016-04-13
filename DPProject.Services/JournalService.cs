@@ -63,13 +63,14 @@ namespace DPProject.Services
                         where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
                         select new SaleListModel
                         {
-                            id = o.Id,
+                            operationId = o.Id,
                             amount = o.Amount,
                             customer = c.Name,
                             customerId = c.CustomerId,
                             customerGroup = g.Name,
                             saleId = s.SaleId,
-                            date = o.OperationDate.ToString()
+                            operationDate = o.OperationDate.ToString(),
+                            description = o.Description
                         };
             return query.ToList();
         }
@@ -78,16 +79,16 @@ namespace DPProject.Services
         {
             var journalId = Insert(new JournalModel()
             {
-                AccountId = M.AccountId,
-                Amount = M.Amount,
-                Description = M.Description,
-                OperationDate = M.OperationDate,
-                PeriodId = M.PeriodId
+                AccountId = M.accountId,
+                Amount = M.amount,
+                Description = M.description,
+                OperationDate = M.operationDate,
+                PeriodId = M.periodId
             });
             var sales = UnitOfWorkAsync.Repository<Sale>();
             sales.Insert(new Sale()
             {
-                CustomerId = M.CustomerId,
+                CustomerId = M.customerId,
                 JournalOperation_Id = journalId
             });
             UnitOfWorkAsync.SaveChanges();
@@ -114,19 +115,19 @@ namespace DPProject.Services
         {
             Update(new JournalModel()
             {
-                AccountId = m.AccountId,
-                Amount = m.Amount,
-                Description = m.Description,
-                OperationDate = m.OperationDate,
-                PeriodId = m.PeriodId,
-                Id = m.OperationId
+                AccountId = m.accountId,
+                Amount = m.amount,
+                Description = m.description,
+                OperationDate = m.operationDate,
+                PeriodId = m.periodId,
+                Id = m.operationId
             });
             var sales = UnitOfWorkAsync.Repository<Sale>();
-            var s = sales.Find(m.SaleId);
-            s.CustomerId = m.CustomerId;
+            var s = sales.Find(m.saleId);
+            s.CustomerId = m.customerId;
             sales.Update(s);
             UnitOfWorkAsync.SaveChanges();
-            return m.OperationId;
+            return m.operationId;
         }
 
         public void Update(JournalModel M)
