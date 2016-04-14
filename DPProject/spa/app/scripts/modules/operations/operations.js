@@ -195,10 +195,6 @@ angular
                 $scope.getCustomerByName();
             };
 
-            $scope.updateSaleData = function () {
-
-            };
-
             $scope.cancel = function () {
                 $scope.salesOperationDialog.close();
             };
@@ -247,12 +243,10 @@ angular
                     var s = $scope.saleOperation;
                     angular.forEach(dataset, function (value, key) {
                         if (value.$$hashKey === $rootScope.editSaleData.$$hashKey) {
-                            if (console) console.log(s.operationDate);
                             value.customer = s.customer,
                             value.amount = s.amount,
-                            value.date = $filter('date')(s.operationDate, 'yyyy-MM-dd'),
+                            value.operationDate = $filter('date')(s.operationDate, 'yyyy-MM-dd'),
                             value.customerGroup = s.customerGroup
-                            if (console) console.log(value);
                         }
                     });
                 }
