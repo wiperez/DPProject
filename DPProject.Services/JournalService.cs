@@ -24,6 +24,7 @@ namespace DPProject.Services
         JournalModel Get(int id);
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
         int Update(SaleOperationModel m);
+        bool Delete(int operationId);
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -36,6 +37,30 @@ namespace DPProject.Services
         {
             Repository = _Repository;
             UnitOfWorkAsync = _UnitOfWork;
+        }
+
+        public bool Delete(int operationId)
+        {
+            try {
+                var j = Find(operationId);
+                j.Deleted = true;
+                Update(new JournalModel()
+                {
+                    Id = j.Id,
+                    AccountId = j.AccountId,
+                    Amount = j.Amount,
+                    Deleted = j.Deleted,
+                    Description = j.Description,
+                    OperationDate = j.OperationDate,
+                    PeriodId = j.PeriodId
+                });
+                UnitOfWorkAsync.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public JournalModel Get(int id)
@@ -61,6 +86,7 @@ namespace DPProject.Services
                         join c in customers on s.CustomerId equals c.CustomerId
                         join g in groups on c.GroupId equals g.CustomerGroupId
                         where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
+                            && o.Deleted == false
                         select new SaleListModel
                         {
                             operationId = o.Id,

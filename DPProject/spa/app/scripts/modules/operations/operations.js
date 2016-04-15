@@ -2,8 +2,8 @@
 
 angular
     .module('app.operations', [])
-    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource) {
+    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout) {
             
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = "05/01/2016";
@@ -106,8 +106,29 @@ angular
                     confirmButtonText: "Sí, ¡elimínala!",
                     closeOnConfirm: false
                 },
-                function () {
-                    sweetAlert.swal("¡Ayá tú con el jefe!");
+                function (ok) {
+                    if (ok) {
+                        var SaleOperation = $resource('api/Journal/sale',
+                            null, { remove: { method: 'DELETE' } });
+                        SaleOperation.remove({
+                            operationId: saleData.operationId
+                        }).$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                var dataset = $rootScope.getSalesDataSet();
+                                var newDataSet = [];
+                                angular.forEach(dataset, function (value, key) {
+                                    if (value.$$hashKey !== saleData.$$hashKey) {
+                                        newDataSet.push(value);
+                                    }
+                                });
+                                $rootScope.getSalesGrid().settings().dataset = newDataSet;
+                                newDataSet = undefined;
+                                $rootScope.getSalesGrid().reload();
+                                $rootScope.recalcSalesTotal();
+                            }, 2000);
+                        });
+                    }
                 });
             };
 
@@ -226,10 +247,18 @@ angular
                 });
             };
 
-            $scope.saveSaleOperation = function () {
-                var ngTable = angular.element($('.sales-table')[0])
+            $rootScope.getSalesGrid = function () {
+                return angular.element($('.sales-table')[0])
                     .scope().tableParams;
-                var dataset = ngTable.settings().dataset;
+            }
+
+            $rootScope.getSalesDataSet = function () {
+                var ngTable = $rootScope.getSalesGrid();
+                return ngTable.settings().dataset;
+            };
+
+            $scope.saveSaleOperation = function () {
+                var dataset = $rootScope.getSalesDataSet();
                 if ($rootScope.salesAction === 'insert') {
                     var s = $scope.saleOperation;
                     dataset.push({
@@ -250,7 +279,7 @@ angular
                         }
                     });
                 }
-                ngTable.reload();
+                $rootScope.getSalesGrid().reload();
                 var SaleOperation = $resource('api/Journal/sale',
                     $scope.saleOperation, {
                     update: { method: 'PUT', params: $scope.saleOperation }
@@ -275,14 +304,14 @@ angular
                                 $scope.initSaleOperationData();
                                 $scope.salesOperationDialog.close();
                                 $timeout(function () {
-                                    $scope.recalcTotals();
+                                    $rootScope.recalcSalesTotal();
                                 }, 2000);
                             }, 2000);
                         });
                 }
             };
 
-            $scope.recalcTotals = function () {
+            $rootScope.recalcSalesTotal = function () {
                 var gridScope = angular.element($('.sales-table')[0]).scope();
                 var dataset = gridScope.tableParams.settings().dataset;
                 gridScope.totalAmount = gridScope.sum(dataset, 'amount');
