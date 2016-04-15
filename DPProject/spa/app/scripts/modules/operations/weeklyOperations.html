@@ -10,8 +10,8 @@
                 </li>
             </ul>
         </div>
-        <h3> Ventas: {{week}}</h3>
-        <table ng-table="tableParams" class="sales-table table table-condensed table-bordered table-hover">
+        <h4> Ventas: {{week}}</h4>
+        <table ng-table="salesParams" class="sales-table table table-condensed table-bordered table-hover">
             <colgroup>
                 <col width="50%" />
                 <col width="20%" />
@@ -51,9 +51,64 @@
             <tfoot ng-if="isLastPage()">
                 <tr>
                     <td class="text-success text-right"><strong>Grant Total:</strong></td>
-                    <td><em>{{totalAmount}}</em></td>
+                    <td><em>{{totalSalesAmount}}</em></td>
                 </tr>
             </tfoot>
         </table>
     </div>
+
+    <div class="col-md-5">
+        <div class="purchases-toolbar">
+            <ul class="list-inline">
+                <li>
+                    <button class="btn btn-success" type="button"
+                            data-ng-click="openPurchasesOperationDialog('insert')">
+                        <i class="pe-7s-ticket"></i> Nueva Compra
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <h4> Compras: {{week}}</h4>
+        <table ng-table="purchasesParams" class="purchases-table table table-condensed table-bordered table-hover">
+            <colgroup>
+                <col width="50%" />
+                <col width="30%" />
+                <col width="20%" />
+            </colgroup>
+            <tr class="ng-table-group" ng-repeat-start="group in $groups">
+                <td colspan="4">
+                    <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                        <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                        <strong>{{ group.value }}</strong>
+                    </a>
+                </td>
+            </tr>
+            <tr ng-hide="group.$hideRows" ng-repeat="purchase in group.data">
+                <td sortable="'vendor'" data-title="'Vendor'" groupable="'vendor'">
+                    {{purchase.vendor}}
+                </td>
+                <td sortable="'amount'" data-title="'Amount'">
+                    {{purchase.amount}}
+                </td>
+                <td sortable="'operationDate'" data-title="'Date'">
+                    {{purchase.operationDate | date : 'MMM-dd' }}
+                </td>
+                <td>
+                    <a ng-click="editPurchase($event)"><i class="fa fa-pencil"></i></a>&nbsp;
+                    <a ng-click="removePurchase($event)"><i class="fa fa-trash-o"></i></a>
+                </td>
+            </tr>
+            <tr ng-repeat-end>
+                <td class="text-success text-right"><strong>Summary:</strong></td>
+                <td><em>{{sum(group.data, "amount")}}</em></td>
+            </tr>
+            <tfoot ng-if="isLastPage()">
+                <tr>
+                    <td class="text-success text-right"><strong>Grant Total:</strong></td>
+                    <td><em>{{totalPurchasesAmount}}</em></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
 </div>

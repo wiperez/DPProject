@@ -2,8 +2,8 @@
 
 angular
     .module('app.operations', [])
-    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout) {
+    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter) {
             
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = "05/01/2016";
@@ -13,7 +13,7 @@ angular
             };
 
             $rootScope.getSalesGrid = function () {
-                return $rootScope.getSalesGridEl().scope().tableParams;
+                return $rootScope.getSalesGridEl().scope().salesParams;
             }
 
             $rootScope.getSalesDataSet = function () {
@@ -24,7 +24,7 @@ angular
             $rootScope.recalcSalesTotal = function () {
                 var gridScope = $rootScope.getSalesGridEl().scope();
                 var dataset = $rootScope.getSalesDataSet();
-                $rootScope.totalAmount = gridScope.sum(dataset, 'amount');
+                $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
             };
 
             // Added by Yordano
@@ -36,23 +36,23 @@ angular
                     week: $rootScope.week.toString().replace(/\ /g, '')
                 }).$promise.then(function (data) {
 
-                    $scope.tableParams = new NgTableParams({
+                    $scope.salesParams = new NgTableParams({
                         // initial grouping
                         group: 'customerGroup'
                     }, {
                         dataset: data.saleList
                     });
                     function isLastPage() {
-                        return $scope.tableParams.page() === totalPages();
+                        return $scope.salesParams.page() === totalPages();
                     }
                     function sum(data, field) {
                         var x = _.sumBy(data, field);
                         return x;
                     }
                     function totalPages() {
-                        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+                        return Math.ceil($scope.salesParams.total() / $scope.salesParams.count());
                     }
-                    $rootScope.totalAmount = sum(data.saleList, 'amount');
+                    $rootScope.totalSalesAmount = sum(data.saleList, 'amount');
                     $scope.sum = sum;
                     $scope.isLastPage = isLastPage;
 
