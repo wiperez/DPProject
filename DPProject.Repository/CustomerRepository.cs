@@ -29,5 +29,24 @@ namespace DPProject.Repository
                     GroupName = i.CustomerGroup.Name
                 });
         }
+
+        public static CustomerModel GetCustomer(this IRepositoryAsync<Customer> repository, string name)
+        {
+            var customers = repository.Queryable();
+            var customerGroups = repository.GetRepository<CustomerGroup>().Queryable();
+            var customerQuery = from c in customers
+                                join gn in customerGroups
+                                on c.GroupId equals gn.CustomerGroupId
+                                where c.Name == name
+                                select new CustomerModel()
+                                {
+                                    Code = c.Code,
+                                    GroupId = c.GroupId,
+                                    GroupName = gn.Name,
+                                    Id = c.CustomerId,
+                                    Name = c.Name
+                                };
+            return customerQuery.First();
+        }
     }
 }
