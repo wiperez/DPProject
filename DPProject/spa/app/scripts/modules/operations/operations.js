@@ -274,7 +274,7 @@ angular
                     dataset.push({
                         customer: s.customer,
                         amount: s.amount,
-                        date: $filter('date')(s.operationDate, 'yyyy-MM-dd'),
+                        operationDate: $filter('date')(s.operationDate, 'yyyy-MM-dd'),
                         customerGroup: s.customerGroup
                     });
                 }
