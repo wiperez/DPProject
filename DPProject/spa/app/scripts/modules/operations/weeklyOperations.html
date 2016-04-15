@@ -1,6 +1,6 @@
 ﻿<div class="row">
    
-    <div class="col-md-6">
+    <div class="col-md-6 pull-left">
         <div class="sales-toolbar">
             <ul class="list-inline">
                 <li>
@@ -12,12 +12,6 @@
         </div>
         <h4> Ventas: {{week}}</h4>
         <table ng-table="salesParams" class="sales-table table table-condensed table-bordered table-hover">
-            <colgroup>
-                <col width="50%" />
-                <col width="20%" />
-                <col width="18%" />
-                <col width="12%" />
-            </colgroup>
             <tr class="ng-table-group" ng-repeat-start="group in $groups">
                 <td colspan="4">
                     <a href="" ng-click="group.$hideRows = !group.$hideRows">
@@ -37,7 +31,7 @@
                     {{sale.amount}}
                 </td>
                 <td sortable="'operationDate'" data-title="'Date'">
-                    {{sale.operationDate | date : 'MMM-dd' }}
+                    {{ sale.operationDate | date : 'MMM-dd' }}
                 </td>
                 <td>
                     <a ng-click="editSale($event)"><i class="fa fa-pencil"></i></a>&nbsp;
@@ -57,7 +51,7 @@
         </table>
     </div>
 
-    <div class="col-md-5">
+    <div class="col-md-5 pull-right">
         <div class="purchases-toolbar">
             <ul class="list-inline">
                 <li>
@@ -70,11 +64,6 @@
         </div>
         <h4> Compras: {{week}}</h4>
         <table ng-table="purchasesParams" class="purchases-table table table-condensed table-bordered table-hover">
-            <colgroup>
-                <col width="40%" />
-                <col width="20%" />
-                <col width="20%" />
-            </colgroup>
             <tr class="ng-table-group" ng-repeat-start="group in $groups">
                 <td colspan="4">
                     <a href="" ng-click="group.$hideRows = !group.$hideRows">
@@ -91,7 +80,7 @@
                     {{purchase.amount}}
                 </td>
                 <td sortable="'operationDate'" data-title="'Date'">
-                    {{purchase.operationDate | date : 'MMM-dd' }}
+                    {{ purchase.operationDate | date : 'MMM-dd' }}
                 </td>
                 <td>
                     <a ng-click="editPurchase($event)"><i class="fa fa-pencil"></i></a>&nbsp;
