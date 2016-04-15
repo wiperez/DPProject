@@ -38,5 +38,10 @@ namespace DPProject.Repository
                         };
             return query.ToList();
         }
+
+        public static ICollection<PurchaseListModel> GetPurchases(this IRepositoryAsync<JournalOperation> repository, PurchaseListParams listParams)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
