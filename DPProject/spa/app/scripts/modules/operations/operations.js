@@ -27,6 +27,21 @@ angular
                 $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
             };
 
+            // Dummy data for purchases grid
+            var dummyPurchases = [
+                { "vendor": "IBM", "amount": 798, "operationDate": "2016/05/08" },
+                { "vendor": "Microsoft", "amount": 749, "operationDate": "2016/05/08" },
+                { "vendor": "Colgate", "amount": 672, "operationDate": "2016/05/10" },
+                { "vendor": "Adidas", "amount": 695, "operationDate": "2016/05/10" },
+                { "vendor": "Apple", "amount": 559, "operationDate": "2016/05/28" }
+            ];
+            $scope.purchasesParams = new NgTableParams({
+                // initial grouping
+                group: "date"
+            }, {
+                dataset: dummyPurchases
+            });
+
             // Added by Yordano
             $scope.reloadSalesGrid = function () {
                 var Sales = $resource('api/Journal/sales');
