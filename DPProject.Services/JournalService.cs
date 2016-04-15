@@ -75,30 +75,7 @@ namespace DPProject.Services
 
         public ICollection<SaleListModel> GetSales(SaleListParams listParams)
         {
-            var startDay = Convert.ToInt32(listParams.week.Split('-')[0].Split('/')[1]);
-            var endDay = Convert.ToInt32(listParams.week.Split('-')[1].Split('/')[1]);
-            var operations = Repository.Queryable();
-            var customers = Repository.GetRepository<Customer>().Queryable();
-            var groups = Repository.GetRepository<CustomerGroup>().Queryable();
-            var sales = Repository.GetRepository<Sale>().Queryable();
-            var query = from o in operations
-                        join s in sales on o.Id equals s.JournalOperation_Id
-                        join c in customers on s.CustomerId equals c.CustomerId
-                        join g in groups on c.GroupId equals g.CustomerGroupId
-                        where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
-                            && o.Deleted == false
-                        select new SaleListModel
-                        {
-                            operationId = o.Id,
-                            amount = o.Amount,
-                            customer = c.Name,
-                            customerId = c.CustomerId,
-                            customerGroup = g.Name,
-                            saleId = s.SaleId,
-                            operationDate = o.OperationDate.ToString(),
-                            description = o.Description
-                        };
-            return query.ToList();
+            return Repository.GetSales(listParams);
         }
 
         public int Insert(SaleOperationModel M)
