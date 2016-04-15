@@ -301,7 +301,8 @@ angular
                             $timeout(function () {
                                 $scope.processing = false;
                                 $scope.initSaleOperationData();
-                                $scope.focusFirstInput();
+                                $scope.salesOperationDialog.close();
+                                $rootScope.recalcSalesTotal();
                             }, 2000);
                         });
                 }
