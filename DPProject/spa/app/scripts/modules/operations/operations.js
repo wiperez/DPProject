@@ -8,6 +8,25 @@ angular
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = "05/01/2016";
 
+            $rootScope.getSalesGridEl = function () {
+                return angular.element($('.sales-table')[0]);
+            };
+
+            $rootScope.recalcSalesTotal = function () {
+                var gridScope = $rootScope.getSalesGridEl().scope();
+                var dataset = gridScope.tableParams.settings().dataset;
+                gridScope.totalAmount = gridScope.sum(dataset, 'amount');
+            };
+
+            $rootScope.getSalesGrid = function () {
+                return $rootScope.getSalesGridEl().scope().tableParams;
+            }
+
+            $rootScope.getSalesDataSet = function () {
+                var ngTable = $rootScope.getSalesGrid();
+                return ngTable.settings().dataset;
+            };
+
             // Added by Yordano
             $scope.reloadSalesGrid = function () {
                 var Sales = $resource('api/Journal/sales');
@@ -104,7 +123,7 @@ angular
                     cancelButtonText: 'Cancelar',
                     confirmButtonColor: "#DD6B55",
                     confirmButtonText: "Sí, ¡elimínala!",
-                    closeOnConfirm: false
+                    closeOnConfirm: true
                 },
                 function (ok) {
                     if (ok) {
@@ -247,16 +266,6 @@ angular
                 });
             };
 
-            $rootScope.getSalesGrid = function () {
-                return angular.element($('.sales-table')[0])
-                    .scope().tableParams;
-            }
-
-            $rootScope.getSalesDataSet = function () {
-                var ngTable = $rootScope.getSalesGrid();
-                return ngTable.settings().dataset;
-            };
-
             $scope.saveSaleOperation = function () {
                 var dataset = $rootScope.getSalesDataSet();
                 if ($rootScope.salesAction === 'insert') {
@@ -309,12 +318,6 @@ angular
                             }, 2000);
                         });
                 }
-            };
-
-            $rootScope.recalcSalesTotal = function () {
-                var gridScope = angular.element($('.sales-table')[0]).scope();
-                var dataset = gridScope.tableParams.settings().dataset;
-                gridScope.totalAmount = gridScope.sum(dataset, 'amount');
             };
 
             $scope.focusFirstInput = function () {
