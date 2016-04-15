@@ -12,12 +12,6 @@ angular
                 return angular.element($('.sales-table')[0]);
             };
 
-            $rootScope.recalcSalesTotal = function () {
-                var gridScope = $rootScope.getSalesGridEl().scope();
-                var dataset = gridScope.tableParams.settings().dataset;
-                gridScope.totalAmount = gridScope.sum(dataset, 'amount');
-            };
-
             $rootScope.getSalesGrid = function () {
                 return $rootScope.getSalesGridEl().scope().tableParams;
             }
@@ -25,6 +19,12 @@ angular
             $rootScope.getSalesDataSet = function () {
                 var ngTable = $rootScope.getSalesGrid();
                 return ngTable.settings().dataset;
+            };
+
+            $rootScope.recalcSalesTotal = function () {
+                var gridScope = $rootScope.getSalesGridEl().scope();
+                var dataset = $rootScope.getSalesDataSet();
+                $rootScope.totalAmount = gridScope.sum(dataset, 'amount');
             };
 
             // Added by Yordano
@@ -52,9 +52,10 @@ angular
                     function totalPages() {
                         return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
                     }
-                    $scope.totalAmount = sum(data.saleList, 'amount');
+                    $rootScope.totalAmount = sum(data.saleList, 'amount');
                     $scope.sum = sum;
                     $scope.isLastPage = isLastPage;
+
                 });
             };
 
