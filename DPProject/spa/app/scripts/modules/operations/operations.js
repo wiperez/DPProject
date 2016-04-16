@@ -22,6 +22,11 @@ angular
                 return ngTable.settings().dataset;
             };
 
+            $scope.sum = function sum(data, field) {
+                var x = _.sumBy(data, field);
+                return x;
+            };
+
             $rootScope.recalcSalesTotal = function () {
                 var gridScope = $rootScope.getSalesGridEl().scope();
                 var dataset = $rootScope.getSalesDataSet();
@@ -46,13 +51,13 @@ angular
                     count: 10,
                     week: $rootScope.week.toString().replace(/\ /g, '')
                 }).$promise.then(function (data) {
-                    console.log(data.purchasesList);
                     $scope.purchasesParams = new NgTableParams({
                         // initial grouping
                         group: "date"
                     }, {
                         dataset: data.purchasesList
                     });
+                    $rootScope.totalPurchasesAmount = $scope.sum(data.purchasesList, 'amount');
                 });
             };
 
@@ -75,15 +80,10 @@ angular
                     function isLastPage() {
                         return $scope.salesParams.page() === totalPages();
                     }
-                    function sum(data, field) {
-                        var x = _.sumBy(data, field);
-                        return x;
-                    }
                     function totalPages() {
                         return Math.ceil($scope.salesParams.total() / $scope.salesParams.count());
                     }
-                    $rootScope.totalSalesAmount = sum(data.saleList, 'amount');
-                    $scope.sum = sum;
+                    $rootScope.totalSalesAmount = $scope.sum(data.saleList, 'amount');
                     $scope.isLastPage = isLastPage;
                 });
             };
