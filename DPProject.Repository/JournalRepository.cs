@@ -15,6 +15,7 @@ namespace DPProject.Repository
         {
             var startDay = Convert.ToInt32(listParams.week.Split('-')[0].Split('/')[1]);
             var endDay = Convert.ToInt32(listParams.week.Split('-')[1].Split('/')[1]);
+            var month = Convert.ToInt32(listParams.week.Split('-')[1].Split('/')[0]);
             var operations = repository.Queryable();
             var customers = repository.GetRepository<Customer>().Queryable();
             var groups = repository.GetRepository<CustomerGroup>().Queryable();
@@ -24,6 +25,7 @@ namespace DPProject.Repository
                         join c in customers on s.CustomerId equals c.CustomerId
                         join g in groups on c.GroupId equals g.CustomerGroupId
                         where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
+                            && o.OperationDate.Month == month
                             && o.Deleted == false
                         select new SaleListModel
                         {
