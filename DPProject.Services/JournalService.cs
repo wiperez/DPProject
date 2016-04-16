@@ -92,7 +92,7 @@ namespace DPProject.Services
             sales.Insert(new Sale()
             {
                 CustomerId = M.customerId,
-                JournalOperation_Id = journalId
+                JournalOperationId = journalId
             });
             UnitOfWorkAsync.SaveChanges();
             return journalId;

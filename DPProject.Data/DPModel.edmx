@@ -58,7 +58,7 @@
             <PropertyRef Name="PurchaseId" />
           </Key>
           <Property Name="PurchaseId" Type="int" Nullable="false" />
-          <Property Name="JournalOperation_Id" Type="int" Nullable="false" />
+          <Property Name="JournalOperationId" Type="int" Nullable="false" />
           <Property Name="VendorId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Sale">
@@ -66,7 +66,7 @@
             <PropertyRef Name="SaleId" />
           </Key>
           <Property Name="SaleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="JournalOperation_Id" Type="int" Nullable="false" />
+          <Property Name="JournalOperationId" Type="int" Nullable="false" />
           <Property Name="CustomerId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Vendor">
@@ -121,7 +121,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Purchase">
-              <PropertyRef Name="JournalOperation_Id" />
+              <PropertyRef Name="JournalOperationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -157,7 +157,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Sale">
-              <PropertyRef Name="JournalOperation_Id" />
+              <PropertyRef Name="JournalOperationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -303,7 +303,7 @@
             <PropertyRef Name="PurchaseId" />
           </Key>
           <Property Name="PurchaseId" Type="Int32" Nullable="false" />
-          <Property Name="JournalOperation_Id" Type="Int32" Nullable="false" />
+          <Property Name="JournalOperationId" Type="Int32" Nullable="false" />
           <Property Name="VendorId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="JournalOperation" Relationship="DPModel.FK_Purchase_JournalOperation" FromRole="Purchase" ToRole="JournalOperation" />
           <NavigationProperty Name="Vendor" Relationship="DPModel.FK_Purchase_Vendor" FromRole="Purchase" ToRole="Vendor" />
@@ -313,7 +313,7 @@
             <PropertyRef Name="SaleId" />
           </Key>
           <Property Name="SaleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="JournalOperation_Id" Type="Int32" Nullable="false" />
+          <Property Name="JournalOperationId" Type="Int32" Nullable="false" />
           <Property Name="CustomerId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Customer" Relationship="DPModel.FK_Sale_Customer" FromRole="Sale" ToRole="Customer" />
           <NavigationProperty Name="JournalOperation" Relationship="DPModel.FK_Sale_JournalOperation" FromRole="Sale" ToRole="JournalOperation" />
@@ -383,7 +383,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Purchase">
-              <PropertyRef Name="JournalOperation_Id" />
+              <PropertyRef Name="JournalOperationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -395,7 +395,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Sale">
-              <PropertyRef Name="JournalOperation_Id" />
+              <PropertyRef Name="JournalOperationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -474,7 +474,7 @@
             <EntityTypeMapping TypeName="DPModel.Purchase">
               <MappingFragment StoreEntitySet="Purchase">
                 <ScalarProperty Name="VendorId" ColumnName="VendorId" />
-                <ScalarProperty Name="JournalOperation_Id" ColumnName="JournalOperation_Id" />
+                <ScalarProperty Name="JournalOperationId" ColumnName="JournalOperationId" />
                 <ScalarProperty Name="PurchaseId" ColumnName="PurchaseId" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -483,7 +483,7 @@
             <EntityTypeMapping TypeName="DPModel.Sale">
               <MappingFragment StoreEntitySet="Sale">
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="JournalOperation_Id" ColumnName="JournalOperation_Id" />
+                <ScalarProperty Name="JournalOperationId" ColumnName="JournalOperationId" />
                 <ScalarProperty Name="SaleId" ColumnName="SaleId" />
               </MappingFragment>
             </EntityTypeMapping>

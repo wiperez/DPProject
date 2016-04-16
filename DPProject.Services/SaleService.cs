@@ -51,7 +51,7 @@ namespace DPProject.Services
             var sale = new Sale()
             {
                 CustomerId = M.CustomerId,
-                JournalOperation_Id = M.JournalOperation_Id
+                JournalOperationId = M.JournalOperation_Id
             };
             Insert(sale);
             UnitOfWorkAsync.SaveChanges();

@@ -4,20 +4,24 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="62b55b1e6c9b459fa4d221240bcb443b" Name="Diagram1" ZoomLevel="55">
-        <EntityTypeShape EntityType="DPModel.Account" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="DPModel.Customer" Width="1.5" PointX="8.5" PointY="4" />
-        <EntityTypeShape EntityType="DPModel.CustomerGroup" Width="1.5" PointX="6.25" PointY="6.375" />
-        <EntityTypeShape EntityType="DPModel.JournalOperation" Width="1.5" PointX="3" PointY="3.25" />
-        <EntityTypeShape EntityType="DPModel.Period" Width="1.5" PointX="0.75" PointY="3.875" />
-        <EntityTypeShape EntityType="DPModel.Purchase" Width="1.5" PointX="5.25" PointY="0.875" />
-        <EntityTypeShape EntityType="DPModel.Sale" Width="1.5" PointX="5.25" PointY="3.875" />
-        <EntityTypeShape EntityType="DPModel.Vendor" Width="1.5" PointX="8.25" PointY="1.25" />
+      <Diagram DiagramId="62b55b1e6c9b459fa4d221240bcb443b" Name="Diagram1" ZoomLevel="78">
+        <EntityTypeShape EntityType="DPModel.Account" Width="1.5" PointX="0.75" PointY="3.625" />
+        <EntityTypeShape EntityType="DPModel.Customer" Width="1.5" PointX="8" PointY="3.75" />
+        <EntityTypeShape EntityType="DPModel.CustomerGroup" Width="1.5" PointX="10.5" PointY="3.875" />
+        <EntityTypeShape EntityType="DPModel.JournalOperation" Width="1.5" PointX="3" PointY="3.125" />
+        <EntityTypeShape EntityType="DPModel.Period" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DPModel.Purchase" Width="1.875" PointX="5.625" PointY="1" />
+        <EntityTypeShape EntityType="DPModel.Sale" Width="1.75" PointX="5.25" PointY="3.75" />
+        <EntityTypeShape EntityType="DPModel.Vendor" Width="1.5" PointX="9.625" PointY="1" />
         <AssociationConnector Association="DPModel.FK_JournalOperation_Account" />
         <AssociationConnector Association="DPModel.FK_Customer_CustomerGroup" />
         <AssociationConnector Association="DPModel.FK_Sale_Customer" />
         <AssociationConnector Association="DPModel.FK_JournalOperation_Period" />
-        <AssociationConnector Association="DPModel.FK_Purchase_JournalOperation" />
+        <AssociationConnector Association="DPModel.FK_Purchase_JournalOperation" ManuallyRouted="true" >
+          <ConnectorPoint PointX="4.5" PointY="3.40625" />
+          <ConnectorPoint PointX="6.52787187467482" PointY="3.40625" />
+          <ConnectorPoint PointX="6.52787187467482" PointY="2.9802864583333317" />
+        </AssociationConnector>
         <AssociationConnector Association="DPModel.FK_Sale_JournalOperation" />
         <AssociationConnector Association="DPModel.FK_Purchase_Vendor" />
       </Diagram>

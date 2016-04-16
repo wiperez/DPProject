@@ -20,7 +20,7 @@ namespace DPProject.Repository
             var groups = repository.GetRepository<CustomerGroup>().Queryable();
             var sales = repository.GetRepository<Sale>().Queryable();
             var query = from o in operations
-                        join s in sales on o.Id equals s.JournalOperation_Id
+                        join s in sales on o.Id equals s.JournalOperationId
                         join c in customers on s.CustomerId equals c.CustomerId
                         join g in groups on c.GroupId equals g.CustomerGroupId
                         where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
