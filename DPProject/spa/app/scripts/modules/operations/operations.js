@@ -36,22 +36,36 @@ angular
                 { "vendor": "Adidas", "amount": 695, "operationDate": "2016-05-10" },
                 { "vendor": "Apple", "amount": 559, "operationDate": "2016-05-28" }
             ];
-            $scope.purchasesParams = new NgTableParams({
-                // initial grouping
-                group: "date"
-            }, {
-                dataset: dummyPurchases
-            });
 
-            // Added by Yordano
-            $scope.reloadSalesGrid = function () {
-                var Sales = $resource('api/Journal/sales');
-                Sales.save({
+            $scope.reloadPurchasesGrid = function () {
+                var Purchases = $resource('api/Journal/purchases', null, {
+                    list: { method: 'POST' }
+                });
+                Purchases.list({
                     page: 1,
                     count: 10,
                     week: $rootScope.week.toString().replace(/\ /g, '')
                 }).$promise.then(function (data) {
+                    console.log(data.purchasesList);
+                    $scope.purchasesParams = new NgTableParams({
+                        // initial grouping
+                        group: "date"
+                    }, {
+                        dataset: data.purchasesList
+                    });
+                });
+            };
 
+            // Added by Yordano
+            $scope.reloadSalesGrid = function () {
+                var Sales = $resource('api/Journal/sales', null, {
+                    list: { method: 'POST' }
+                });
+                Sales.list({
+                    page: 1,
+                    count: 10,
+                    week: $rootScope.week.toString().replace(/\ /g, '')
+                }).$promise.then(function (data) {
                     $scope.salesParams = new NgTableParams({
                         // initial grouping
                         group: 'customerGroup'
@@ -83,6 +97,7 @@ angular
             $scope.getWeekDate = function (_month, week) {
                 $rootScope.week = service.getWeeksOfMonth(_month)[week];
                 $scope.reloadSalesGrid();
+                $scope.reloadPurchasesGrid();
             };
 
             $rootScope.toolBar = {
