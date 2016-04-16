@@ -2,8 +2,9 @@
 
 angular
     .module('app.operations', [])
-    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter) {
+    .controller('OperationsController', [
+        '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', '$interval',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval) {
             
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = "05/01/2016";
@@ -70,7 +71,6 @@ angular
                     $rootScope.totalSalesAmount = sum(data.saleList, 'amount');
                     $scope.sum = sum;
                     $scope.isLastPage = isLastPage;
-
                 });
             };
 
@@ -167,6 +167,28 @@ angular
                 });
             };
 
+            $rootScope.fixGridsWidth = function () {
+                var p1 = $('.sales-table').parent('.col-md-6');
+                var p2 = $('.purchases-table').parent('.col-md-6');
+                var t1 = p1.position().top;
+                var t2 = p2.position().top;
+                var w1 = p1.width();
+                var w2 = p2.width();
+                while (t1 !== t2) {
+                    w1 -= 1; w2 -= 1;
+                    p1.width(w1 + 'px');
+                    p2.width(w2 + 'px');
+                    t2 = p2.position().top;
+                }
+            };
+
+            var gridsWidthFixInterval = $interval(function () {
+                var p = typeof $('.purchases-table')[0] !== 'undefined';
+                if (p) {
+                    $rootScope.fixGridsWidth();
+                    $interval.cancel(gridsWidthFixInterval);
+                }
+            }, 200);
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [
