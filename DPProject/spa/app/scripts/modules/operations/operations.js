@@ -58,7 +58,6 @@ angular
                         dataset: data.purchasesList
                     });
                     $rootScope.totalPurchasesAmount = $scope.sum(data.purchasesList, 'amount');
-                    $rootScope.fixGridsWidth();
                 });
             };
 
@@ -194,30 +193,6 @@ angular
                     }
                 });
             };
-
-            $rootScope.fixGridsWidth = function () {
-                var p1 = $('.sales-table').parent('.col-md-6');
-                var p2 = $('.purchases-table').parent('.col-md-6');
-                if (p1.length == 0 || p2.length == 0) return;
-                var t1 = p1.position().top;
-                var t2 = p2.position().top;
-                var w1 = p1.width();
-                var w2 = p2.width();
-                while (t1 !== t2) {
-                    w1 -= 1; w2 -= 1;
-                    p1.width(w1 + 'px');
-                    p2.width(w2 + 'px');
-                    t2 = p2.position().top;
-                }
-            };
-
-            var gridsWidthFixInterval = $interval(function () {
-                var p = typeof $('.purchases-table')[0] !== 'undefined';
-                if (p) {
-                    $rootScope.fixGridsWidth();
-                    $interval.cancel(gridsWidthFixInterval);
-                }
-            }, 200);
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [

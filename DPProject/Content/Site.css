@@ -58,3 +58,11 @@
 .operations-period-list {
     margin-top: 10px;
 }
+
+#operation-grids td {
+    padding: 10px;
+}
+
+#operation-grids td table td {
+    padding: 5px;
+}
