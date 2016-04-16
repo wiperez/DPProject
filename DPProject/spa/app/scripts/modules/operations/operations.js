@@ -136,6 +136,18 @@ angular
                 });
             };
 
+            $scope.openPurchasesOperationDialog = function (purchasesAction, purchaseData) {
+                $rootScope.purchasesAction = purchasesAction;
+                $rootScope.editPurchaseData = purchaseData;
+                $rootScope.purchaseOperationDialog = $modal.open({
+                    animation: true,
+                    templateUrl: 'spa/app/scripts/modules/operations/purchasesDialog.html',
+                    controller: 'PurchasesOperationController',
+                    windowClass: "hmodal-info",
+                    size: 'md'
+                });
+            };
+
             $scope.editSale = function ($event) {
                 var saleData = angular.element($event.target).scope().sale;
                 $scope.openSalesOperationDialog('edit', saleData);
@@ -378,6 +390,11 @@ angular
                 var t = $('#sales-dialog .form-control:first')[0];
                 if (angular.isUndefined(t)) return; else t.focus();
             }
+        }
+    ]).controller('PurchasesOperationController', [
+        '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
+        function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
+        {
         }
     ]);
 
