@@ -189,7 +189,7 @@ angular
                                 newDataSet = undefined;
                                 $rootScope.getSalesGrid().reload();
                                 $rootScope.recalcSalesTotal();
-                            }, 2000);
+                            }, 100);
                         });
                     }
                 });
@@ -294,7 +294,7 @@ angular
                 $timeout(function () {
                     $scope.processing = false;
                     $scope.focusFirstInput();
-                }, 2000);
+                }, 100);
             });
 
             $scope.ok = function () {
@@ -369,7 +369,7 @@ angular
                                 $scope.initSaleOperationData();
                                 $scope.salesOperationDialog.close();
                                 $rootScope.recalcSalesTotal();
-                            }, 2000);
+                            }, 100);
                         });
                 }
                 else if ($rootScope.salesAction === 'edit') {
@@ -382,8 +382,8 @@ angular
                                 $scope.salesOperationDialog.close();
                                 $timeout(function () {
                                     $rootScope.recalcSalesTotal();
-                                }, 2000);
-                            }, 2000);
+                                }, 100);
+                            }, 100);
                         });
                 }
             };
