@@ -14,5 +14,6 @@ namespace DPProject.Repository.Models
         public System.DateTime OperationDate { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }
+        public bool Deleted { get; set; }
     }
 }

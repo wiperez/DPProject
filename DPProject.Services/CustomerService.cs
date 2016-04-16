@@ -39,16 +39,12 @@ namespace DPProject.Services
 
         public SmartTableModel<CustomerModel> GetCustomers(SmartTableParamModel<CustomerPredicateModel> M) 
         {
-
             var RecordSet = Repository.GetCustomers(M);
-
             var TList = RecordSet.ToList();
-
             if (!string.IsNullOrEmpty(M.Sort.Predicate))
             {
                 TList = TList.OrderBy(string.Format("{0} {1}", M.Sort.Predicate, M.Sort.Reverse? "DESC" : "ASC")).ToList();
             }
-
             return new SmartTableModel<CustomerModel>()
             {
                 Rows = TList.Skip(M.Pagination.Start).Take(M.Pagination.Number),
@@ -57,7 +53,6 @@ namespace DPProject.Services
                 Number = M.Pagination.Number,
                 RowCount = TList.Count()
             };
-
         }
 
         public IEnumerable<CustomerGroup> GetCustomerGroups()
@@ -91,23 +86,10 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
         }
 
+        // Added by Yordano
         public CustomerModel GetCustomer(string name)
         {
-            var customers = Repository.Queryable();
-            var customerGroups = Repository.GetRepository<CustomerGroup>().Queryable();
-            var customerQuery = from c in customers
-                           join gn in customerGroups
-                           on c.GroupId equals gn.CustomerGroupId
-                           where c.Name == name
-                           select new CustomerModel()
-            {
-                Code = c.Code,
-                GroupId = c.GroupId,
-                GroupName = gn.Name,
-                Id = c.CustomerId,
-                Name = c.Name
-            };
-            return customerQuery.First();
+            return Repository.GetCustomer(name);
         }
     }
 }

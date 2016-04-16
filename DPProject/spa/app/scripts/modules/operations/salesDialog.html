@@ -9,7 +9,7 @@
                 <label class="col-sm-2 control-label">Cliente:</label>
                 <div class="col-sm-9 input-group">
                     <input class="form-control" name="customer" type="text" 
-                           ng-model="saleOperation.Customer" ng-required="true" placeholder="{{ processing ? 'Cargando datos...' : 'Nombre del cliente...' }}"
+                           ng-model="saleOperation.customer" ng-required="true" placeholder="{{ processing ? 'Cargando datos...' : 'Nombre del cliente...' }}"
                            typeahead="customer.Name for customer in customers | filter:$viewValue"
                            ng-disabled="processing" autocomplete="off" />
                 </div>
@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Monto: </label>
                 <div class="col-sm-9 input-group">
-                    <input class="form-control" name="amount" ng-model="saleOperation.Amount" 
+                    <input class="form-control" name="amount" ng-model="saleOperation.amount" 
                            ng-required="true" type="number" placeholder="Monto de la venta" 
                            ng-disabled="processing" autocomplete="off" />
                 </div>
@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Fecha: </label>
                 <div class="col-sm-9 input-group">
-                    <input class="form-control" name="date" ng-model="saleOperation.OperationDate"
+                    <input class="form-control" name="date" ng-model="saleOperation.operationDate"
                            ng-required="true" type="text" placeholder="Fecha" 
                            datepicker-popup="yyyy-MM-dd" is-open="calOpened"
                            ng-disabled="processing" autocomplete="off"
@@ -43,7 +43,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Descripci&oacute;n: </label>
                 <div class="col-sm-9 input-group">
-                    <textarea class="form-control" ng-model="saleOperation.Description"
+                    <textarea class="form-control" ng-model="saleOperation.description"
                               rows="3" placeholder="Venta de... / Compra de un..."
                               ng-disabled="processing"></textarea>
                 </div>

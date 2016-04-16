@@ -26,6 +26,7 @@ namespace DPProject.Data
         public System.DateTime OperationDate { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }
+        public bool Deleted { get; set; }
     
         public virtual Account Account { get; set; }
         public virtual Period Period { get; set; }

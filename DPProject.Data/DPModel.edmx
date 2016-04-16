@@ -42,6 +42,7 @@
           <Property Name="OperationDate" Type="date" Nullable="false" />
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Period">
           <Key>
@@ -281,6 +282,7 @@
           <Property Name="OperationDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Account" Relationship="DPModel.FK_JournalOperation_Account" FromRole="JournalOperation" ToRole="Account" />
           <NavigationProperty Name="Period" Relationship="DPModel.FK_JournalOperation_Period" FromRole="JournalOperation" ToRole="Period" />
           <NavigationProperty Name="Purchases" Relationship="DPModel.FK_Purchase_JournalOperation" FromRole="JournalOperation" ToRole="Purchase" />
@@ -409,7 +411,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -448,6 +450,7 @@
           <EntitySetMapping Name="JournalOperations">
             <EntityTypeMapping TypeName="DPModel.JournalOperation">
               <MappingFragment StoreEntitySet="JournalOperation">
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="OperationDate" ColumnName="OperationDate" />

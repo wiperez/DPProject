@@ -2,12 +2,45 @@
 
 angular
     .module('app.operations', [])
-    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource) {
+    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter) {
             
             $scope.periods = service.getPeriods();
-
             $rootScope.periodDate = "05/01/2016";
+
+            $rootScope.getSalesGridEl = function () {
+                return angular.element($('.sales-table')[0]);
+            };
+
+            $rootScope.getSalesGrid = function () {
+                return $rootScope.getSalesGridEl().scope().salesParams;
+            }
+
+            $rootScope.getSalesDataSet = function () {
+                var ngTable = $rootScope.getSalesGrid();
+                return ngTable.settings().dataset;
+            };
+
+            $rootScope.recalcSalesTotal = function () {
+                var gridScope = $rootScope.getSalesGridEl().scope();
+                var dataset = $rootScope.getSalesDataSet();
+                $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
+            };
+
+            // Dummy data for purchases grid
+            var dummyPurchases = [
+                { "vendor": "IBM", "amount": 798, "operationDate": "2016-05-08" },
+                { "vendor": "Microsoft", "amount": 749, "operationDate": "2016-05-08" },
+                { "vendor": "Colgate", "amount": 672, "operationDate": "2016-05-10" },
+                { "vendor": "Adidas", "amount": 695, "operationDate": "2016-05-10" },
+                { "vendor": "Apple", "amount": 559, "operationDate": "2016-05-28" }
+            ];
+            $scope.purchasesParams = new NgTableParams({
+                // initial grouping
+                group: "date"
+            }, {
+                dataset: dummyPurchases
+            });
 
             // Added by Yordano
             $scope.reloadSalesGrid = function () {
@@ -17,25 +50,27 @@ angular
                     count: 10,
                     week: $rootScope.week.toString().replace(/\ /g, '')
                 }).$promise.then(function (data) {
-                    $scope.tableParams = new NgTableParams({
+
+                    $scope.salesParams = new NgTableParams({
                         // initial grouping
                         group: 'customerGroup'
                     }, {
                         dataset: data.saleList
                     });
                     function isLastPage() {
-                        return $scope.tableParams.page() === totalPages();
+                        return $scope.salesParams.page() === totalPages();
                     }
                     function sum(data, field) {
                         var x = _.sumBy(data, field);
                         return x;
                     }
                     function totalPages() {
-                        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+                        return Math.ceil($scope.salesParams.total() / $scope.salesParams.count());
                     }
-                    $scope.totalAmount = sum(data.saleList, 'amount');
+                    $rootScope.totalSalesAmount = sum(data.saleList, 'amount');
                     $scope.sum = sum;
                     $scope.isLastPage = isLastPage;
+
                 });
             };
 
@@ -91,6 +126,47 @@ angular
                 $scope.openSalesOperationDialog('edit', saleData);
             };
 
+            $scope.removeSale = function ($event) {
+                var saleData = angular.element($event.target).scope().sale;
+                sweetAlert.swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No podrás recuperar los datos de esta venta!\n\n"
+                        + 'Cliente: ' + saleData.customer + '\n'
+                        + 'Fecha: ' + saleData.operationDate + '\n'
+                        + 'Monto: ' + saleData.amount,
+                    type: "error",
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, ¡elimínala!",
+                    closeOnConfirm: true
+                },
+                function (ok) {
+                    if (ok) {
+                        var SaleOperation = $resource('api/Journal/sale',
+                            null, { remove: { method: 'DELETE' } });
+                        SaleOperation.remove({
+                            operationId: saleData.operationId
+                        }).$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                var dataset = $rootScope.getSalesDataSet();
+                                var newDataSet = [];
+                                angular.forEach(dataset, function (value, key) {
+                                    if (value.$$hashKey !== saleData.$$hashKey) {
+                                        newDataSet.push(value);
+                                    }
+                                });
+                                $rootScope.getSalesGrid().settings().dataset = newDataSet;
+                                newDataSet = undefined;
+                                $rootScope.getSalesGrid().reload();
+                                $rootScope.recalcSalesTotal();
+                            }, 2000);
+                        });
+                    }
+                });
+            };
+
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [
@@ -134,30 +210,20 @@ angular
             $scope.initSaleOperationData = function () {
                 if ($rootScope.salesAction === 'insert') {
                     $scope.saleOperation = {
-                        OperationId: 0,
-                        SaleId: 0,
-                        Customer: '',
-                        Amount: '',
-                        Description: '',
-                        AccountId: -1,
-                        PeriodId: -1,
-                        CustomerId: -1,
-                        CustomerGroup: '',
-                        OperationDate: ''
+                        operationId: 0,
+                        saleId: 0,
+                        customer: '',
+                        amount: '',
+                        description: '',
+                        accountId: -1,
+                        periodId: -1,
+                        customerId: -1,
+                        customerGroup: '',
+                        operationDate: ''
                     };
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    $scope.saleOperation = {
-                        OperationId: $rootScope.editSaleData.id,
-                        Customer: $rootScope.editSaleData.customer,
-                        Amount: $rootScope.editSaleData.amount,
-                        Description: $rootScope.editSaleData.description,
-                        AccountId: -1,
-                        PeriodId: -1,
-                        CustomerId: $rootScope.editSaleData.customerId,
-                        CustomerGroup: $rootScope.editSaleData.customerGroup,
-                        OperationDate: $rootScope.editSaleData.date
-                    };
+                    $scope.saleOperation = $rootScope.editSaleData;
                 }
             };
 
@@ -185,19 +251,15 @@ angular
                 $scope.getCustomerByName();
             };
 
-            $scope.updateSaleData = function () {
-
-            };
-
             $scope.cancel = function () {
                 $scope.salesOperationDialog.close();
             };
 
             $scope.getCustomerByName = function () {
-                var Customer = $resource('api/Customer', { name: $scope.saleOperation.Customer });
+                var Customer = $resource('api/Customer', { name: $scope.saleOperation.customer });
                 Customer.get().$promise.then(function (data) {
-                    $scope.saleOperation.CustomerId = data.Id;
-                    $scope.saleOperation.CustomerGroup = data.GroupName;
+                    $scope.saleOperation.customerId = data.Id;
+                    $scope.saleOperation.customerGroup = data.GroupName;
                     $scope.getAccountId();
                 });
             };
@@ -205,67 +267,71 @@ angular
             $scope.getAccountId = function () {
                 var Account = $resource('api/Accounts', { name: 'Ventas' });
                 Account.get().$promise.then(function (data) {
-                    $scope.saleOperation.AccountId = data.AccountId;
+                    $scope.saleOperation.accountId = data.AccountId;
                     $scope.getPeriodId();
                 });
             };
 
             $scope.getPeriodId = function () {
                 var Period = $resource('api/Period/belongs', {
-                    date: $scope.saleOperation.OperationDate
+                    date: $scope.saleOperation.operationDate
                 });
                 Period.get().$promise.then(function (data) {
-                    $scope.saleOperation.PeriodId = data.periodId;
+                    $scope.saleOperation.periodId = data.periodId;
                     $scope.saveSaleOperation();
                 });
             };
 
             $scope.saveSaleOperation = function () {
-                var ngTable = angular.element($('.sales-table')[0])
-                    .scope().tableParams;
-                var dataset = ngTable.settings().dataset;
+                var dataset = $rootScope.getSalesDataSet();
                 if ($rootScope.salesAction === 'insert') {
+                    var s = $scope.saleOperation;
                     dataset.push({
-                        customer: $scope.saleOperation.Customer,
-                        amount: $scope.saleOperation.Amount,
-                        date: $filter('date')($scope.saleOperation.OperationDate,
-                            'yyyy-MM-dd'),
-                        customerGroup: $scope.saleOperation.CustomerGroup
+                        customer: s.customer,
+                        amount: s.amount,
+                        operationDate: $filter('date')(s.operationDate, 'yyyy-MM-dd'),
+                        customerGroup: s.customerGroup
                     });
                 }
                 else if ($rootScope.salesAction === 'edit') {
+                    var s = $scope.saleOperation;
                     angular.forEach(dataset, function (value, key) {
                         if (value.$$hashKey === $rootScope.editSaleData.$$hashKey) {
-                            value.customer = $scope.saleOperation.Customer,
-                            value.amount = $scope.saleOperation.Amount,
-                            value.date = $filter('date')($scope.saleOperation.OperationDate,
-                                'yyyy-MM-dd'),
-                            value.customerGroup = $scope.saleOperation.CustomerGroup
+                            value.customer = s.customer,
+                            value.amount = s.amount,
+                            value.operationDate = $filter('date')(s.operationDate, 'yyyy-MM-dd'),
+                            value.customerGroup = s.customerGroup
                         }
                     });
                 }
-                ngTable.reload();
+                $rootScope.getSalesGrid().reload();
                 var SaleOperation = $resource('api/Journal/sale',
                     $scope.saleOperation, {
-                    edit: { method: 'PUT', params: $scope.saleOperation }
+                    update: { method: 'PUT', params: $scope.saleOperation }
                 });
                 if ($rootScope.salesAction === 'insert') {
-                    SaleOperation.save($scope.saleOperation).$promise
-                        .then(function (data) {
-                            $timeout(function () {
-                                $scope.processing = false;
-                                $scope.initSaleOperationData();
-                                $scope.focusFirstInput();
-                            }, 2000);
-                        });
-                }
-                else if ($rootScope.salesAction === 'edit') {
-                    SaleOperation.edit($scope.saleOperation).$promise
+                    SaleOperation.save($scope.saleOperation)
+                        .$promise
                         .then(function (data) {
                             $timeout(function () {
                                 $scope.processing = false;
                                 $scope.initSaleOperationData();
                                 $scope.salesOperationDialog.close();
+                                $rootScope.recalcSalesTotal();
+                            }, 2000);
+                        });
+                }
+                else if ($rootScope.salesAction === 'edit') {
+                    SaleOperation.update($scope.saleOperation)
+                        .$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                $scope.processing = false;
+                                $scope.initSaleOperationData();
+                                $scope.salesOperationDialog.close();
+                                $timeout(function () {
+                                    $rootScope.recalcSalesTotal();
+                                }, 2000);
                             }, 2000);
                         });
                 }

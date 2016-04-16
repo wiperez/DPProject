@@ -24,6 +24,7 @@ namespace DPProject.Services
         JournalModel Get(int id);
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
         int Update(SaleOperationModel m);
+        bool Delete(int operationId);
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -38,6 +39,30 @@ namespace DPProject.Services
             UnitOfWorkAsync = _UnitOfWork;
         }
 
+        public bool Delete(int operationId)
+        {
+            try {
+                var j = Find(operationId);
+                j.Deleted = true;
+                Update(new JournalModel()
+                {
+                    Id = j.Id,
+                    AccountId = j.AccountId,
+                    Amount = j.Amount,
+                    Deleted = j.Deleted,
+                    Description = j.Description,
+                    OperationDate = j.OperationDate,
+                    PeriodId = j.PeriodId
+                });
+                UnitOfWorkAsync.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public JournalModel Get(int id)
         {
             throw new NotImplementedException();
@@ -50,44 +75,23 @@ namespace DPProject.Services
 
         public ICollection<SaleListModel> GetSales(SaleListParams listParams)
         {
-            var startDay = Convert.ToInt32(listParams.week.Split('-')[0].Split('/')[1]);
-            var endDay = Convert.ToInt32(listParams.week.Split('-')[1].Split('/')[1]);
-            var operations = Repository.Queryable();
-            var customers = Repository.GetRepository<Customer>().Queryable();
-            var groups = Repository.GetRepository<CustomerGroup>().Queryable();
-            var sales = Repository.GetRepository<Sale>().Queryable();
-            var query = from o in operations
-                        join s in sales on o.Id equals s.JournalOperation_Id
-                        join c in customers on s.CustomerId equals c.CustomerId
-                        join g in groups on c.GroupId equals g.CustomerGroupId
-                        where o.OperationDate.Day >= startDay && o.OperationDate.Day <= endDay
-                        select new SaleListModel
-                        {
-                            id = o.Id,
-                            amount = o.Amount,
-                            customer = c.Name,
-                            customerId = c.CustomerId,
-                            customerGroup = g.Name,
-                            saleId = s.SaleId,
-                            date = o.OperationDate.ToString()
-                        };
-            return query.ToList();
+            return Repository.GetSales(listParams);
         }
 
         public int Insert(SaleOperationModel M)
         {
             var journalId = Insert(new JournalModel()
             {
-                AccountId = M.AccountId,
-                Amount = M.Amount,
-                Description = M.Description,
-                OperationDate = M.OperationDate,
-                PeriodId = M.PeriodId
+                AccountId = M.accountId,
+                Amount = M.amount,
+                Description = M.description,
+                OperationDate = M.operationDate,
+                PeriodId = M.periodId
             });
             var sales = UnitOfWorkAsync.Repository<Sale>();
             sales.Insert(new Sale()
             {
-                CustomerId = M.CustomerId,
+                CustomerId = M.customerId,
                 JournalOperation_Id = journalId
             });
             UnitOfWorkAsync.SaveChanges();
@@ -114,25 +118,31 @@ namespace DPProject.Services
         {
             Update(new JournalModel()
             {
-                AccountId = m.AccountId,
-                Amount = m.Amount,
-                Description = m.Description,
-                OperationDate = m.OperationDate,
-                PeriodId = m.PeriodId,
-                Id = m.OperationId
+                AccountId = m.accountId,
+                Amount = m.amount,
+                Description = m.description,
+                OperationDate = m.operationDate,
+                PeriodId = m.periodId,
+                Id = m.operationId
             });
-            var sales = Repository.GetRepository<Sale>();
-            sales.Update(new Sale()
-            {
-                CustomerId = m.CustomerId,
-            });
+            var sales = UnitOfWorkAsync.Repository<Sale>();
+            var s = sales.Find(m.saleId);
+            s.CustomerId = m.customerId;
+            sales.Update(s);
             UnitOfWorkAsync.SaveChanges();
-            return m.OperationId;
+            return m.operationId;
         }
 
         public void Update(JournalModel M)
         {
-            throw new NotImplementedException();
+            var j = Repository.Find(M.Id);
+            j.AccountId = M.AccountId;
+            j.Amount = M.Amount;
+            j.OperationDate = M.OperationDate;
+            j.PeriodId = M.PeriodId;
+            j.Description = M.Description;
+            Update(j);
+            UnitOfWorkAsync.SaveChanges();
         }
     }
 }
