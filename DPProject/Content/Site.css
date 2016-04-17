@@ -65,4 +65,10 @@
 
 #operation-grids td table td {
     padding: 5px;
+    cursor: pointer;
+}
+
+#operation-grids .sales-toolbar button,
+#operation-grids .purchases-toolbar button {
+    font-size: 13px;
 }

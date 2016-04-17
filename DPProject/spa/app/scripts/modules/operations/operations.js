@@ -18,8 +18,19 @@ angular
             }
 
             $rootScope.getSalesDataSet = function () {
-                var ngTable = $rootScope.getSalesGrid();
-                return ngTable.settings().dataset;
+                return $rootScope.getSalesGrid().settings().dataset;
+            };
+
+            $rootScope.getPurchasesGridEl = function () {
+                return angular.element($('.purchases-table')[0]);
+            };
+
+            $rootScope.getPurchasesGrid = function () {
+                return $rootScope.getPurchasesGridEl().scope().purchasesParams;
+            }
+
+            $rootScope.getPurchasesDataSet = function () {
+                return $rootScope.getPurchasesGrid().settings().dataset;
             };
 
             $scope.sum = function sum(data, field) {
@@ -32,15 +43,6 @@ angular
                 var dataset = $rootScope.getSalesDataSet();
                 $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
             };
-
-            // Dummy data for purchases grid
-            var dummyPurchases = [
-                { "vendor": "IBM", "amount": 798, "operationDate": "2016-05-08" },
-                { "vendor": "Microsoft", "amount": 749, "operationDate": "2016-05-08" },
-                { "vendor": "Colgate", "amount": 672, "operationDate": "2016-05-10" },
-                { "vendor": "Adidas", "amount": 695, "operationDate": "2016-05-10" },
-                { "vendor": "Apple", "amount": 559, "operationDate": "2016-05-28" }
-            ];
 
             $scope.reloadPurchasesGrid = function () {
                 var Purchases = $resource('api/Journal/purchases', null, {
@@ -126,6 +128,8 @@ angular
             // Added by Yordano
             $scope.openSalesOperationDialog = function (salesAction, saleData) {
                 $rootScope.salesAction = salesAction;
+                $scope.unselectSale();
+                $scope.saleSelected = false;
                 $rootScope.editSaleData = saleData;
                 $rootScope.salesOperationDialog = $modal.open({
                     animation: true,
@@ -148,13 +152,27 @@ angular
                 });
             };
 
+            $scope.unselectSale = function () {
+                $('.sales-table').first().find('tr').removeClass('st-selected');
+            };
+
+            $scope.getSelectedSale = function () {
+                return $scope.getSalesGridEl().find('tr.st-selected').scope().sale;
+            };
+
             $scope.editSale = function ($event) {
-                var saleData = angular.element($event.target).scope().sale;
+                var saleData = $scope.getSelectedSale();
                 $scope.openSalesOperationDialog('edit', saleData);
             };
 
+            $scope.selectSale = function ($event) {
+                $scope.unselectSale();
+                $($event.target).parent('tr').addClass('st-selected');
+                $scope.saleSelected = true;
+            };
+
             $scope.removeSale = function ($event) {
-                var saleData = angular.element($event.target).scope().sale;
+                var saleData = $scope.getSelectedSale();
                 sweetAlert.swal({
                     title: "¿Estás seguro?",
                     text: "¡No podrás recuperar los datos de esta venta!\n\n"
@@ -193,6 +211,7 @@ angular
                     }
                 });
             };
+
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [

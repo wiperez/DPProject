@@ -3,19 +3,24 @@
         <tr>
             <td valign="top" width="50%">
                 <div class="sales-toolbar">
-                    <ul class="list-inline">
-                        <li>
-                            <button class="btn btn-success" type="button"
-                                    data-ng-click="openSalesOperationDialog('insert')">
-                                <i class="pe-7s-ticket"></i> Nueva Venta
-                            </button>
-                        </li>
-                    </ul>
+                    <button class="btn btn-success" type="button" 
+                            ng-click="openSalesOperationDialog('insert')">
+                        <span class="pe-7s-ticket"></span>
+                        <span class="bold ng-binding">+ Venta</span>
+                    </button>
+                    <button class="btn btn-info" type="button" ng-click="editSale($event)" ng-disabled="!saleSelected">
+                        <span class="pe-7s-users"></span>
+                        <span class="bold ng-binding">Editar</span>
+                    </button>
+                    <button class="btn btn-danger2" type="button" ng-click="removeSale($event)" ng-disabled="!saleSelected">
+                        <span class="pe-7s-delete-user"></span>
+                        <span class="bold ng-binding">Eliminar</span>
+                    </button>
                 </div>
                 <h4> Ventas: {{week}}</h4>
                 <table ng-table="salesParams" class="sales-table table table-condensed table-bordered table-hover">
                     <tr class="ng-table-group" ng-repeat-start="group in $groups">
-                        <td colspan="4">
+                        <td colspan="3">
                             <a href="" ng-click="group.$hideRows = !group.$hideRows">
                                 <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
                                 <strong>{{ group.value }}</strong>
@@ -23,21 +28,22 @@
                         </td>
                     </tr>
                     <tr ng-hide="group.$hideRows" ng-repeat="sale in group.data">
-                        <td sortable="'customerGroup'" data-title="'Group'" groupable="'customerGroup'" ng-if="false">
+                        <td sortable="'customerGroup'" data-title="'Group'" 
+                            groupable="'customerGroup'" ng-if="false">
                             {{sale.customerGroup}}
                         </td>
-                        <td sortable="'customer'" data-title="'Customer'" groupable="'customer'">
+                        <td sortable="'customer'" data-title="'Customer'" 
+                            groupable="'customer'" 
+                            ng-click="selectSale($event)">
                             {{sale.customer}}
                         </td>
-                        <td sortable="'amount'" data-title="'Amount'">
+                        <td sortable="'amount'" data-title="'Amount'"
+                            ng-click="selectSale($event)">
                             {{sale.amount}}
                         </td>
-                        <td sortable="'operationDate'" data-title="'Date'">
+                        <td sortable="'operationDate'" data-title="'Date'"
+                            ng-click="selectSale($event)">
                             {{ sale.operationDate | date : 'MMM-dd' }}
-                        </td>
-                        <td>
-                            <a ng-click="editSale($event)"><i class="fa fa-pencil"></i></a>&nbsp;
-                            <a ng-click="removeSale($event)"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
                     <tr ng-repeat-end>
@@ -54,19 +60,24 @@
             </td>
             <td valign="top" width="50%">
                 <div class="purchases-toolbar">
-                    <ul class="list-inline">
-                        <li>
-                            <button class="btn btn-success" type="button"
-                                    data-ng-click="openPurchasesOperationDialog('insert')">
-                                <i class="pe-7s-ticket"></i> Nueva Compra
-                            </button>
-                        </li>
-                    </ul>
+                    <button class="btn btn-success" type="button"
+                            ng-click="openPurchasesOperationDialog('insert')">
+                        <span class="pe-7s-ticket"></span>
+                        <span class="bold ng-binding">+ Compra</span>
+                    </button>
+                    <button class="btn btn-info" type="button" ng-click="editPurchase($event)" ng-disabled="!purchaseSelected">
+                        <span class="pe-7s-users"></span>
+                        <span class="bold ng-binding">Editar</span>
+                    </button>
+                    <button class="btn btn-danger2" type="button" ng-click="removePurchase($event)" ng-disabled="!purchaseSelected">
+                        <span class="pe-7s-delete-user"></span>
+                        <span class="bold ng-binding">Eliminar</span>
+                    </button>
                 </div>
                 <h4> Compras: {{week}}</h4>
                 <table ng-table="purchasesParams" class="purchases-table table table-condensed table-bordered table-hover">
                     <tr class="ng-table-group" ng-repeat-start="group in $groups">
-                        <td colspan="4">
+                        <td colspan="3">
                             <a href="" ng-click="group.$hideRows = !group.$hideRows">
                                 <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
                                 <strong>{{ group.value }}</strong>
@@ -74,18 +85,17 @@
                         </td>
                     </tr>
                     <tr ng-hide="group.$hideRows" ng-repeat="purchase in group.data">
-                        <td sortable="'vendor'" data-title="'Vendor'" groupable="'vendor'">
+                        <td sortable="'vendor'" data-title="'Vendor'"
+                            ng-click="selectPurchase($event)">
                             {{purchase.vendor}}
                         </td>
-                        <td sortable="'amount'" data-title="'Amount'">
+                        <td sortable="'amount'" data-title="'Amount'"
+                            ng-click="selectPurchase($event)">
                             {{purchase.amount}}
                         </td>
-                        <td sortable="'operationDate'" data-title="'Date'">
+                        <td sortable="'operationDate'" data-title="'Date'"
+                            ng-click="selectPurchase($event)">
                             {{ purchase.operationDate | date : 'MMM-dd' }}
-                        </td>
-                        <td>
-                            <a ng-click="editPurchase($event)"><i class="fa fa-pencil"></i></a>&nbsp;
-                            <a ng-click="removePurchase($event)"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
                     <tr ng-repeat-end>
