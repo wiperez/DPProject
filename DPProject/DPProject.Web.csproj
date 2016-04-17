@@ -313,6 +313,7 @@
     <Content Include="spa\app\scripts\modules\operations\operationsManager.html" />
     <Content Include="spa\app\scripts\modules\operations\operationsServices.js" />
     <Content Include="spa\app\scripts\modules\operations\operations.js" />
+    <Content Include="spa\app\scripts\modules\operations\purchasesDialog.html" />
     <Content Include="spa\app\scripts\modules\operations\salesDialog.html" />
     <Content Include="spa\app\scripts\modules\operations\weeklyOperations.html" />
     <Content Include="spa\app\styles\img\green%402x.png" />

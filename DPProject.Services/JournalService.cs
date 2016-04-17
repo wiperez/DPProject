@@ -25,6 +25,7 @@ namespace DPProject.Services
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
         int Update(SaleOperationModel m);
         bool Delete(int operationId);
+        ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -73,6 +74,11 @@ namespace DPProject.Services
             throw new NotImplementedException();
         }
 
+        public ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams)
+        {
+            return Repository.GetPurchases(listParams);
+        }
+
         public ICollection<SaleListModel> GetSales(SaleListParams listParams)
         {
             return Repository.GetSales(listParams);
@@ -92,7 +98,7 @@ namespace DPProject.Services
             sales.Insert(new Sale()
             {
                 CustomerId = M.customerId,
-                JournalOperation_Id = journalId
+                JournalOperationId = journalId
             });
             UnitOfWorkAsync.SaveChanges();
             return journalId;

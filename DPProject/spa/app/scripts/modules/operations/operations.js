@@ -2,8 +2,9 @@
 
 angular
     .module('app.operations', [])
-    .controller('OperationsController', ['$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter) {
+    .controller('OperationsController', [
+        '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', '$interval',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval) {
             
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
@@ -21,6 +22,11 @@ angular
                 return ngTable.settings().dataset;
             };
 
+            $scope.sum = function sum(data, field) {
+                var x = _.sumBy(data, field);
+                return x;
+            };
+
             $rootScope.recalcSalesTotal = function () {
                 var gridScope = $rootScope.getSalesGridEl().scope();
                 var dataset = $rootScope.getSalesDataSet();
@@ -35,22 +41,37 @@ angular
                 { "vendor": "Adidas", "amount": 695, "operationDate": "2016-05-10" },
                 { "vendor": "Apple", "amount": 559, "operationDate": "2016-05-28" }
             ];
-            $scope.purchasesParams = new NgTableParams({
-                // initial grouping
-                group: "date"
-            }, {
-                dataset: dummyPurchases
-            });
 
-            // Added by Yordano
-            $scope.reloadSalesGrid = function () {
-                var Sales = $resource('api/Journal/sales');
-                Sales.save({
+            $scope.reloadPurchasesGrid = function () {
+                var Purchases = $resource('api/Journal/purchases', null, {
+                    list: { method: 'POST' }
+                });
+                Purchases.list({
                     page: 1,
                     count: 10,
                     week: $rootScope.week.toString().replace(/\ /g, '')
                 }).$promise.then(function (data) {
+                    $scope.purchasesParams = new NgTableParams({
+                        // initial grouping
+                        group: "date"
+                    }, {
+                        dataset: data.purchasesList
+                    });
+                    $rootScope.totalPurchasesAmount = $scope.sum(data.purchasesList, 'amount');
+                    $rootScope.fixGridsWidth();
+                });
+            };
 
+            // Added by Yordano
+            $scope.reloadSalesGrid = function () {
+                var Sales = $resource('api/Journal/sales', null, {
+                    list: { method: 'POST' }
+                });
+                Sales.list({
+                    page: 1,
+                    count: 10,
+                    week: $rootScope.week.toString().replace(/\ /g, '')
+                }).$promise.then(function (data) {
                     $scope.salesParams = new NgTableParams({
                         // initial grouping
                         group: 'customerGroup'
@@ -60,23 +81,18 @@ angular
                     function isLastPage() {
                         return $scope.salesParams.page() === totalPages();
                     }
-                    function sum(data, field) {
-                        var x = _.sumBy(data, field);
-                        return x;
-                    }
                     function totalPages() {
                         return Math.ceil($scope.salesParams.total() / $scope.salesParams.count());
                     }
-                    $rootScope.totalSalesAmount = sum(data.saleList, 'amount');
-                    $scope.sum = sum;
+                    $rootScope.totalSalesAmount = $scope.sum(data.saleList, 'amount');
                     $scope.isLastPage = isLastPage;
-
                 });
             };
 
             $scope.getWeekDate = function (_month, week) {
                 $rootScope.week = $scope.weeksOfMonth[week].value; //service.getWeeksOfMonth(_month)[week];
                 $scope.reloadSalesGrid();
+                $scope.reloadPurchasesGrid();
             };
 
             $scope.getWeeksOfMonth = function () {
@@ -116,6 +132,18 @@ angular
                     animation: true,
                     templateUrl: 'spa/app/scripts/modules/operations/salesDialog.html',
                     controller: 'SalesOperationController',
+                    windowClass: "hmodal-info",
+                    size: 'md'
+                });
+            };
+
+            $scope.openPurchasesOperationDialog = function (purchasesAction, purchaseData) {
+                $rootScope.purchasesAction = purchasesAction;
+                $rootScope.editPurchaseData = purchaseData;
+                $rootScope.purchaseOperationDialog = $modal.open({
+                    animation: true,
+                    templateUrl: 'spa/app/scripts/modules/operations/purchasesDialog.html',
+                    controller: 'PurchasesOperationController',
                     windowClass: "hmodal-info",
                     size: 'md'
                 });
@@ -167,6 +195,29 @@ angular
                 });
             };
 
+            $rootScope.fixGridsWidth = function () {
+                var p1 = $('.sales-table').parent('.col-md-6');
+                var p2 = $('.purchases-table').parent('.col-md-6');
+                if (p1.length == 0 || p2.length == 0) return;
+                var t1 = p1.position().top;
+                var t2 = p2.position().top;
+                var w1 = p1.width();
+                var w2 = p2.width();
+                while (t1 !== t2) {
+                    w1 -= 1; w2 -= 1;
+                    p1.width(w1 + 'px');
+                    p2.width(w2 + 'px');
+                    t2 = p2.position().top;
+                }
+            };
+
+            var gridsWidthFixInterval = $interval(function () {
+                var p = typeof $('.purchases-table')[0] !== 'undefined';
+                if (p) {
+                    $rootScope.fixGridsWidth();
+                    $interval.cancel(gridsWidthFixInterval);
+                }
+            }, 200);
         }
     // Added by Yordano
     ]).controller('SalesOperationController', [
@@ -341,6 +392,11 @@ angular
                 var t = $('#sales-dialog .form-control:first')[0];
                 if (angular.isUndefined(t)) return; else t.focus();
             }
+        }
+    ]).controller('PurchasesOperationController', [
+        '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
+        function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
+        {
         }
     ]);
 

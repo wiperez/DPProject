@@ -51,6 +51,21 @@ namespace DPProject.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("purchases")]
+        public IHttpActionResult GetPurchases(PurchaseListParams listParams)
+        {
+            try
+            {
+                var purchases = Service.GetPurchases(listParams);
+                return Ok(new { purchasesList = purchases });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
         [HttpPut]
         [Route("sale")]
         public IHttpActionResult UpdateSale(SaleOperationModel M)

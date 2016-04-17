@@ -15,7 +15,7 @@ namespace DPProject.Data
     public partial class Sale : Entity
     {
         public int SaleId { get; set; }
-        public int JournalOperation_Id { get; set; }
+        public int JournalOperationId { get; set; }
         public int CustomerId { get; set; }
     
         public virtual Customer Customer { get; set; }
