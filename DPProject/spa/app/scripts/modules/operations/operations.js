@@ -6,7 +6,7 @@ angular
         function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter) {
             
             $scope.periods = service.getPeriods();
-            $rootScope.periodDate = "05/01/2016";
+            $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
 
             $rootScope.getSalesGridEl = function () {
                 return angular.element($('.sales-table')[0]);
@@ -74,16 +74,16 @@ angular
                 });
             };
 
-            $scope.getWeeksOfMonth = function () {
-                $scope.weeksOfMonth = service.getWeeksOfMonth($rootScope.periodDate);
-            };
-
-            $scope.getWeeksOfMonth();
-
             $scope.getWeekDate = function (_month, week) {
-                $rootScope.week = service.getWeeksOfMonth(_month)[week];
+                $rootScope.week = $scope.weeksOfMonth[week].value; //service.getWeeksOfMonth(_month)[week];
                 $scope.reloadSalesGrid();
             };
+
+            $scope.getWeeksOfMonth = function () {
+                $scope.weeksOfMonth = service.getWeeksOfMonth($rootScope.periodDate.key);
+                $scope.getWeekDate($rootScope.periodDate.key, 0);
+            };
+            $scope.getWeeksOfMonth();
 
             $rootScope.toolBar = {
                 visible: true,

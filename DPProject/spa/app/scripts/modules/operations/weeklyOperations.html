@@ -12,7 +12,7 @@
         </div>
         <h4> Ventas: {{week}}</h4>
         <table ng-table="salesParams" class="sales-table table table-condensed table-bordered table-hover">
-            <tr class="ng-table-group" ng-repeat-start="group in $groups">
+            <tr class="ng-table-group" ng-repeat-start="group in $groups track by $index">
                 <td colspan="4">
                     <a href="" ng-click="group.$hideRows = !group.$hideRows">
                         <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
@@ -20,7 +20,7 @@
                     </a>
                 </td>
             </tr>
-            <tr ng-hide="group.$hideRows" ng-repeat="sale in group.data">
+            <tr ng-hide="group.$hideRows" ng-repeat="sale in group.data track by $index">
                 <td sortable="'customerGroup'" data-title="'Group'" groupable="'customerGroup'" ng-if="false">
                     {{sale.customerGroup}}
                 </td>
@@ -64,7 +64,7 @@
         </div>
         <h4> Compras: {{week}}</h4>
         <table ng-table="purchasesParams" class="purchases-table table table-condensed table-bordered table-hover">
-            <tr class="ng-table-group" ng-repeat-start="group in $groups">
+            <tr class="ng-table-group" ng-repeat-start="group in $groups track by $index">
                 <td colspan="4">
                     <a href="" ng-click="group.$hideRows = !group.$hideRows">
                         <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
@@ -72,7 +72,7 @@
                     </a>
                 </td>
             </tr>
-            <tr ng-hide="group.$hideRows" ng-repeat="purchase in group.data">
+            <tr ng-hide="group.$hideRows" ng-repeat="purchase in group.data track by $index">
                 <td sortable="'vendor'" data-title="'Vendor'" groupable="'vendor'">
                     {{purchase.vendor}}
                 </td>

@@ -23,10 +23,13 @@ angular
                     if (startDate.month() == moment().weekday(7).weeks(i).month()
                         || startDate.month() == moment().weekday(7).weeks(i).add(6, 'days').month())
                     {
-                        weeks.push(
-                            (moment().weekday(7).weeks(i) < startDate ? startDate.format('MM/DD/YYYY') : moment().weekday(7).weeks(i).format('MM/DD/YYYY'))
-                            + ' - ' +
-                            (moment().weekday(7).weeks(i).add(6, 'days') > endDate ? endDate.format('MM/DD/YYYY') : moment().weekday(7).weeks(i).add(6, 'days').format('MM/DD/YYYY'))
+                        weeks.push({
+                            active: (weeks.length == 0),
+                            value: 
+                                (moment().weekday(7).weeks(i) < startDate ? startDate.format('MM/DD/YYYY') : moment().weekday(7).weeks(i).format('MM/DD/YYYY'))
+                                + ' - ' +
+                                (moment().weekday(7).weeks(i).add(6, 'days') > endDate ? endDate.format('MM/DD/YYYY') : moment().weekday(7).weeks(i).add(6, 'days').format('MM/DD/YYYY'))
+                            }
                         );
                     }
                 }
