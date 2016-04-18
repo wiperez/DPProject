@@ -11,7 +11,8 @@
                     <input class="form-control" name="customer" type="text" 
                            ng-model="saleOperation.customer" ng-required="true" placeholder="{{ processing ? 'Cargando datos...' : 'Nombre del cliente...' }}"
                            typeahead="customer.Name for customer in customers | filter:$viewValue"
-                           ng-disabled="processing" autocomplete="off" />
+                           ng-disabled="processing" autocomplete="off" 
+                           typeahead-on-select="onSelect($item, $model, $label)"/>
                 </div>
             </div>
             <div class="form-group">

@@ -296,20 +296,11 @@ angular
 
             $scope.ok = function () {
                 $scope.processing = true;
-                $scope.getCustomerByName();
+                $scope.saveSaleOperation();
             };
 
             $scope.cancel = function () {
                 $scope.salesOperationDialog.close();
-            };
-
-            $scope.getCustomerByName = function () {
-                var Customer = $resource('api/Customer', { name: $scope.saleOperation.customer });
-                Customer.get().$promise.then(function (data) {
-                    $scope.saleOperation.customerId = data.Id;
-                    $scope.saleOperation.customerGroup = data.GroupName;
-                    $scope.saveSaleOperation();
-                });
             };
 
             $scope.saveSaleOperation = function () {
@@ -371,6 +362,10 @@ angular
                 var t = $('#sales-dialog .form-control:first')[0];
                 if (angular.isUndefined(t)) return; else t.focus();
             }
+            
+            $scope.onSelect = function ($item) {
+                $scope.saleOperation.customerId = $item.Id;
+            };
         }
     ]).controller('PurchasesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
