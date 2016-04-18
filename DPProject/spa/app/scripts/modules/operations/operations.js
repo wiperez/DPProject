@@ -4,8 +4,8 @@ angular
     .module('app.operations', [])
     .controller('OperationsController', [
         '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', '$interval',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval) {
-            
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval)
+        {
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
 
@@ -79,7 +79,31 @@ angular
             };
 
             $scope.getWeekDate = function (_month, week) {
-                $rootScope.week = $scope.weeksOfMonth[week].value; //service.getWeeksOfMonth(_month)[week];
+                $rootScope.week = $scope.weeksOfMonth[week].value;
+
+                $rootScope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
+                $rootScope.minDate = $filter('date')($rootScope.week.split(' - ')[0],
+                    'MM-dd-yyyy');
+                $rootScope.maxDate = $filter('date')($rootScope.week.split(' - ')[1],
+                    'MM-dd-yyyy');
+
+                // Tomado de el fuente de Homer donde explica el datepicker
+                $rootScope.datesDisabled = function (date, mode) {
+                    return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
+                };
+
+                $rootScope.dateOptions = {
+                    formatYear: 'yyyy',
+                    startingDay: 1
+                };
+
+                // Tomado de el fuente de Homer donde explica el datepicker
+                $rootScope.openCal = function ($event) {
+                    $event.preventDefault();
+                    $event.stopPropagation();
+                    $rootScope.calOpened = true;
+                };
+
                 $scope.reloadSalesGrid();
                 $scope.reloadPurchasesGrid();
             };
@@ -116,6 +140,7 @@ angular
             // Added by Yordano
             $scope.salesDialog = function (salesAction, saleData) {
                 $rootScope.salesAction = salesAction;
+                $rootScope.calOpened = false;
                 $scope.unselect('sale');
                 $rootScope.editSaleData = saleData;
                 $rootScope.salesOperationDialog = $modal.open({
@@ -129,6 +154,7 @@ angular
 
             $scope.purchasesDialog = function (purchasesAction, purchaseData) {
                 $rootScope.purchasesAction = purchasesAction;
+                $rootScope.calOpened = false;
                 $rootScope.editPurchaseData = purchaseData;
                 $rootScope.purchasesOperationDialog = $modal.open({
                     animation: true,
@@ -210,36 +236,13 @@ angular
                     }
                 });
             };
-
         }
+
     // Added by Yordano
     ]).controller('SalesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
-            $rootScope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
-            $scope.minDate = $filter('date')($rootScope.week.split(' - ')[0],
-                'MM-dd-yyyy');
-            $scope.maxDate = $filter('date')($rootScope.week.split(' - ')[1],
-                'MM-dd-yyyy');
-
-            // Tomado de el fuente de Homer donde explica el datepicker
-            $rootScope.datesDisabled = function (date, mode) {
-                return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
-            };
-
-            $rootScope.dateOptions = {
-                formatYear: 'yyyy',
-                startingDay: 1
-            };
-
-            // Tomado de el fuente de Homer donde explica el datepicker
-            $rootScope.openCal = function ($event) {
-                $event.preventDefault();
-                $event.stopPropagation();
-                $scope.calOpened = true;
-            };
-
             $scope.processing = true;
             $scope.customers = [];
 
