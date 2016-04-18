@@ -9,28 +9,16 @@ angular
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = "05/01/2016";
 
-            $rootScope.getSalesGridEl = function () {
-                return angular.element($('.sales-table')[0]);
+            $rootScope.getGridEl = function (n) {
+                return angular.element($('.' + n + '-table')[0]);
             };
 
-            $rootScope.getSalesGrid = function () {
-                return $rootScope.getSalesGridEl().scope().salesParams;
+            $rootScope.getGrid = function (n) {
+                return $rootScope.getGridEl(n).scope()[ n + 'Params' ];
             }
 
-            $rootScope.getSalesDataSet = function () {
-                return $rootScope.getSalesGrid().settings().dataset;
-            };
-
-            $rootScope.getPurchasesGridEl = function () {
-                return angular.element($('.purchases-table')[0]);
-            };
-
-            $rootScope.getPurchasesGrid = function () {
-                return $rootScope.getPurchasesGridEl().scope().purchasesParams;
-            }
-
-            $rootScope.getPurchasesDataSet = function () {
-                return $rootScope.getPurchasesGrid().settings().dataset;
+            $rootScope.getDataSet = function (n) {
+                return $rootScope.getGrid(n).settings().dataset;
             };
 
             $scope.sum = function sum(data, field) {
@@ -39,8 +27,8 @@ angular
             };
 
             $rootScope.recalcSalesTotal = function () {
-                var gridScope = $rootScope.getSalesGridEl().scope();
-                var dataset = $rootScope.getSalesDataSet();
+                var gridScope = $rootScope.getGridEl('sales').scope();
+                var dataset = $rootScope.getDataSet('sales');
                 $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
             };
 
@@ -128,8 +116,7 @@ angular
             // Added by Yordano
             $scope.openSalesOperationDialog = function (salesAction, saleData) {
                 $rootScope.salesAction = salesAction;
-                $scope.unselectSale();
-                $scope.saleSelected = false;
+                $scope.unselect('sale');
                 $rootScope.editSaleData = saleData;
                 $rootScope.salesOperationDialog = $modal.open({
                     animation: true,
@@ -152,27 +139,41 @@ angular
                 });
             };
 
-            $scope.unselectSale = function () {
-                $('.sales-table').first().find('tr').removeClass('st-selected');
+            $scope.getSelected = function (n) {
+                return $scope.getGridEl(n + 's').find('tr.st-selected').scope()[n];
             };
 
-            $scope.getSelectedSale = function () {
-                return $scope.getSalesGridEl().find('tr.st-selected').scope().sale;
+            $scope.edit = function ($event) {
+                var n = $($event.target).parents('.sales-toolbar').length === 1 ?
+                    'sale' : 'purchase';
+                if (n === 'sale') {
+                    var saleData = $scope.getSelected('sale');
+                    $scope.openSalesOperationDialog('edit', saleData);
+                }
+                else {
+                    var purchaseData = $scope.getSelected('purchase');
+                    $scope.openPurchasesOperationDialog('edit', purchaseData);
+                }
             };
 
-            $scope.editSale = function ($event) {
-                var saleData = $scope.getSelectedSale();
-                $scope.openSalesOperationDialog('edit', saleData);
+            $scope.unselect = function (n) {
+                $('.' + n + 's-table').first().find('tr').removeClass('st-selected');
+                $scope[n + 'Selected'] = false;
             };
 
-            $scope.selectSale = function ($event) {
-                $scope.unselectSale();
+            $scope.select = function ($event) {
+                var n = $($event.target).parents('.sales-table').length === 1 ?
+                    'sale' : 'purchase';
+                $scope.unselect('sale');
                 $($event.target).parent('tr').addClass('st-selected');
-                $scope.saleSelected = true;
+                if (n === 'sale')
+                    $scope.saleSelected = true;
+                else
+                    $scope.purchaseSelected = true;
             };
 
             $scope.removeSale = function ($event) {
-                var saleData = $scope.getSelectedSale();
+                var saleData = $scope.getSelected('sale');
                 sweetAlert.swal({
                     title: "¿Estás seguro?",
                     text: "¡No podrás recuperar los datos de esta venta!\n\n"
@@ -195,16 +196,16 @@ angular
                         }).$promise
                         .then(function (data) {
                             $timeout(function () {
-                                var dataset = $rootScope.getSalesDataSet();
+                                var dataset = $rootScope.getDataSet('sales');
                                 var newDataSet = [];
                                 angular.forEach(dataset, function (value, key) {
                                     if (value.$$hashKey !== saleData.$$hashKey) {
                                         newDataSet.push(value);
                                     }
                                 });
-                                $rootScope.getSalesGrid().settings().dataset = newDataSet;
+                                $rootScope.getGrid('sales').settings().dataset = newDataSet;
                                 newDataSet = undefined;
-                                $rootScope.getSalesGrid().reload();
+                                $rootScope.getGrid('sales').reload();
                                 $rootScope.recalcSalesTotal();
                             }, 100);
                         });
@@ -328,7 +329,7 @@ angular
             };
 
             $scope.saveSaleOperation = function () {
-                var dataset = $rootScope.getSalesDataSet();
+                var dataset = $rootScope.getDataSet('sales');
                 if ($rootScope.salesAction === 'insert') {
                     var s = $scope.saleOperation;
                     dataset.push({
@@ -349,7 +350,7 @@ angular
                         }
                     });
                 }
-                $rootScope.getSalesGrid().reload();
+                $rootScope.getGrid('sales').reload();
                 var SaleOperation = $resource('api/Journal/sale',
                     $scope.saleOperation, {
                     update: { method: 'PUT', params: $scope.saleOperation }
@@ -391,7 +392,6 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
+            
         }
     ]);
-
-
