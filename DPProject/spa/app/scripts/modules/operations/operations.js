@@ -372,8 +372,8 @@ angular
                 },
                 predicate: { groupId: '0' },
                 sort: {}
-            }).$promise.then(function (data) {
-                $scope.vendors = data.list;
+            }).$promise.then(function (vendors) {
+                $scope.vendors = vendors.list;
                 $timeout(function () {
                     $scope.processing = false;
                 }, 100);

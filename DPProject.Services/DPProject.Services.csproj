@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaleService.cs" />
     <Compile Include="SPService.cs" />
+    <Compile Include="VendorService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DPProject.Data\DPProject.Data.csproj">

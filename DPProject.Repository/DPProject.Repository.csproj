@@ -68,8 +68,10 @@
     <Compile Include="Models\SaleModel.cs" />
     <Compile Include="Models\SaleOperationModel.cs" />
     <Compile Include="Models\SmartTableParamModel.cs" />
+    <Compile Include="Models\VendorModel.cs" />
     <Compile Include="PeriodRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VendorRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DPProject.Data\DPProject.Data.csproj">

@@ -61,6 +61,9 @@ namespace DPProject.App_Start
                 .RegisterType<IRepositoryAsync<JournalOperation>, Repository<JournalOperation>>()
                 .RegisterType<IJournalService, JournalService>()
 
+                .RegisterType<IRepositoryAsync<Vendor>, Repository<Vendor>>()
+                .RegisterType<IVendorService, VendorService>()
+
                 .RegisterType<IStoredProcedureService, StoredProcedureService>();
 
         }
