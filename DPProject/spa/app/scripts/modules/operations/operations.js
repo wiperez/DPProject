@@ -283,7 +283,6 @@ angular
                 $scope.customers = data.Rows;
                 $timeout(function () {
                     $scope.processing = false;
-                    $scope.focusFirstInput();
                 }, 100);
             });
 
@@ -351,11 +350,6 @@ angular
                 }
             };
 
-            $scope.focusFirstInput = function () {
-                var t = $('#sales-dialog .form-control:first')[0];
-                if (angular.isUndefined(t)) return; else t.focus();
-            }
-            
             $scope.onSelect = function ($item) {
                 $scope.saleOperation.customerId = $item.Id;
             };
@@ -364,5 +358,43 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
+            $scope.processing = true;
+            $scope.vendors = [];
+
+            var Vendor = $resource("api/Vendor/get", null, {
+                getList: { method: "POST", isArray: false }
+            });
+            Vendor.getList({
+                pagination: {
+                    start: 0,
+                    totalItemCount: 0,
+                    number: 100
+                },
+                predicate: { groupId: '0' },
+                sort: {}
+            }).$promise.then(function (data) {
+                $scope.vendors = data.list;
+                $timeout(function () {
+                    $scope.processing = false;
+                }, 100);
+            });
+
+            $scope.ok = function () {
+                $scope.processing = true;
+                $scope.savePurchaseOperation();
+            };
+
+            $scope.cancel = function () {
+                $scope.purchasesOperationDialog.close();
+            };
+
+            // Aqui va el grueso del controlador...
+            $scope.savePurchaseOperation = function () {
+
+            };
+
+            $scope.onSelect = function ($item) {
+                $scope.purchaseOperation.vendorId = $item.Id;
+            };
         }
     ]);
