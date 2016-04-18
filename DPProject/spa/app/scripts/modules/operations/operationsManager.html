@@ -9,7 +9,7 @@
             <div class="hpanel hblue">
                 <div class="panel-body">
                     <tabset class="tabs-left tabpane-weeks" >
-                        <tab ng-repeat="w in weeksOfMonth" select="getWeekDate(periodDate, $index)">
+                        <tab ng-repeat="w in weeksOfMonth track by $index" select="getWeekDate(periodDate, $index)" ng-attr-active="w.active">
                             <tab-heading>
                                 Semana: {{$index + 1}}
                             </tab-heading>

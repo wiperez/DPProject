@@ -47,7 +47,7 @@
 
     <!-- Main Wrapper -->
     <div id="wrapper" >
-        <div small-header="" class="normalheader transition" ng-show="toolBar.visible">
+        <div small-header="" class="normalheader transition" ng-if="toolBar.visible">
             <div class="hpanel ng-scope" tour-step="" order="1" title="Page header" content="" placement="bottom">
                 <div class="panel-body">
 
@@ -57,20 +57,18 @@
                     </div>
 
                     
-                    <div class="pull-right tool-bar-top" ng-show="toolBar.buttonToolbar.length > 0">
+                    <div class="pull-right tool-bar-top" ng-if="toolBar.buttonToolbar.length > 0">
                         <button ng-repeat="item in toolBar.buttonToolbar" class="btn {{item.cls}}" type="button" ng-click="item.fn();" ng-disabled="item.disabled();">
                             <span class="{{item.icon}}"></span>
                             <span class="bold">{{item.text}}</span> 
                         </button>
                     </div>
 
-                    <div class="pull-right tool-bar-top" ng-show="toolBar.optionToolbar.length > 0" ng-repeat="opt in toolBar.optionToolbar">
+                    <div class="pull-right tool-bar-top" ng-if="toolBar.optionToolbar.length > 0" ng-repeat="opt in toolBar.optionToolbar">
                         <div class="{{opt.cls}}">
                             <h4 class="col-sm-3 control-label">{{opt.label}}:</h4>
                             <div class="col-sm-9 input-group">
-                                {{opt.model}}
-                                <select class="form-control" ng-show="opt.type=='select'" ng-model="$root.periodDate" ng-change="opt.change()">
-                                    <option value="{{item.key}}" ng-repeat="item in opt.data">{{item.value}}</option>
+                                <select class="form-control" ng-model="$root.periodDate" ng-change="opt.change()"  ng-options="item as item.value for item in opt.data track by item.key">
                                 </select>
                             </div>
                         </div>
