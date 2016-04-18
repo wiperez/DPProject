@@ -4,7 +4,7 @@
             <td valign="top" width="50%">
                 <div class="sales-toolbar">
                     <button class="btn btn-success" type="button" 
-                            ng-click="openSalesOperationDialog('insert')">
+                            ng-click="salesDialog('insert')">
                         <span class="pe-7s-ticket"></span>
                         <span class="bold ng-binding">+ Venta</span>
                     </button>
@@ -61,11 +61,11 @@
             <td valign="top" width="50%">
                 <div class="purchases-toolbar">
                     <button class="btn btn-success" type="button"
-                            ng-click="openPurchasesOperationDialog('insert')">
+                            ng-click="purchasesDialog('insert')">
                         <span class="pe-7s-ticket"></span>
                         <span class="bold ng-binding">+ Compra</span>
                     </button>
-                    <button class="btn btn-info" type="button" ng-click="editPurchase($event)" ng-disabled="!purchaseSelected">
+                    <button class="btn btn-info" type="button" ng-click="edit($event)" ng-disabled="!purchaseSelected">
                         <span class="pe-7s-users"></span>
                         <span class="bold ng-binding">Editar</span>
                     </button>

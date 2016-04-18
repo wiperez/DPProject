@@ -1,7 +1,7 @@
 ﻿<div class="inmodal" id="purchases-dialog">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title">{{salesAction == "insert" ? "Nueva" : "Modificar"}} Compra</h4> 
+        <h4 class="modal-title">{{purchasesAction == "insert" ? "Nueva" : "Modificar"}} Compra</h4>
     </div>
     <div class="modal-body row">
         <form action="" class="form-horizontal row-border col-sm-12" name="form" novalidate>
@@ -9,15 +9,16 @@
                 <label class="col-sm-2 control-label">Vendedor:</label>
                 <div class="col-sm-9 input-group">
                     <input class="form-control" name="vendor" type="text" 
-                           ng-model="purchOperation.vendor" ng-required="true" placeholder="{{ processing ? 'Cargando datos...' : 'Nombre del vendedor...' }}"
+                           ng-model="purchasesOperation.vendor" ng-required="true" placeholder="{{ processing ? 'Cargando datos...' : 'Nombre del vendedor...' }}"
                            typeahead="vendor.Name for vendor in vendors | filter:$viewValue"
-                           ng-disabled="processing" autocomplete="off" />
+                           ng-disabled="processing" autocomplete="off" 
+                           typeahead-on-select="onSelect($item, $model, $label)"/>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Monto: </label>
                 <div class="col-sm-9 input-group">
-                    <input class="form-control" name="amount" ng-model="purchOperation.amount" 
+                    <input class="form-control" name="amount" ng-model="purchasesOperation.amount" 
                            ng-required="true" type="number" placeholder="Monto de la venta" 
                            ng-disabled="processing" autocomplete="off" />
                 </div>
@@ -25,7 +26,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Fecha: </label>
                 <div class="col-sm-9 input-group">
-                    <input class="form-control" name="date" ng-model="purchOperation.operationDate"
+                    <input class="form-control" name="date" ng-model="purchasesOperation.operationDate"
                            ng-required="true" type="text" placeholder="Fecha" 
                            datepicker-popup="yyyy-MM-dd" is-open="calOpened"
                            ng-disabled="processing" autocomplete="off"
@@ -43,7 +44,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Descripci&oacute;n: </label>
                 <div class="col-sm-9 input-group">
-                    <textarea class="form-control" ng-model="purchOperation.description"
+                    <textarea class="form-control" ng-model="purchasesOperation.description"
                               rows="3" placeholder="Venta de... / Compra de un..."
                               ng-disabled="processing"></textarea>
                 </div>
@@ -52,6 +53,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="cancel()" ng-disabled="processing">Cerrar</button>
-        <button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="form.$invalid || processing || saleOperation.amount == 0">Guardar</button>
+        <button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="form.$invalid || processing || purchasesOperation.amount == 0">Guardar</button>
     </div>
 </div>

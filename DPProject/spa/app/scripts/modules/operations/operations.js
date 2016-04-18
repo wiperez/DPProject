@@ -114,7 +114,7 @@ angular
             };
 
             // Added by Yordano
-            $scope.openSalesOperationDialog = function (salesAction, saleData) {
+            $scope.salesDialog = function (salesAction, saleData) {
                 $rootScope.salesAction = salesAction;
                 $scope.unselect('sale');
                 $rootScope.editSaleData = saleData;
@@ -127,10 +127,10 @@ angular
                 });
             };
 
-            $scope.openPurchasesOperationDialog = function (purchasesAction, purchaseData) {
+            $scope.purchasesDialog = function (purchasesAction, purchaseData) {
                 $rootScope.purchasesAction = purchasesAction;
                 $rootScope.editPurchaseData = purchaseData;
-                $rootScope.purchaseOperationDialog = $modal.open({
+                $rootScope.purchasesOperationDialog = $modal.open({
                     animation: true,
                     templateUrl: 'spa/app/scripts/modules/operations/purchasesDialog.html',
                     controller: 'PurchasesOperationController',
@@ -147,12 +147,10 @@ angular
                 var n = $($event.target).parents('.sales-toolbar').length === 1 ?
                     'sale' : 'purchase';
                 if (n === 'sale') {
-                    var saleData = $scope.getSelected('sale');
-                    $scope.openSalesOperationDialog('edit', saleData);
+                    $scope.salesDialog('edit', $scope.getSelected(n));
                 }
                 else {
-                    var purchaseData = $scope.getSelected('purchase');
-                    $scope.openPurchasesOperationDialog('edit', purchaseData);
+                    $scope.purchasesDialog('edit', $scope.getSelected(n));
                 }
             };
 
@@ -164,7 +162,7 @@ angular
             $scope.select = function ($event) {
                 var n = $($event.target).parents('.sales-table').length === 1 ?
                     'sale' : 'purchase';
-                $scope.unselect('sale');
+                $scope.unselect(n);
                 $($event.target).parent('tr').addClass('st-selected');
                 if (n === 'sale')
                     $scope.saleSelected = true;
@@ -219,39 +217,31 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
-            $scope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
-
-            $scope.getMinDate = function () {
-                $scope.minDate = $filter('date')($rootScope.week.split(' - ')[0],
-                    'MM-dd-yyyy');
-            };
-            $scope.getMinDate();
-
-            $scope.getLastDayOfWeek = function () {
-                $scope.maxDate = $filter('date')($rootScope.week.split(' - ')[1],
-                    'MM-dd-yyyy');
-            };
-            $scope.getLastDayOfWeek();
+            $rootScope.today = $filter('date')(new Date().getTime(), 'yyyy-MM-dd');
+            $scope.minDate = $filter('date')($rootScope.week.split(' - ')[0],
+                'MM-dd-yyyy');
+            $scope.maxDate = $filter('date')($rootScope.week.split(' - ')[1],
+                'MM-dd-yyyy');
 
             // Tomado de el fuente de Homer donde explica el datepicker
-            $scope.datesDisabled = function (date, mode) {
+            $rootScope.datesDisabled = function (date, mode) {
                 return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
             };
 
-            $scope.dateOptions = {
+            $rootScope.dateOptions = {
                 formatYear: 'yyyy',
                 startingDay: 1
             };
 
-            $scope.processing = true;
-            $scope.customers = [];
-
             // Tomado de el fuente de Homer donde explica el datepicker
-            $scope.openCal = function ($event) {
+            $rootScope.openCal = function ($event) {
                 $event.preventDefault();
                 $event.stopPropagation();
                 $scope.calOpened = true;
             };
+
+            $scope.processing = true;
+            $scope.customers = [];
 
             $scope.initSaleOperationData = function () {
                 if ($rootScope.salesAction === 'insert') {
@@ -371,6 +361,5 @@ angular
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
-            
         }
     ]);
