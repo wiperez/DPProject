@@ -86,6 +86,11 @@ namespace DPProject.Services
 
         public int Insert(SaleOperationModel M)
         {
+            var accounts = UnitOfWorkAsync.Repository<Account>();
+            M.accountId = accounts.Query(a => a.AccountName.Equals("Ventas"))
+                .Select().First().AccountId;
+            M.periodId = UnitOfWorkAsync.RepositoryAsync<Period>()
+                .BelongsTo(M.operationDate);
             var journalId = Insert(new JournalModel()
             {
                 AccountId = M.accountId,

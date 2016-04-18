@@ -68,6 +68,7 @@
     <Compile Include="Models\SaleModel.cs" />
     <Compile Include="Models\SaleOperationModel.cs" />
     <Compile Include="Models\SmartTableParamModel.cs" />
+    <Compile Include="PeriodRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

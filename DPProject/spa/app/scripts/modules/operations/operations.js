@@ -275,8 +275,10 @@ angular
 
             $scope.initSaleOperationData();
 
-            var Customer = $resource("api/Customer/get", null, { 'postQuery': { method: "POST", isArray: false } });
-            Customer.postQuery({
+            var Customer = $resource("api/Customer/get", null, {
+                getList: { method: "POST", isArray: false }
+            });
+            Customer.getList({
                 pagination: {
                     start: 0,
                     totalItemCount: 0,
@@ -306,24 +308,6 @@ angular
                 Customer.get().$promise.then(function (data) {
                     $scope.saleOperation.customerId = data.Id;
                     $scope.saleOperation.customerGroup = data.GroupName;
-                    $scope.getAccountId();
-                });
-            };
-
-            $scope.getAccountId = function () {
-                var Account = $resource('api/Accounts', { name: 'Ventas' });
-                Account.get().$promise.then(function (data) {
-                    $scope.saleOperation.accountId = data.AccountId;
-                    $scope.getPeriodId();
-                });
-            };
-
-            $scope.getPeriodId = function () {
-                var Period = $resource('api/Period/belongs', {
-                    date: $scope.saleOperation.operationDate
-                });
-                Period.get().$promise.then(function (data) {
-                    $scope.saleOperation.periodId = data.periodId;
                     $scope.saveSaleOperation();
                 });
             };

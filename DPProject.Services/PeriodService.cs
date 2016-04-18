@@ -38,14 +38,15 @@ namespace DPProject.Services
 
         public int BelongsTo(DateTime d)
         {
-            foreach (var period in Repository.Query().Select())
+            return Repository.BelongsTo(d);
+            /*foreach (var period in Repository.Query().Select())
             {
                 if (period.StartDate < d && period.EndDate > d)
                 {
                     return period.Id;
                 }
             }
-            return 0;
+            return 0;*/
         }
 
         public PeriodModel Get(string name)
