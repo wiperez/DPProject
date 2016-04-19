@@ -21,7 +21,6 @@ namespace DPProject.Services
         IEnumerable<CustomerGroup> GetCustomerGroups();
         int Insert(CustomerModel M);
         void Update(CustomerModel M, int Id);
-        CustomerModel GetCustomer(string name);
     }
 
     public class CustomerService : Service<Customer>, ICustomerService
@@ -86,10 +85,5 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
         }
 
-        // Added by Yordano
-        public CustomerModel GetCustomer(string name)
-        {
-            return Repository.GetCustomer(name);
-        }
     }
 }

@@ -97,6 +97,20 @@ namespace DPProject.Controllers
                 return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("purchase")]
+        public IHttpActionResult InsertPurchase(PurchaseOperationModel M)
+        {
+            try
+            {
+                return Ok(Service.Insert(M));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message, MoreInfo = ex.InnerException });
+            }
+        }
     }
 
 }

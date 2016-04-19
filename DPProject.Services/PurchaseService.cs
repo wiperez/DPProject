@@ -16,53 +16,53 @@ using DPProject.Data;
 
 namespace DPProject.Services
 {
-    public interface ISaleService : IService<Sale>
+    public interface IPurchaseService : IService<Purchase>
     {
-        ICollection<SaleModel> GetSales(int page, int count);
-        int Insert(SaleModel M);
-        void Update(SaleModel M);
-        SaleModel Get(int id);
+        ICollection<PurchaseModel> GetSales(int page, int count);
+        int Insert(PurchaseModel M);
+        void Update(PurchaseModel M);
+        PurchaseModel Get(int id);
     }
 
-    public class SaleService : Service<Sale>, ISaleService
+    public class PurchaseService : Service<Purchase>, IPurchaseService
     {
-        private readonly IRepositoryAsync<Sale> Repository;
+        private readonly IRepositoryAsync<Purchase> Repository;
         private readonly IUnitOfWorkAsync UnitOfWorkAsync;
 
-        public SaleService(IRepositoryAsync<Sale> _Repository, IUnitOfWorkAsync _UnitOfWork)
+        public PurchaseService(IRepositoryAsync<Purchase> _Repository, IUnitOfWorkAsync _UnitOfWork)
             : base(_Repository)
         {
             Repository = _Repository;
             UnitOfWorkAsync = _UnitOfWork;
         }
 
-        public SaleModel Get(int id)
+        public PurchaseModel Get(int id)
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<SaleModel> GetSales(int page, int count)
+        public ICollection<PurchaseModel> GetSales(int page, int count)
         {
             throw new NotImplementedException();
         }
 
-        public int Insert(SaleModel M)
+        public int Insert(PurchaseModel M)
         {
-            var sale = new Sale()
+            var purchase = new Purchase()
             {
-                CustomerId = M.CustomerId,
+                VendorId = M.VendorId,
                 JournalOperationId = M.JournalOperationId
             };
-            Insert(sale);
+            Insert(purchase);
             UnitOfWorkAsync.SaveChanges();
 
-            return sale.SaleId;
+            return purchase.PurchaseId;
         }
 
-        public void Update(SaleModel M)
+        public void Update(PurchaseModel M)
         {
-            var s = Repository.Find(M.SaleId);
-            s.CustomerId = M.CustomerId;
+            var s = Repository.Find(M.PurchaseId);
+            s.VendorId = M.VendorId;
             Update(s);
             UnitOfWorkAsync.SaveChanges();
         }

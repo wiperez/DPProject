@@ -63,6 +63,8 @@
     <Compile Include="Models\PredicateModels.cs" />
     <Compile Include="Models\PurchaseListModel.cs" />
     <Compile Include="Models\PurchaseListParams.cs" />
+    <Compile Include="Models\PurchaseModel.cs" />
+    <Compile Include="Models\PurchaseOperationModel.cs" />
     <Compile Include="Models\SaleListModel.cs" />
     <Compile Include="Models\SaleListParams.cs" />
     <Compile Include="Models\SaleModel.cs" />

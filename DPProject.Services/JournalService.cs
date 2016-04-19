@@ -17,15 +17,19 @@ namespace DPProject.Services
 {
     public interface IJournalService : IService<JournalOperation>
     {
-        ICollection<JournalModel> GetOperations(int page, int count);
         int Insert(JournalModel M);
         int Insert(SaleOperationModel M);
+        int Insert(PurchaseOperationModel M);
+
         void Update(JournalModel M);
-        JournalModel Get(int id);
-        ICollection<SaleListModel> GetSales(SaleListParams listParams);
         int Update(SaleOperationModel m);
-        bool Delete(int operationId);
+
+        JournalModel Get(int id);
+        ICollection<JournalModel> GetOperations(int page, int count);
+        ICollection<SaleListModel> GetSales(SaleListParams listParams);
         ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
+
+        bool Delete(int operationId);
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -82,6 +86,31 @@ namespace DPProject.Services
         public ICollection<SaleListModel> GetSales(SaleListParams listParams)
         {
             return Repository.GetSales(listParams);
+        }
+
+        public int Insert(PurchaseOperationModel M)
+        {
+            var accounts = UnitOfWorkAsync.Repository<Account>();
+            M.accountId = accounts.Query(a => a.AccountName.Equals("Compras"))
+                .Select().First().AccountId;
+            M.periodId = UnitOfWorkAsync.RepositoryAsync<Period>()
+                .BelongsTo(M.operationDate);
+            var journalId = Insert(new JournalModel()
+            {
+                AccountId = M.accountId,
+                Amount = M.amount,
+                Description = M.description,
+                OperationDate = M.operationDate,
+                PeriodId = M.periodId
+            });
+            var purchases = UnitOfWorkAsync.Repository<Purchase>();
+            purchases.Insert(new Purchase()
+            {
+                VendorId = M.vendorId,
+                JournalOperationId = journalId
+            });
+            UnitOfWorkAsync.SaveChanges();
+            return journalId;
         }
 
         public int Insert(SaleOperationModel M)

@@ -351,7 +351,7 @@ angular
             };
 
             $scope.onSelect = function ($item) {
-                $scope.saleOperation.customerId = $item.Id;
+                $scope.saleOperation.customerId = $item.VendorId;
             };
         }
     ]).controller('PurchasesOperationController', [
@@ -360,6 +360,17 @@ angular
         {
             $scope.processing = true;
             $scope.vendors = [];
+            $scope.purchaseOperation = {
+                operationId: 0,
+                purchaseId: 0,
+                accountId: 0,
+                amount: '',
+                vendor: '',
+                vendorId: 0,
+                description: '',
+                operationDate: '',
+                periodId: 0
+            };
 
             var Vendor = $resource("api/Vendor/get", null, {
                 getList: { method: "POST", isArray: false }
@@ -390,11 +401,24 @@ angular
 
             // Aqui va el grueso del controlador...
             $scope.savePurchaseOperation = function () {
-
+                var PurchaseOperation = $resource('api/Journal/purchase');
+                $scope.purchaseOperation.operationDate = $filter('date')
+                    ($scope.purchaseOperation.operationDate, 'yyyy-MM-dd');
+                PurchaseOperation.save($scope.purchaseOperation)
+                .$promise.then(function (data)
+                {
+                    $timeout(function () {
+                        $scope.processing = false;
+                        $scope.purchasesOperationDialog.close();
+                        //$rootScope.recalcPurchasesTotal();
+                    }, 100);
+                }, function (data) {
+                    console.log(data);
+                });
             };
 
             $scope.onSelect = function ($item) {
-                $scope.purchaseOperation.vendorId = $item.Id;
+                $scope.purchaseOperation.vendorId = $item.VendorId;
             };
         }
     ]);

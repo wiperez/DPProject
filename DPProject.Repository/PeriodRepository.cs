@@ -15,7 +15,8 @@ namespace DPProject.Repository
         {
             foreach (var period in repository.Query().Select())
             {
-                if (period.StartDate < d && period.EndDate > d)
+                if (period.StartDate.Day <= d.Day && period.EndDate.Day >= d.Day
+                    && period.StartDate.Month == d.Month)
                 {
                     return period.Id;
                 }

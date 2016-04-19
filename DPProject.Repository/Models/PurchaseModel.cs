@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DPProject.Repository.Models
 {
-    public class SaleModel
+    public class PurchaseModel
     {
-        public int SaleId { get; set; }
+        public int PurchaseId { get; set; }
         public int JournalOperationId { get; set; }
-        public int CustomerId { get; set; }
+        public int VendorId { get; set; }
     }
 }
