@@ -246,7 +246,7 @@ angular
             $scope.processing = true;
             $scope.customers = [];
 
-            $scope.initSaleOperationData = function () {
+            $scope.initOperation = function () {
                 if ($rootScope.salesAction === 'insert') {
                     $scope.saleOperation = {
                         operationId: 0,
@@ -266,7 +266,7 @@ angular
                 }
             };
 
-            $scope.initSaleOperationData();
+            $scope.initOperation();
 
             var Customer = $resource("api/Customer/get", null, {
                 getList: { method: "POST", isArray: false }
@@ -324,15 +324,16 @@ angular
                 });
                 if ($rootScope.salesAction === 'insert') {
                     SaleOperation.save($scope.saleOperation)
-                        .$promise
-                        .then(function (data) {
-                            $timeout(function () {
-                                $scope.processing = false;
-                                $scope.initSaleOperationData();
-                                $scope.salesOperationDialog.close();
-                                $rootScope.recalcSalesTotal();
-                            }, 100);
-                        });
+                    .$promise.then(function (data) {
+                        $timeout(function () {
+                            $scope.processing = false;
+                            $scope.initOperation();
+                            $scope.salesOperationDialog.close();
+                            $rootScope.recalcSalesTotal();
+                        }, 100);
+                    }, function (data) {
+                        if (console) console.log(data);
+                    });
                 }
                 else if ($rootScope.salesAction === 'edit') {
                     SaleOperation.update($scope.saleOperation)
@@ -340,7 +341,7 @@ angular
                         .then(function (data) {
                             $timeout(function () {
                                 $scope.processing = false;
-                                $scope.initSaleOperationData();
+                                $scope.initOperation();
                                 $scope.salesOperationDialog.close();
                                 $timeout(function () {
                                     $rootScope.recalcSalesTotal();
@@ -351,7 +352,7 @@ angular
             };
 
             $scope.onSelect = function ($item) {
-                $scope.saleOperation.customerId = $item.VendorId;
+                $scope.saleOperation.customerId = $item.Id;
             };
         }
     ]).controller('PurchasesOperationController', [
@@ -413,7 +414,7 @@ angular
                         //$rootScope.recalcPurchasesTotal();
                     }, 100);
                 }, function (data) {
-                    console.log(data);
+                    if (console) console.log(data);
                 });
             };
 

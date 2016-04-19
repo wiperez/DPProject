@@ -103,7 +103,7 @@ namespace DPProject.Services
                 OperationDate = M.operationDate,
                 PeriodId = M.periodId
             });
-            var purchases = UnitOfWorkAsync.Repository<Purchase>();
+            var purchases = UnitOfWorkAsync.RepositoryAsync<Purchase>();
             purchases.Insert(new Purchase()
             {
                 VendorId = M.vendorId,
