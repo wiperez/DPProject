@@ -34,6 +34,14 @@ angular
                 $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
             };
 
+            $rootScope.recalcTotal = function (n) {
+                var gridScope = $rootScope.getGridEl(n).scope();
+                var dataset = $rootScope.getDataSet(n);
+                var prop = 'total' + n[0].toUpperCase() + n.substring(1) +
+                    'Amount';
+                $rootScope[prop] = gridScope.sum(dataset, 'amount');
+            };
+
             $scope.reloadPurchasesGrid = function () {
                 var Purchases = $resource('api/Journal/purchases', null, {
                     list: { method: 'POST' }
@@ -419,8 +427,16 @@ angular
                 {
                     $timeout(function () {
                         $scope.processing = false;
+                        var dataset = $rootScope.getDataSet('purchases');
+                        var s = $scope.purchaseOperation;
+                        dataset.push({
+                            vendor: s.vendor,
+                            amount: s.amount,
+                            operationDate: $filter('date')(s.operationDate, 'yyyy-MM-dd')
+                        });
+                        $rootScope.getGrid('purchases').reload();
+                        $rootScope.recalcTotal('purchases');
                         $scope.purchasesOperationDialog.close();
-                        //$rootScope.recalcPurchasesTotal();
                     }, 100);
                 }, function (data) {
                     if (console) console.log(data);
