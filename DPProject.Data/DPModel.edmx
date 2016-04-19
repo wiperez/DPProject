@@ -57,7 +57,7 @@
           <Key>
             <PropertyRef Name="PurchaseId" />
           </Key>
-          <Property Name="PurchaseId" Type="int" Nullable="false" />
+          <Property Name="PurchaseId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="JournalOperationId" Type="int" Nullable="false" />
           <Property Name="VendorId" Type="int" Nullable="false" />
         </EntityType>
@@ -302,7 +302,7 @@
           <Key>
             <PropertyRef Name="PurchaseId" />
           </Key>
-          <Property Name="PurchaseId" Type="Int32" Nullable="false" />
+          <Property Name="PurchaseId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="JournalOperationId" Type="Int32" Nullable="false" />
           <Property Name="VendorId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="JournalOperation" Relationship="DPModel.FK_Purchase_JournalOperation" FromRole="Purchase" ToRole="JournalOperation" />

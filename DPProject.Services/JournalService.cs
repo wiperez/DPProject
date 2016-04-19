@@ -128,6 +128,7 @@ namespace DPProject.Services
                 OperationDate = M.operationDate,
                 PeriodId = M.periodId
             });
+            
             var sales = UnitOfWorkAsync.Repository<Sale>();
             sales.Insert(new Sale()
             {
