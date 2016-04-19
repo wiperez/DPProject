@@ -10,11 +10,13 @@ angular
             $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
 
             $rootScope.getGridEl = function (n) {
-                return angular.element($('.' + n + '-table')[0]);
+                var className = '.' + n + '-table';
+                return angular.element($(className)[0]);
             };
 
             $rootScope.getGrid = function (n) {
-                return $rootScope.getGridEl(n).scope()[ n + 'Params' ];
+                var index = n + 'Params';
+                return $rootScope.getGridEl(n).scope()[index];
             }
 
             $rootScope.getDataSet = function (n) {
@@ -47,7 +49,8 @@ angular
                     }, {
                         dataset: data.purchasesList
                     });
-                    $rootScope.totalPurchasesAmount = $scope.sum(data.purchasesList, 'amount');
+                    $rootScope.totalPurchasesAmount =
+                        $scope.sum(data.purchasesList, 'amount');
                 });
             };
 
@@ -166,7 +169,11 @@ angular
             };
 
             $scope.getSelected = function (n) {
-                return $scope.getGridEl(n + 's').find('tr.st-selected').scope()[n];
+                var objName = n;
+                var elName = n + 's';
+                return $scope.getGridEl(elName)
+                    .find('tr.st-selected')
+                    .scope()[objName];
             };
 
             $scope.edit = function ($event) {
@@ -181,8 +188,10 @@ angular
             };
 
             $scope.unselect = function (n) {
-                $('.' + n + 's-table').first().find('tr').removeClass('st-selected');
-                $scope[n + 'Selected'] = false;
+                var className = '.' + n + 's-table';
+                var objName = n + 'Selected';
+                $(className).first().find('tr').removeClass('st-selected');
+                $scope[objName] = false;
             };
 
             $scope.select = function ($event) {
