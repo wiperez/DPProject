@@ -29,8 +29,7 @@ angular
 
             $rootScope.recalcTotal = function (n) {
                 var dataset = $rootScope.getDataSet(n);
-                var totalProp = 'total' + n[0].toUpperCase() +
-                    n.substring(1) + 'Amount';
+                var totalProp = _.camelCase('total ' + n + ' Amount');
                 $rootScope[totalProp] = _.sumBy(dataset, 'amount');
             };
 
@@ -180,8 +179,7 @@ angular
             $scope.edit = function ($event) {
                 var n = $($event.target).parents('.sales-toolbar').length === 1 ?
                     'sale' : 'purchase';
-                var dlgAction = 'open' + n[0].toUpperCase() +
-                    n.substring(1) + 'sDlg';
+                var dlgAction = _.camelCase('open ' + n + 's ' + 'Dlg');
                 var entity = $scope.getSelected(n);
                 $scope[dlgAction]('edit', entity);
             };
@@ -198,10 +196,8 @@ angular
                     'sale' : 'purchase';
                 $scope.unselect(n);
                 $($event.target).parent('tr').addClass('st-selected');
-                if (n === 'sale')
-                    $scope.saleSelected = true;
-                else
-                    $scope.purchaseSelected = true;
+                var objName = n + 'Selected';
+                $scope[objName] = true;
             };
 
             $scope.removeSale = function ($event) {
@@ -401,6 +397,7 @@ angular
 
             $scope.onSelect = function ($item) {
                 $scope.saleOperation.customerId = $item.Id;
+                $scope.saleOperation.customerGroup = $item.GroupName;
             };
         }
     ]).controller('PurchasesOperationController', [
