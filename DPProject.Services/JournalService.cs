@@ -157,6 +157,11 @@ namespace DPProject.Services
 
         public int Update(SaleOperationModel m)
         {
+            m.accountId = UnitOfWorkAsync.Repository<Account>()
+                .Query(a => a.AccountName.Equals("Ventas"))
+                .Select().First().AccountId;
+            m.periodId = UnitOfWorkAsync.RepositoryAsync<Period>()
+                .BelongsTo(m.operationDate);
             Update(new JournalModel()
             {
                 AccountId = m.accountId,

@@ -23,23 +23,11 @@ angular
                 return $rootScope.getGrid(n).settings().dataset;
             };
 
-            $scope.sum = function sum(data, field) {
-                var x = _.sumBy(data, field);
-                return x;
-            };
-
-            $rootScope.recalcSalesTotal = function () {
-                var gridScope = $rootScope.getGridEl('sales').scope();
-                var dataset = $rootScope.getDataSet('sales');
-                $rootScope.totalSalesAmount = gridScope.sum(dataset, 'amount');
-            };
-
             $rootScope.recalcTotal = function (n) {
-                var gridScope = $rootScope.getGridEl(n).scope();
                 var dataset = $rootScope.getDataSet(n);
-                var prop = 'total' + n[0].toUpperCase() + n.substring(1) +
-                    'Amount';
-                $rootScope[prop] = gridScope.sum(dataset, 'amount');
+                var totalProp = 'total' + n[0].toUpperCase() +
+                    n.substring(1) + 'Amount';
+                $rootScope[totalProp] = _.sumBy(dataset, 'amount');
             };
 
             $scope.reloadPurchasesGrid = function () {
@@ -58,7 +46,7 @@ angular
                         dataset: data.purchasesList
                     });
                     $rootScope.totalPurchasesAmount =
-                        $scope.sum(data.purchasesList, 'amount');
+                        _.sumBy(data.purchasesList, 'amount');
                 });
             };
 
@@ -84,7 +72,8 @@ angular
                     function totalPages() {
                         return Math.ceil($scope.salesParams.total() / $scope.salesParams.count());
                     }
-                    $rootScope.totalSalesAmount = $scope.sum(data.saleList, 'amount');
+                    $rootScope.totalSalesAmount =
+                        _.sumBy(data.saleList, 'amount');
                     $scope.isLastPage = isLastPage;
                 });
             };
@@ -246,7 +235,7 @@ angular
                                 $rootScope.getGrid('sales').settings().dataset = newDataSet;
                                 newDataSet = undefined;
                                 $rootScope.getGrid('sales').reload();
-                                $rootScope.recalcSalesTotal();
+                                $rootScope.recalcTotal('sales');
                             }, 100);
                         });
                     }
@@ -345,7 +334,7 @@ angular
                             $scope.processing = false;
                             $scope.initOperation();
                             $scope.salesOperationDialog.close();
-                            $rootScope.recalcSalesTotal();
+                            $rootScope.recalcTotal('sales');
                         }, 100);
                     }, function (data) {
                         if (console) console.log(data);
@@ -353,17 +342,18 @@ angular
                 }
                 else if ($rootScope.salesAction === 'edit') {
                     SaleOperation.update($scope.saleOperation)
-                        .$promise
-                        .then(function (data) {
+                    .$promise.then(function (data) {
+                        $timeout(function () {
+                            $scope.processing = false;
+                            $scope.initOperation();
+                            $scope.salesOperationDialog.close();
                             $timeout(function () {
-                                $scope.processing = false;
-                                $scope.initOperation();
-                                $scope.salesOperationDialog.close();
-                                $timeout(function () {
-                                    $rootScope.recalcSalesTotal();
-                                }, 100);
+                                $rootScope.recalcTotal('sales');
                             }, 100);
-                        });
+                        }, 100);
+                    }, function (data) {
+                        if (console) console.log(data);
+                    });
                 }
             };
 

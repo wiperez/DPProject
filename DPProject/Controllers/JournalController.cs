@@ -47,7 +47,7 @@ namespace DPProject.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+                return BadRequest<object>(ex);
             }
         }
 
@@ -62,7 +62,7 @@ namespace DPProject.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+                return BadRequest<object>(ex);
             }
         }
 
@@ -77,7 +77,7 @@ namespace DPProject.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+                return BadRequest<object>(ex);
             }
         }
 
@@ -94,7 +94,7 @@ namespace DPProject.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+                return BadRequest<object>(ex);
             }
         }
 
@@ -108,7 +108,7 @@ namespace DPProject.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message, MoreInfo = ex.InnerException });
+                return BadRequest<object>(ex);
             }
         }
     }
