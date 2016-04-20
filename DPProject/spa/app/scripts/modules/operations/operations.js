@@ -141,13 +141,12 @@ angular
                 }]
             };
 
-            // Added by Yordano
-            $scope.salesDialog = function (salesAction, saleData) {
+            $scope.openSalesDlg = function (salesAction, saleData) {
                 $rootScope.salesAction = salesAction;
                 $rootScope.calOpened = false;
-                $scope.unselect('sale');
                 $rootScope.editSaleData = saleData;
-                $rootScope.salesOperationDialog = $modal.open({
+                $scope.unselect('sale');
+                $rootScope.salesDialog = $modal.open({
                     animation: true,
                     templateUrl: 'spa/app/scripts/modules/operations/salesDialog.html',
                     controller: 'SalesOperationController',
@@ -156,12 +155,12 @@ angular
                 });
             };
 
-            $scope.purchasesDialog = function (purchasesAction, purchaseData) {
+            $scope.openPurchasesDlg = function (purchasesAction, purchaseData) {
                 $rootScope.purchasesAction = purchasesAction;
                 $rootScope.calOpened = false;
                 $rootScope.editPurchaseData = purchaseData;
                 $scope.unselect('purchase');
-                $rootScope.purchasesOperationDialog = $modal.open({
+                $rootScope.purchasesDialog = $modal.open({
                     animation: true,
                     templateUrl: 'spa/app/scripts/modules/operations/purchasesDialog.html',
                     controller: 'PurchasesOperationController',
@@ -181,10 +180,10 @@ angular
             $scope.edit = function ($event) {
                 var n = $($event.target).parents('.sales-toolbar').length === 1 ?
                     'sale' : 'purchase';
-                var dlgName = n + 'sDialog';
+                var dlgAction = 'open' + n[0].toUpperCase() +
+                    n.substring(1) + 'sDlg';
                 var entity = $scope.getSelected(n);
-                $scope[dlgName]('edit', entity);
-                if (console) console.log(entity);
+                $scope[dlgAction]('edit', entity);
             };
 
             $scope.unselect = function (n) {
@@ -245,9 +244,48 @@ angular
                     }
                 });
             };
+
+            $scope.removePurchase = function ($event) {
+                var purchaseData = $scope.getSelected('purchase');
+                sweetAlert.swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No podrás recuperar los datos de esta compra!\n\n"
+                        + 'Vendedor: ' + purchaseData.vendor + '\n'
+                        + 'Fecha: ' + purchaseData.operationDate + '\n'
+                        + 'Monto: ' + purchaseData.amount,
+                    type: "error",
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, ¡elimínala!",
+                    closeOnConfirm: true
+                },
+                function (ok) {
+                    if (ok) {
+                        var PurchaseOperation = $resource('api/Journal/purchase',
+                            null, { remove: { method: 'DELETE' } });
+                        PurchaseOperation.remove({
+                            operationId: purchaseData.operationId
+                        }).$promise.then(function (data) {
+                            $timeout(function () {
+                                var dataset = $rootScope.getDataSet('purchases');
+                                var newDataSet = [];
+                                angular.forEach(dataset, function (value, key) {
+                                    if (value.$$hashKey !== purchaseData.$$hashKey) {
+                                        newDataSet.push(value);
+                                    }
+                                });
+                                $rootScope.getGrid('purchases').settings().dataset = newDataSet;
+                                newDataSet = undefined;
+                                $rootScope.getGrid('purchases').reload();
+                                $rootScope.recalcTotal('purchases');
+                            }, 100);
+                        });
+                    }
+                });
+            };
         }
 
-    // Added by Yordano
     ]).controller('SalesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
@@ -301,7 +339,7 @@ angular
             };
 
             $scope.cancel = function () {
-                $scope.salesOperationDialog.close();
+                $scope.salesDialog.close();
             };
 
             $scope.saveSaleOperation = function () {
@@ -337,7 +375,7 @@ angular
                         $timeout(function () {
                             $scope.processing = false;
                             $scope.initOperation();
-                            $scope.salesOperationDialog.close();
+                            $scope.salesDialog.close();
                             $rootScope.recalcTotal('sales');
                         }, 100);
                     }, function (data) {
@@ -350,7 +388,7 @@ angular
                         $timeout(function () {
                             $scope.processing = false;
                             $scope.initOperation();
-                            $scope.salesOperationDialog.close();
+                            $scope.salesDialog.close();
                             $timeout(function () {
                                 $rootScope.recalcTotal('sales');
                             }, 100);
@@ -371,17 +409,21 @@ angular
         {
             $scope.processing = true;
             $scope.vendors = [];
-            $scope.purchaseOperation = {
-                operationId: 0,
-                purchaseId: 0,
-                accountId: 0,
-                amount: '',
-                vendor: '',
-                vendorId: 0,
-                description: '',
-                operationDate: '',
-                periodId: 0
+
+            $scope.initOperation = function () {
+                $scope.purchaseOperation = {
+                    operationId: 0,
+                    purchaseId: 0,
+                    accountId: 0,
+                    amount: '',
+                    vendor: '',
+                    vendorId: 0,
+                    description: '',
+                    operationDate: '',
+                    periodId: 0
+                };
             };
+            $scope.initOperation();
 
             if ($rootScope.purchasesAction === 'edit') {
                 $scope.purchaseOperation = $rootScope.editPurchaseData;
@@ -414,7 +456,7 @@ angular
             };
 
             $scope.cancel = function () {
-                $scope.purchasesOperationDialog.close();
+                $scope.purchasesDialog.close();
             };
 
             // Aqui va el grueso del controlador...
@@ -436,7 +478,7 @@ angular
                         });
                         $rootScope.getGrid('purchases').reload();
                         $rootScope.recalcTotal('purchases');
-                        $scope.purchasesOperationDialog.close();
+                        $scope.purchasesDialog.close();
                     }, 100);
                 }, function (data) {
                     if (console) console.log(data);
@@ -444,7 +486,23 @@ angular
             };
 
             $scope.updatePurchaseOperation = function () {
-                alert('update');
+                var PurchaseOperation = $resource('api/Journal/purchase',
+                    $scope.purchaseOperation, {
+                    update: { method: 'PUT', params: $scope.purchaseOperation }
+                });
+                PurchaseOperation.update($scope.purchaseOperation)
+                .$promise.then(function (data) {
+                    $timeout(function () {
+                        $scope.processing = false;
+                        $scope.initOperation();
+                        $scope.purchasesDialog.close();
+                        $timeout(function () {
+                            $rootScope.recalcTotal('purchases');
+                        }, 100);
+                    }, 100);
+                }, function (data) {
+                    if (console) console.log(data);
+                });
             };
 
             $scope.onSelect = function ($item) {

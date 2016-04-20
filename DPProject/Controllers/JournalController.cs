@@ -81,9 +81,41 @@ namespace DPProject.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("purchase")]
+        public IHttpActionResult UpdatePurchase(PurchaseOperationModel M)
+        {
+            try
+            {
+                var id = Service.Update(M);
+                return Ok(new { editedSale = id });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(ex);
+            }
+        }
+
         [HttpDelete]
         [Route("sale")]
         public IHttpActionResult DeleteSale(int operationId)
+        {
+            try
+            {
+                if (Service.Delete(operationId))
+                    return Ok(new { success = true });
+                else
+                    return Ok(new { success = false, message = "See the output for aditional information." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(ex);
+            }
+        }
+
+        [HttpDelete]
+        [Route("purchase")]
+        public IHttpActionResult DeletePurchase(int operationId)
         {
             try
             {

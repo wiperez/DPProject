@@ -23,6 +23,7 @@ namespace DPProject.Services
 
         void Update(JournalModel M);
         int Update(SaleOperationModel m);
+        int Update(PurchaseOperationModel m);
 
         JournalModel Get(int id);
         ICollection<JournalModel> GetOperations(int page, int count);
@@ -30,6 +31,7 @@ namespace DPProject.Services
         ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
 
         bool Delete(int operationId);
+        
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -153,6 +155,30 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
 
             return jOper.Id;
+        }
+
+        public int Update(PurchaseOperationModel m)
+        {
+            m.accountId = UnitOfWorkAsync.Repository<Account>()
+                .Query(a => a.AccountName.Equals("Compras"))
+                .Select().First().AccountId;
+            m.periodId = UnitOfWorkAsync.RepositoryAsync<Period>()
+                .BelongsTo(m.operationDate);
+            Update(new JournalModel()
+            {
+                AccountId = m.accountId,
+                Amount = m.amount,
+                Description = m.description,
+                OperationDate = m.operationDate,
+                PeriodId = m.periodId,
+                Id = m.operationId
+            });
+            var purchases = UnitOfWorkAsync.Repository<Purchase>();
+            var s = purchases.Find(m.purchaseId);
+            s.VendorId = m.vendorId;
+            purchases.Update(s);
+            UnitOfWorkAsync.SaveChanges();
+            return m.operationId;
         }
 
         public int Update(SaleOperationModel m)
