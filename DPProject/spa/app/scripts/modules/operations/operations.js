@@ -167,6 +167,7 @@ angular
                 $rootScope.purchasesAction = purchasesAction;
                 $rootScope.calOpened = false;
                 $rootScope.editPurchaseData = purchaseData;
+                $scope.unselect('purchase');
                 $rootScope.purchasesOperationDialog = $modal.open({
                     animation: true,
                     templateUrl: 'spa/app/scripts/modules/operations/purchasesDialog.html',
@@ -177,22 +178,20 @@ angular
             };
 
             $scope.getSelected = function (n) {
-                var objName = n;
+                var prop = n;
                 var elName = n + 's';
                 return $scope.getGridEl(elName)
                     .find('tr.st-selected')
-                    .scope()[objName];
+                    .scope()[prop];
             };
 
             $scope.edit = function ($event) {
                 var n = $($event.target).parents('.sales-toolbar').length === 1 ?
                     'sale' : 'purchase';
-                if (n === 'sale') {
-                    $scope.salesDialog('edit', $scope.getSelected(n));
-                }
-                else {
-                    $scope.purchasesDialog('edit', $scope.getSelected(n));
-                }
+                var dlgName = n + 'sDialog';
+                var entity = $scope.getSelected(n);
+                $scope[dlgName]('edit', entity);
+                if (console) console.log(entity);
             };
 
             $scope.unselect = function (n) {
@@ -390,6 +389,10 @@ angular
                 periodId: 0
             };
 
+            if ($rootScope.purchasesAction === 'edit') {
+                $scope.purchaseOperation = $rootScope.editPurchaseData;
+            }
+
             var Vendor = $resource("api/Vendor/get", null, {
                 getList: { method: "POST", isArray: false }
             });
@@ -410,7 +413,10 @@ angular
 
             $scope.ok = function () {
                 $scope.processing = true;
-                $scope.savePurchaseOperation();
+                if ($rootScope.purchasesAction === 'insert')
+                    $scope.savePurchaseOperation();
+                else
+                    $scope.updatePurchaseOperation();
             };
 
             $scope.cancel = function () {
@@ -441,6 +447,10 @@ angular
                 }, function (data) {
                     if (console) console.log(data);
                 });
+            };
+
+            $scope.updatePurchaseOperation = function () {
+                alert('update');
             };
 
             $scope.onSelect = function ($item) {
