@@ -6,6 +6,10 @@ angular
         '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', '$interval',
         function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval)
         {
+            $rootScope.sumBy = function (anArray, field) {
+                return _.sumBy(anArray, field);
+            };
+
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
 

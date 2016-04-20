@@ -48,7 +48,7 @@
                     </tr>
                     <tr ng-repeat-end>
                         <td class="text-success text-right"><strong>Summary:</strong></td>
-                        <td><em>{{sum(group.data, "amount")}}</em></td>
+                        <td><em>{{sumBy(group.data, "amount")}}</em></td>
                     </tr>
                     <tfoot ng-if="isLastPage()">
                         <tr>
@@ -100,7 +100,7 @@
                     </tr>
                     <tr ng-repeat-end>
                         <td class="text-success text-right"><strong>Summary:</strong></td>
-                        <td><em>{{sum(group.data, "amount")}}</em></td>
+                        <td><em>{{sumBy(group.data, "amount")}}</em></td>
                     </tr>
                     <tfoot ng-if="isLastPage()">
                         <tr>
