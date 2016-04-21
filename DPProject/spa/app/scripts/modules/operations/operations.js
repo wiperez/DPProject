@@ -293,7 +293,7 @@ angular
                     };
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    // Clonar porque no se puede editar en vivo lo que se esta viendo
+                    // Clonar objeto para evitar efecto visual de edicion en vivo
                     $scope.saleOperation = _.cloneDeep($rootScope.editSaleData);
                 }
             };
@@ -397,7 +397,8 @@ angular
             $scope.initOperation();
 
             if ($rootScope.purchasesAction === 'edit') {
-                $scope.purchaseOperation = $rootScope.editPurchaseData;
+                // Clonar objeto para evitar efecto visual de edicion en vivo
+                $scope.purchaseOperation = _.cloneDeep($rootScope.editPurchaseData);
             }
 
             var Vendor = $resource("api/Vendor/get", null, {
@@ -433,20 +434,15 @@ angular
             // Aqui va el grueso del controlador...
             $scope.savePurchaseOperation = function () {
                 var PurchaseOperation = $resource('api/Journal/purchase');
-                $scope.purchaseOperation.operationDate = $filter('date')
-                    ($scope.purchaseOperation.operationDate, 'yyyy-MM-dd');
-                PurchaseOperation.save($scope.purchaseOperation)
+                var p = $scope.purchaseOperation;
+                p.operationDate = $filter('date')(p.operationDate, 'yyyy-MM-dd');
+                PurchaseOperation.save(p)
                 .$promise.then(function (data)
                 {
                     $timeout(function () {
                         $scope.processing = false;
                         var dataset = $rootScope.getDataSet('purchases');
-                        var s = $scope.purchaseOperation;
-                        dataset.push({
-                            vendor: s.vendor,
-                            amount: s.amount,
-                            operationDate: $filter('date')(s.operationDate, 'yyyy-MM-dd')
-                        });
+                        dataset.push(p);
                         $rootScope.getGrid('purchases').reload();
                         $rootScope.recalcTotal('purchases');
                         $scope.purchasesDialog.close();
@@ -457,13 +453,18 @@ angular
             };
 
             $scope.updatePurchaseOperation = function () {
+                var dataset = $rootScope.getDataSet('purchases');
+                var p = $scope.purchaseOperation;
+                p.operationDate = $filter('date')(p.operationDate, 'yyyy-MM-dd');
                 var PurchaseOperation = $resource('api/Journal/purchase',
-                    $scope.purchaseOperation, {
-                    update: { method: 'PUT', params: $scope.purchaseOperation }
+                    null, {
+                    update: { method: 'PUT', params: p }
                 });
-                PurchaseOperation.update($scope.purchaseOperation)
+                PurchaseOperation.update(p)
                 .$promise.then(function (data) {
                     $timeout(function () {
+                        var oldPurchase = _.find(dataset, _.matchesProperty('$$hashKey', $rootScope.editPurchaseData.$$hashKey));
+                        _.assign(oldPurchase, p);
                         $scope.processing = false;
                         $scope.initOperation();
                         $scope.purchasesDialog.close();
