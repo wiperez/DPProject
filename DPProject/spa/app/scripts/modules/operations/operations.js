@@ -225,14 +225,8 @@ angular
                         .then(function (data) {
                             $timeout(function () {
                                 var dataset = $rootScope.getDataSet('sales');
-                                var newDataSet = [];
-                                angular.forEach(dataset, function (value, key) {
-                                    if (value.$$hashKey !== saleData.$$hashKey) {
-                                        newDataSet.push(value);
-                                    }
-                                });
-                                $rootScope.getGrid('sales').settings().dataset = newDataSet;
-                                newDataSet = undefined;
+                                _.pull(dataset, saleData);
+                                $rootScope.getGrid('sales').settings().dataset = dataset;
                                 $rootScope.getGrid('sales').reload();
                                 $rootScope.recalcTotal('sales');
                             }, 100);
@@ -265,14 +259,8 @@ angular
                         }).$promise.then(function (data) {
                             $timeout(function () {
                                 var dataset = $rootScope.getDataSet('purchases');
-                                var newDataSet = [];
-                                angular.forEach(dataset, function (value, key) {
-                                    if (value.$$hashKey !== purchaseData.$$hashKey) {
-                                        newDataSet.push(value);
-                                    }
-                                });
-                                $rootScope.getGrid('purchases').settings().dataset = newDataSet;
-                                newDataSet = undefined;
+                                _.pull(dataset, purchaseData);
+                                $rootScope.getGrid('purchases').settings().dataset = dataset;
                                 $rootScope.getGrid('purchases').reload();
                                 $rootScope.recalcTotal('purchases');
                             }, 100);
@@ -305,7 +293,8 @@ angular
                     };
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    $scope.saleOperation = $rootScope.editSaleData;
+                    // Clonar porque no se puede editar en vivo lo que se esta viendo
+                    $scope.saleOperation = _.cloneDeep($rootScope.editSaleData);
                 }
             };
 
@@ -340,48 +329,32 @@ angular
 
             $scope.saveSaleOperation = function () {
                 var dataset = $rootScope.getDataSet('sales');
-                if ($rootScope.salesAction === 'insert') {
-                    var s = $scope.saleOperation;
-                    dataset.push({
-                        customer: s.customer,
-                        amount: s.amount,
-                        operationDate: $filter('date')(s.operationDate, 'yyyy-MM-dd'),
-                        customerGroup: s.customerGroup
-                    });
-                }
-                else if ($rootScope.salesAction === 'edit') {
-                    var s = $scope.saleOperation;
-                    angular.forEach(dataset, function (value, key) {
-                        if (value.$$hashKey === $rootScope.editSaleData.$$hashKey) {
-                            value.customer = s.customer,
-                            value.amount = s.amount,
-                            value.operationDate = $filter('date')(s.operationDate, 'yyyy-MM-dd'),
-                            value.customerGroup = s.customerGroup
-                        }
-                    });
-                }
-                $rootScope.getGrid('sales').reload();
+                var s = $scope.saleOperation;
+                s.operationDate = $filter('date')(s.operationDate, 'yyyy-MM-dd');
                 var SaleOperation = $resource('api/Journal/sale',
-                    $scope.saleOperation, {
-                    update: { method: 'PUT', params: $scope.saleOperation }
+                    null, { update: { method: 'PUT', params: s }
                 });
                 if ($rootScope.salesAction === 'insert') {
-                    SaleOperation.save($scope.saleOperation)
+                    SaleOperation.save(s)
                     .$promise.then(function (data) {
+                        dataset.push(s);
                         $timeout(function () {
                             $scope.processing = false;
                             $scope.initOperation();
                             $scope.salesDialog.close();
                             $rootScope.recalcTotal('sales');
                         }, 100);
+                        $rootScope.getGrid('sales').reload();
                     }, function (data) {
                         if (console) console.log(data);
                     });
                 }
                 else if ($rootScope.salesAction === 'edit') {
-                    SaleOperation.update($scope.saleOperation)
+                    SaleOperation.update(s)
                     .$promise.then(function (data) {
                         $timeout(function () {
+                            var oldSale = _.find(dataset, _.matchesProperty('$$hashKey', $rootScope.editSaleData.$$hashKey));
+                            _.assign(oldSale, s);
                             $scope.processing = false;
                             $scope.initOperation();
                             $scope.salesDialog.close();
@@ -389,6 +362,7 @@ angular
                                 $rootScope.recalcTotal('sales');
                             }, 100);
                         }, 100);
+                        $rootScope.getGrid('sales').reload();
                     }, function (data) {
                         if (console) console.log(data);
                     });
