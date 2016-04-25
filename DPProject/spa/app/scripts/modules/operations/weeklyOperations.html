@@ -1,9 +1,9 @@
-﻿<div class="row">
-    <table id="operation-grids">
+﻿<div id="operations-container">
+    <table id="operation-grids" class="table">
         <tr>
             <td valign="top" width="50%">
                 <div class="sales-toolbar">
-                    <button class="btn btn-success" type="button" 
+                    <button class="btn btn-success" type="button"
                             ng-click="openSalesDlg('insert')">
                         <span class="pe-7s-ticket"></span>
                         <span class="bold ng-binding">+ Venta</span>
@@ -28,12 +28,12 @@
                         </td>
                     </tr>
                     <tr ng-hide="group.$hideRows" ng-repeat="sale in group.data">
-                        <td sortable="'customerGroup'" data-title="'Group'" 
+                        <td sortable="'customerGroup'" data-title="'Group'"
                             groupable="'customerGroup'" ng-if="false">
                             {{sale.customerGroup}}
                         </td>
-                        <td sortable="'customer'" data-title="'Customer'" 
-                            groupable="'customer'" 
+                        <td sortable="'customer'" data-title="'Customer'"
+                            groupable="'customer'"
                             ng-click="select($event)">
                             {{sale.customer}}
                         </td>
@@ -113,14 +113,12 @@
         </tr>
         <tr>
             <td valign="top">
-                <hr />
                 <center>
                     <h3>Inv. Inicial: ${{ initInvent }}</h3>
                     <h3>Inv. Final: ${{ finalInvent }}</h3>
                 </center>
             </td>
             <td valign="top">
-                <hr />
                 <center>
                     <h3>Salarios: ${{ salaries }}</h3>
                 </center>
@@ -128,7 +126,6 @@
         </tr>
         <tr>
             <td valign="top" colspan="2">
-                <hr />
                 <center>
                     <h3>Utilidad/P&eacute;rdida bruta: ${{ profits }}</h3>
                 </center>

@@ -489,34 +489,48 @@ angular
 
     .controller('ExpensesController', [
 
-        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout',
-        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout)
+        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout', '$modal',
+        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout, $modal)
         {
             $scope.getExpenses = function (tableState) {
 
+                $scope.processExpense = function (action) {
+                    $rootScope.action = action;
+                    modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'spa/app/scripts/modules/operations/expensesDialog.html',
+                        scope: $rootScope,
+                        controller: 'ExpensesDialog',
+                        windowClass: "hmodal-info",
+                        size: 'md'
+                    });
+                };
+
+                tableState.pagination.number = 10;
+
                 $scope.gridDataSet = [
-                    { "Name": "Salarios", "Description": "", "Amount": 100 },
-                    { "Name": "BANK CHARGES", "Description": "", "Amount": 2100 },
-                    { "Name": "USATAX", "Description": "", "Amount": 10 },
-                    { "Name": "SUN PASS", "Description": "", "Amount": 1100 },
-                    { "Name": "TUNDRA", "Description": "", "Amount": 1200 },
-                    { "Name": "TELEFONO", "Description": "", "Amount": 500 },
-                    { "Name": "LICENCIAS", "Description": "", "Amount": 60 },
-                    { "Name": "CELULAR", "Description": "", "Amount": 990 },
-                    { "Name": "PALLELLAT Y FORLLIS", "Description": "", "Amount": 110 },
-                    { "Name": "FPL", "Description": "", "Amount": 1001 },
-                    { "Name": "PALACE", "Description": "", "Amount": 1050 },
-                    { "Name": "WATER", "Description": "", "Amount": 1200 },
-                    { "Name": "INTERNET", "Description": "", "Amount": 300 },
-                    { "Name": "SEGURO MEDICO", "Description": "", "Amount": 310 },
-                    { "Name": "SEGURO DOMINGO", "Description": "", "Amount": 500 },
-                    { "Name": "BASURA", "Description": "", "Amount": 700 },
-                    { "Name": "FAUSTO", "Description": "", "Amount": 800 },
-                    { "Name": "PACA", "Description": "", "Amount": 900 },
-                    { "Name": "RENTA", "Description": "", "Amount": 10 },
-                    { "Name": "LEXUS", "Description": "", "Amount": 23 },
-                    { "Name": "CHAPAS", "Description": "", "Amount": 76 },
-                    { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55 }
+                    { "Name": "Salarios", "Description": "", "Amount": 100, "PeriodId": 4, "OperationId": 100, "AccountId": 200 },
+                    { "Name": "BANK CHARGES", "Description": "", "Amount": 2100, "PeriodId": 4, "OperationId": 101, "AccountId": 201 },
+                    { "Name": "USATAX", "Description": "", "Amount": 10, "PeriodId": 4, "OperationId": 102, "AccountId": 202 },
+                    { "Name": "SUN PASS", "Description": "", "Amount": 1100, "PeriodId": 4, "OperationId": 103, "AccountId": 203 },
+                    { "Name": "TUNDRA", "Description": "", "Amount": 1200, "PeriodId": 4, "OperationId": 104, "AccountId": 204 },
+                    { "Name": "TELEFONO", "Description": "", "Amount": 500, "PeriodId": 4, "OperationId": 105, "AccountId": 205 },
+                    { "Name": "LICENCIAS", "Description": "", "Amount": 60, "PeriodId": 4, "OperationId": 106, "AccountId": 206 },
+                    { "Name": "CELULAR", "Description": "", "Amount": 990, "PeriodId": 4, "OperationId": 107, "AccountId": 207 },
+                    { "Name": "PALLELLAT Y FORLLIS", "Description": "", "Amount": 110, "PeriodId": 4, "OperationId": 108, "AccountId": 208 },
+                    { "Name": "FPL", "Description": "", "Amount": 1001, "PeriodId": 4, "OperationId": 109, "AccountId": 209 },
+                    { "Name": "PALACE", "Description": "", "Amount": 1050, "PeriodId": 4, "OperationId": 110, "AccountId": 210 },
+                    { "Name": "WATER", "Description": "", "Amount": 1200, "PeriodId": 4, "OperationId": 111, "AccountId": 211 },
+                    { "Name": "INTERNET", "Description": "", "Amount": 300, "PeriodId": 4, "OperationId": 112, "AccountId": 212 },
+                    { "Name": "SEGURO MEDICO", "Description": "", "Amount": 310, "PeriodId": 4, "OperationId": 113, "AccountId": 213 },
+                    { "Name": "SEGURO DOMINGO", "Description": "", "Amount": 500, "PeriodId": 4, "OperationId": 114, "AccountId": 214 },
+                    { "Name": "BASURA", "Description": "", "Amount": 700, "PeriodId": 4, "OperationId": 115, "AccountId": 215 },
+                    { "Name": "FAUSTO", "Description": "", "Amount": 800, "PeriodId": 4, "OperationId": 116, "AccountId": 216 },
+                    { "Name": "PACA", "Description": "", "Amount": 900, "PeriodId": 4, "OperationId": 117, "AccountId": 217 },
+                    { "Name": "RENTA", "Description": "", "Amount": 10, "PeriodId": 4, "OperationId": 118, "AccountId": 218 },
+                    { "Name": "LEXUS", "Description": "", "Amount": 23, "PeriodId": 4, "OperationId": 119, "AccountId": 219 },
+                    { "Name": "CHAPAS", "Description": "", "Amount": 76, "PeriodId": 4, "OperationId": 120, "AccountId": 220 },
+                    { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55, "PeriodId": 4, "OperationId": 121, "AccountId": 221 }
                 ];
 
                 // fired when table rows are selected
@@ -557,4 +571,61 @@ angular
             }
         }
 
+    ]).controller('ExpensesDialog', [
+
+        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout',
+        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout)
+        {
+            $scope.expense = {
+                OperationId: 0,
+                Name: "",
+                Description: "",
+                Amount: 0
+            };
+
+            $scope.insert = function (expense) {
+                return $resource("api/Expense/").save(expense)
+                    .$promise;
+            };
+
+            $scope.update = function (expense) {
+                var resource = $resource('/api/Expense/:OperationId', null, { 'update': { method: 'PUT' } });
+                resource.update({ Id: expense.OprationId }, expense)
+                    .$promise;
+            };
+
+            if ($rootScope.action == "update") {
+                angular.copy($scope.gridSelectedItem, $scope.expense);
+                $scope.update($scope.gridSelectedItem);
+            }
+
+            $scope.ok = function () {
+                $scope.saving = true;
+
+                if ($rootScope.action === 'update')
+                    $scope.call = $scope.update;
+                else
+                    $scope.call = $scope.insert;
+
+                $scope.call($scope)
+                    .then(function (response) {
+                        if ($rootScope.action == "update") {
+                            angular.copy($scope.expense, $scope.gridSelectedItem);
+                        } else {
+                            $rootScope.getExpenses($rootScope.tableState);
+                        }
+                        $modalInstance.close();
+                        $scope.saving = false;
+                    })
+                    .catch(function (response) {
+                        sweetAlert.resolveError(response);
+                        $scope.saving = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+        
     ]);
