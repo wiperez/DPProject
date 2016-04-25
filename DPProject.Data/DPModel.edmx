@@ -75,7 +75,7 @@
           </Key>
           <Property Name="VendorId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
-          <Property Name="Description" Type="nchar" MaxLength="10" />
+          <Property Name="Description" Type="nchar" MaxLength="200" />
         </EntityType>
         <Association Name="FK_Customer_CustomerGroup">
           <End Role="CustomerGroup" Type="Self.CustomerGroup" Multiplicity="1" />
@@ -324,7 +324,7 @@
           </Key>
           <Property Name="VendorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="200" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="Purchases" Relationship="DPModel.FK_Purchase_Vendor" FromRole="Vendor" ToRole="Purchase" />
         </EntityType>
         <Association Name="FK_JournalOperation_Account">

@@ -270,7 +270,9 @@ angular
             };
         }
 
-    ]).controller('SalesOperationController', [
+    ])
+
+    .controller('SalesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
@@ -374,7 +376,9 @@ angular
                 $scope.saleOperation.customerGroup = $item.GroupName;
             };
         }
-    ]).controller('PurchasesOperationController', [
+    ])
+
+    .controller('PurchasesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {

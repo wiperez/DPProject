@@ -12,10 +12,11 @@
         'ngResource',
         'cgNotify',                 // Angular notify
 
-        "mygrid",
+        'mygrid',
 
         'app.dashboard',
         'app.customer',
+        'app.vendor',
         'app.operations'
     ])
 })();
