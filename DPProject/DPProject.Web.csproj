@@ -311,6 +311,7 @@
     <Content Include="spa\app\scripts\modules\nggrid\nggrid.html" />
     <Content Include="spa\app\scripts\modules\nggrid\nggridDemo.js" />
     <Content Include="spa\app\scripts\modules\nggrid\tableDemos.js" />
+    <Content Include="spa\app\scripts\modules\operations\expensesManager.html" />
     <Content Include="spa\app\scripts\modules\operations\operationsManager.html" />
     <Content Include="spa\app\scripts\modules\operations\operationsServices.js" />
     <Content Include="spa\app\scripts\modules\operations\operations.js" />

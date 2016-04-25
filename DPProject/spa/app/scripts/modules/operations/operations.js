@@ -485,4 +485,76 @@ angular
                 $scope.purchaseOperation.vendorId = $item.VendorId;
             };
         }
+    ])
+
+    .controller('ExpensesController', [
+
+        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout',
+        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout)
+        {
+            $scope.getExpenses = function (tableState) {
+
+                $scope.gridDataSet = [
+                    { "Name": "Salarios", "Description": "", "Amount": 100 },
+                    { "Name": "BANK CHARGES", "Description": "", "Amount": 2100 },
+                    { "Name": "USATAX", "Description": "", "Amount": 10 },
+                    { "Name": "SUN PASS", "Description": "", "Amount": 1100 },
+                    { "Name": "TUNDRA", "Description": "", "Amount": 1200 },
+                    { "Name": "TELEFONO", "Description": "", "Amount": 500 },
+                    { "Name": "LICENCIAS", "Description": "", "Amount": 60 },
+                    { "Name": "CELULAR", "Description": "", "Amount": 990 },
+                    { "Name": "PALLELLAT Y FORLLIS", "Description": "", "Amount": 110 },
+                    { "Name": "FPL", "Description": "", "Amount": 1001 },
+                    { "Name": "PALACE", "Description": "", "Amount": 1050 },
+                    { "Name": "WATER", "Description": "", "Amount": 1200 },
+                    { "Name": "INTERNET", "Description": "", "Amount": 300 },
+                    { "Name": "SEGURO MEDICO", "Description": "", "Amount": 310 },
+                    { "Name": "SEGURO DOMINGO", "Description": "", "Amount": 500 },
+                    { "Name": "BASURA", "Description": "", "Amount": 700 },
+                    { "Name": "FAUSTO", "Description": "", "Amount": 800 },
+                    { "Name": "PACA", "Description": "", "Amount": 900 },
+                    { "Name": "RENTA", "Description": "", "Amount": 10 },
+                    { "Name": "LEXUS", "Description": "", "Amount": 23 },
+                    { "Name": "CHAPAS", "Description": "", "Amount": 76 },
+                    { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55 }
+                ];
+
+                // fired when table rows are selected
+                $scope.$watch('gridDataSet', function (rows) {
+                    // get selected row
+                    if (!angular.isUndefined(rows)) {
+                        $scope.gridSelectedItem = null;
+                        rows.filter(function (r) {
+                            if (r.isSelected) {
+                                $scope.gridSelectedItem = r;
+                                return;
+                            }
+                        })
+                    }
+                }, true);
+
+                return; // quitar cuando ya puedan venir datos desde el server
+
+                var params = {
+                    predicate: tableState.search.predicateObject ? tableState.search.predicateObject : {Description:""},
+                    pagination: tableState.pagination,
+                    sort: tableState.sort
+                };
+
+                var request = $resource("api/Expenses/get", null, { 'postQuery': { method: "POST", isArray: false } });
+
+                request.postQuery(params).$promise.then(function (result) {
+                    $scope.gridSelectedItem = null;
+                    $scope.gridDataSet = result.Rows;
+                    $scope.pages = result.NumberOfPages;
+                    tableState.pagination.totalItemCount = result.RowCount;
+                    tableState.pagination.numberOfPages = result.NumberOfPages;
+                    $scope.tableState = tableState;
+                })
+                .catch(function (response) {
+                    sweetAlert.resolveError(response);
+                });
+            }
+        }
+
     ]);
