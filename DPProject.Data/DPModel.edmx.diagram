@@ -6,12 +6,12 @@
     <edmx:Diagrams>
       <Diagram DiagramId="62b55b1e6c9b459fa4d221240bcb443b" Name="Diagram1" ZoomLevel="78">
         <EntityTypeShape EntityType="DPModel.Account" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="DPModel.Customer" Width="1.5" PointX="7.625" PointY="3.375" />
-        <EntityTypeShape EntityType="DPModel.CustomerGroup" Width="1.5" PointX="10.125" PointY="4.125" />
-        <EntityTypeShape EntityType="DPModel.JournalOperation" Width="1.5" PointX="3" PointY="3.25" />
-        <EntityTypeShape EntityType="DPModel.Period" Width="1.5" PointX="0.75" PointY="3.875" />
+        <EntityTypeShape EntityType="DPModel.Customer" Width="1.5" PointX="7.25" PointY="3.125" />
+        <EntityTypeShape EntityType="DPModel.CustomerGroup" Width="1.5" PointX="9.5" PointY="3.375" />
+        <EntityTypeShape EntityType="DPModel.JournalOperation" Width="1.5" PointX="3" PointY="3.125" />
+        <EntityTypeShape EntityType="DPModel.Period" Width="1.5" PointX="0.625" PointY="3.375" />
         <EntityTypeShape EntityType="DPModel.Purchase" Width="1.5" PointX="5.25" PointY="0.875" />
-        <EntityTypeShape EntityType="DPModel.Sale" Width="1.5" PointX="5.25" PointY="3.875" />
+        <EntityTypeShape EntityType="DPModel.Sale" Width="1.5" PointX="5.125" PointY="3.25" />
         <EntityTypeShape EntityType="DPModel.Vendor" Width="1.5" PointX="8.375" PointY="1" />
         <AssociationConnector Association="DPModel.FK_JournalOperation_Account" />
         <AssociationConnector Association="DPModel.FK_Customer_CustomerGroup" />
