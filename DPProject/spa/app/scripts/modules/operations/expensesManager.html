@@ -5,8 +5,22 @@
     <div class="hpanel hblue" st-table="gridDataSet" st-pipe="getExpenses">
         <div class="panel-heading hbuilt">Elementos de gastos</div>
         <div class="panel-body">
+            <div class="purchases-toolbar">
+                <button class="btn btn-success" type="button" ng-click="processExpense('insert')">
+                    <span class="pe-7s-ticket"></span>
+                    <span class="bold ng-binding">+ Nuevo</span>
+                </button>
+                <button class="btn btn-info" type="button" ng-click="processExpense('update')" ng-disabled="!gridSelectedItem">
+                    <span class="pe-7s-users"></span>
+                    <span class="bold ng-binding">Modificar</span>
+                </button>
+                <button class="btn btn-danger2" type="button" ng-click="delete()" ng-disabled="!gridSelectedItem">
+                    <span class="pe-7s-delete-user"></span>
+                    <span class="bold ng-binding">Eliminar</span>
+                </button>
+            </div><br />
             <div class="table-container" style="min-height:280px;">
-                <table class="table table-hover table-bordered">
+                <table id="expenses-table" class="table table-hover table-bordered">
                     <thead>
                         <tr>
                             <th class="expander"></th>

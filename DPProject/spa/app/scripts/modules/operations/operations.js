@@ -496,7 +496,7 @@ angular
 
                 $scope.processExpense = function (action) {
                     $rootScope.action = action;
-                    modalInstance = $modal.open({
+                    var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'spa/app/scripts/modules/operations/expensesDialog.html',
                         scope: $rootScope,
@@ -573,14 +573,16 @@ angular
 
     ]).controller('ExpensesDialog', [
 
-        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout',
-        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout)
+        '$scope', '$rootScope', '$modalInstance', 'sweetAlert', '$resource', '$filter', '$timeout',
+        function ($scope, $rootScope, $modalInstance, sweetAlert, $resource, $filter, $timeout)
         {
+            $scope.gridSelectedItem = angular.element('#expenses-table .st-selected').scope().row;
+
             $scope.expense = {
                 OperationId: 0,
-                Name: "",
-                Description: "",
-                Amount: 0
+                Name: '',
+                Description: '',
+                Amount: ''
             };
 
             $scope.insert = function (expense) {
@@ -590,13 +592,12 @@ angular
 
             $scope.update = function (expense) {
                 var resource = $resource('/api/Expense/:OperationId', null, { 'update': { method: 'PUT' } });
-                resource.update({ Id: expense.OprationId }, expense)
+                resource.update({ Id: expense.OperationId }, expense)
                     .$promise;
             };
 
-            if ($rootScope.action == "update") {
+            if ($rootScope.action === "update") {
                 angular.copy($scope.gridSelectedItem, $scope.expense);
-                $scope.update($scope.gridSelectedItem);
             }
 
             $scope.ok = function () {
