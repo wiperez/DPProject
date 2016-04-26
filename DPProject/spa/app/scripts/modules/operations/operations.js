@@ -494,6 +494,17 @@ angular
         {
             $scope.getExpenses = function (tableState) {
 
+                /*
+                    select Account.AccountId,Account.AccountCode,
+                        Account.ParentAccount,Account.AccountName,
+                        Account.AccountDescription,JournalOperation.PeriodId,
+                        JournalOperation.Id AS OperationId,
+                        ISNULL(JournalOperation.Amount, 0) AS Amount
+                    from Account left join JournalOperation 
+                        on Account.AccountId = JournalOperation.AccountId
+                    where Account.ParentAccount=4
+                */
+
                 $scope.processExpense = function (action) {
                     $rootScope.action = action;
                     var modalInstance = $modal.open({
@@ -509,28 +520,28 @@ angular
                 tableState.pagination.number = 10;
 
                 $scope.gridDataSet = [
-                    { "Name": "Salarios", "Description": "", "Amount": 100, "PeriodId": 4, "OperationId": 100, "AccountId": 200 },
-                    { "Name": "BANK CHARGES", "Description": "", "Amount": 2100, "PeriodId": 4, "OperationId": 101, "AccountId": 201 },
-                    { "Name": "USATAX", "Description": "", "Amount": 10, "PeriodId": 4, "OperationId": 102, "AccountId": 202 },
-                    { "Name": "SUN PASS", "Description": "", "Amount": 1100, "PeriodId": 4, "OperationId": 103, "AccountId": 203 },
-                    { "Name": "TUNDRA", "Description": "", "Amount": 1200, "PeriodId": 4, "OperationId": 104, "AccountId": 204 },
-                    { "Name": "TELEFONO", "Description": "", "Amount": 500, "PeriodId": 4, "OperationId": 105, "AccountId": 205 },
-                    { "Name": "LICENCIAS", "Description": "", "Amount": 60, "PeriodId": 4, "OperationId": 106, "AccountId": 206 },
-                    { "Name": "CELULAR", "Description": "", "Amount": 990, "PeriodId": 4, "OperationId": 107, "AccountId": 207 },
-                    { "Name": "PALLELLAT Y FORLLIS", "Description": "", "Amount": 110, "PeriodId": 4, "OperationId": 108, "AccountId": 208 },
-                    { "Name": "FPL", "Description": "", "Amount": 1001, "PeriodId": 4, "OperationId": 109, "AccountId": 209 },
-                    { "Name": "PALACE", "Description": "", "Amount": 1050, "PeriodId": 4, "OperationId": 110, "AccountId": 210 },
-                    { "Name": "WATER", "Description": "", "Amount": 1200, "PeriodId": 4, "OperationId": 111, "AccountId": 211 },
-                    { "Name": "INTERNET", "Description": "", "Amount": 300, "PeriodId": 4, "OperationId": 112, "AccountId": 212 },
-                    { "Name": "SEGURO MEDICO", "Description": "", "Amount": 310, "PeriodId": 4, "OperationId": 113, "AccountId": 213 },
-                    { "Name": "SEGURO DOMINGO", "Description": "", "Amount": 500, "PeriodId": 4, "OperationId": 114, "AccountId": 214 },
-                    { "Name": "BASURA", "Description": "", "Amount": 700, "PeriodId": 4, "OperationId": 115, "AccountId": 215 },
-                    { "Name": "FAUSTO", "Description": "", "Amount": 800, "PeriodId": 4, "OperationId": 116, "AccountId": 216 },
-                    { "Name": "PACA", "Description": "", "Amount": 900, "PeriodId": 4, "OperationId": 117, "AccountId": 217 },
-                    { "Name": "RENTA", "Description": "", "Amount": 10, "PeriodId": 4, "OperationId": 118, "AccountId": 218 },
-                    { "Name": "LEXUS", "Description": "", "Amount": 23, "PeriodId": 4, "OperationId": 119, "AccountId": 219 },
-                    { "Name": "CHAPAS", "Description": "", "Amount": 76, "PeriodId": 4, "OperationId": 120, "AccountId": 220 },
-                    { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55, "PeriodId": 4, "OperationId": 121, "AccountId": 221 }
+                    { "Name": "Salarios", "Description": "", "Amount": 100, "PeriodId": null, "OperationId": 100, "AccountId": 200 },
+                    { "Name": "BANK CHARGES", "Description": "", "Amount": 2100, "PeriodId": null, "OperationId": 101, "AccountId": 201 },
+                    { "Name": "USATAX", "Description": "", "Amount": 10, "PeriodId": null, "OperationId": 102, "AccountId": 202 },
+                    { "Name": "SUN PASS", "Description": "", "Amount": 1100, "PeriodId": null, "OperationId": 103, "AccountId": 203 },
+                    { "Name": "TUNDRA", "Description": "", "Amount": 1200, "PeriodId": null, "OperationId": 104, "AccountId": 204 },
+                    { "Name": "TELEFONO", "Description": "", "Amount": 500, "PeriodId": null, "OperationId": 105, "AccountId": 205 },
+                    { "Name": "LICENCIAS", "Description": "", "Amount": 60, "PeriodId": null, "OperationId": 106, "AccountId": 206 },
+                    { "Name": "CELULAR", "Description": "", "Amount": 990, "PeriodId": null, "OperationId": 107, "AccountId": 207 },
+                    { "Name": "PALLELLAT Y FORLLIS", "Description": "", "Amount": 110, "PeriodId": null, "OperationId": 108, "AccountId": 208 },
+                    { "Name": "FPL", "Description": "", "Amount": 1001, "PeriodId": null, "OperationId": 109, "AccountId": 209 },
+                    { "Name": "PALACE", "Description": "", "Amount": 1050, "PeriodId": null, "OperationId": 110, "AccountId": 210 },
+                    { "Name": "WATER", "Description": "", "Amount": 1200, "PeriodId": null, "OperationId": 111, "AccountId": 211 },
+                    { "Name": "INTERNET", "Description": "", "Amount": 300, "PeriodId": null, "OperationId": 112, "AccountId": 212 },
+                    { "Name": "SEGURO MEDICO", "Description": "", "Amount": 310, "PeriodId": null, "OperationId": 113, "AccountId": 213 },
+                    { "Name": "SEGURO DOMINGO", "Description": "", "Amount": 500, "PeriodId": null, "OperationId": 114, "AccountId": 214 },
+                    { "Name": "BASURA", "Description": "", "Amount": 700, "PeriodId": null, "OperationId": 115, "AccountId": 215 },
+                    { "Name": "FAUSTO", "Description": "", "Amount": 800, "PeriodId": null, "OperationId": 116, "AccountId": 216 },
+                    { "Name": "PACA", "Description": "", "Amount": 900, "PeriodId": null, "OperationId": 117, "AccountId": 217 },
+                    { "Name": "RENTA", "Description": "", "Amount": 10, "PeriodId": null, "OperationId": 118, "AccountId": 218 },
+                    { "Name": "LEXUS", "Description": "", "Amount": 23, "PeriodId": null, "OperationId": 119, "AccountId": 219 },
+                    { "Name": "CHAPAS", "Description": "", "Amount": 76, "PeriodId": null, "OperationId": 120, "AccountId": 220 },
+                    { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55, "PeriodId": null, "OperationId": 121, "AccountId": 221 }
                 ];
 
                 // fired when table rows are selected
@@ -543,7 +554,7 @@ angular
                                 $scope.gridSelectedItem = r;
                                 return;
                             }
-                        })
+                        });
                     }
                 }, true);
 

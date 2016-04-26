@@ -23,6 +23,7 @@ namespace DPProject.Data
         public string Code { get; set; }
         public string Name { get; set; }
         public int GroupId { get; set; }
+        public bool Disabled { get; set; }
     
         public virtual CustomerGroup CustomerGroup { get; set; }
         public virtual ICollection<Sale> Sales { get; set; }
