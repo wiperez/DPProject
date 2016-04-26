@@ -143,6 +143,21 @@ namespace DPProject.Controllers
                 return BadRequest<object>(ex);
             }
         }
+
+        [HttpPost]
+        [Route("expenses")]
+        public IHttpActionResult GetExpenses(SmartTableParamModel<ExpensePredicateModel> M)
+        {
+            try
+            {
+                var result = Service.GetExpenses(M);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
     }
 
 }

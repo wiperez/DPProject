@@ -29,6 +29,7 @@ namespace DPProject.Services
         ICollection<JournalModel> GetOperations(int page, int count);
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
         ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
+        SmartTableModel<ExpenseModel> GetExpenses(SmartTableParamModel<ExpensePredicateModel> M);
 
         bool Delete(int operationId);
         
@@ -73,6 +74,46 @@ namespace DPProject.Services
         public JournalModel Get(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public SmartTableModel<ExpenseModel> GetExpenses(SmartTableParamModel<ExpensePredicateModel> M)
+        {
+            var accounts = Repository.GetRepository<Account>().Queryable();
+            var operations = Repository.GetRepository<JournalOperation>().Queryable();
+
+            var parentAccount = accounts.First(a => a.AccountName.Equals("Gastos"))
+                .ParentAccount;
+
+            var RecordSet = from a in accounts
+                            join o in operations on a.AccountId 
+                                equals o.AccountId into ea
+                            from e in ea.DefaultIfEmpty()
+                            where e.PeriodId == M.Predicate.PeriodId &&
+                                a.ParentAccount == parentAccount
+                            select new ExpenseModel()
+                            {
+                                Name = a.AccountName,
+                                Description = a.AccountDescription,
+                                Amount = e.Amount,
+                                AccountId = a.AccountId,
+                                PeriodId = e.PeriodId,
+                                OperationId = e.Id
+                            };
+
+            var TList = RecordSet.ToList();
+            if (!string.IsNullOrEmpty(M.Sort.Predicate))
+            {
+                TList = TList.OrderBy(string.Format("{0} {1}", M.Sort.Predicate, M.Sort.Reverse ? "DESC" : "ASC")).ToList();
+            }
+
+            return new SmartTableModel<ExpenseModel>()
+            {
+                Rows = TList.Skip(M.Pagination.Start).Take(M.Pagination.Number),
+                NumberOfPages = Convert.ToInt32(Math.Ceiling((float)TList.Count() / M.Pagination.Number)),
+                Start = M.Pagination.Start,
+                Number = M.Pagination.Number,
+                RowCount = TList.Count()
+            };
         }
 
         public ICollection<JournalModel> GetOperations(int page, int count)

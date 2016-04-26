@@ -494,17 +494,6 @@ angular
         {
             $scope.getExpenses = function (tableState) {
 
-                /*
-                    select Account.AccountId,Account.AccountCode,
-                        Account.ParentAccount,Account.AccountName,
-                        Account.AccountDescription,JournalOperation.PeriodId,
-                        JournalOperation.Id AS OperationId,
-                        ISNULL(JournalOperation.Amount, 0) AS Amount
-                    from Account left join JournalOperation 
-                        on Account.AccountId = JournalOperation.AccountId
-                    where Account.ParentAccount=4
-                */
-
                 $scope.processExpense = function (action) {
                     $rootScope.action = action;
                     var modalInstance = $modal.open({
@@ -519,7 +508,7 @@ angular
 
                 tableState.pagination.number = 10;
 
-                $scope.gridDataSet = [
+                /*$scope.gridDataSet = [
                     { "Name": "Salarios", "Description": "", "Amount": 100, "PeriodId": null, "OperationId": 100, "AccountId": 200 },
                     { "Name": "BANK CHARGES", "Description": "", "Amount": 2100, "PeriodId": null, "OperationId": 101, "AccountId": 201 },
                     { "Name": "USATAX", "Description": "", "Amount": 10, "PeriodId": null, "OperationId": 102, "AccountId": 202 },
@@ -542,7 +531,7 @@ angular
                     { "Name": "LEXUS", "Description": "", "Amount": 23, "PeriodId": null, "OperationId": 119, "AccountId": 219 },
                     { "Name": "CHAPAS", "Description": "", "Amount": 76, "PeriodId": null, "OperationId": 120, "AccountId": 220 },
                     { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55, "PeriodId": null, "OperationId": 121, "AccountId": 221 }
-                ];
+                ];*/
 
                 // fired when table rows are selected
                 $scope.$watch('gridDataSet', function (rows) {
@@ -558,17 +547,23 @@ angular
                     }
                 }, true);
 
-                return; // quitar cuando ya puedan venir datos desde el server
+                //return; // quitar cuando ya puedan venir datos desde el server
 
                 var params = {
-                    predicate: tableState.search.predicateObject ? tableState.search.predicateObject : {Description:""},
+                    predicate: tableState.search.predicateObject ? tableState.search.predicateObject : {Name:""},
                     pagination: tableState.pagination,
                     sort: tableState.sort
                 };
 
-                var request = $resource("api/Expenses/get", null, { 'postQuery': { method: "POST", isArray: false } });
+                var selectedOption = $('.tool-bar-top').find('select option:selected');
+                var period = $('.tool-bar-top').find('option')
+                    .index(selectedOption) + 1;
+                params.predicate.PeriodId = period;
+
+                var request = $resource("api/Journal/expenses", null, { 'postQuery': { method: "POST", isArray: false } });
 
                 request.postQuery(params).$promise.then(function (result) {
+                    console.log(tableState);
                     $scope.gridSelectedItem = null;
                     $scope.gridDataSet = result.Rows;
                     $scope.pages = result.NumberOfPages;
@@ -587,14 +582,17 @@ angular
         '$scope', '$rootScope', '$modalInstance', 'sweetAlert', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, $modalInstance, sweetAlert, $resource, $filter, $timeout)
         {
-            $scope.gridSelectedItem = angular.element('#expenses-table .st-selected').scope().row;
-
             $scope.expense = {
                 OperationId: 0,
                 Name: '',
                 Description: '',
                 Amount: ''
             };
+
+            var selRow = $('#expenses-table .st-selected');
+            $scope.gridSelectedItem = selRow.length > 0 ?
+                angular.element(selRow).scope().row : $scope.expense;
+            console.log($scope.gridSelectedItem);
 
             $scope.insert = function (expense) {
                 return $resource("api/Expense/").save(expense)
