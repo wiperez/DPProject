@@ -563,7 +563,7 @@ angular
                 var request = $resource("api/Journal/expenses", null, { 'postQuery': { method: "POST", isArray: false } });
 
                 request.postQuery(params).$promise.then(function (result) {
-                    console.log(tableState);
+                    if (console) console.log(result.Rows);
                     $scope.gridSelectedItem = null;
                     $scope.gridDataSet = result.Rows;
                     $scope.pages = result.NumberOfPages;
@@ -592,7 +592,6 @@ angular
             var selRow = $('#expenses-table .st-selected');
             $scope.gridSelectedItem = selRow.length > 0 ?
                 angular.element(selRow).scope().row : $scope.expense;
-            console.log($scope.gridSelectedItem);
 
             $scope.insert = function (expense) {
                 return $resource("api/Expense/").save(expense)

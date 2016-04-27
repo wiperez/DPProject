@@ -82,25 +82,52 @@ namespace DPProject.Services
             var operations = Repository.GetRepository<JournalOperation>().Queryable();
 
             var parentAccount = accounts.First(a => a.AccountName.Equals("Gastos"))
-                .ParentAccount;
+                .AccountId;
 
-            var RecordSet = from a in accounts
-                            join o in operations on a.AccountId 
-                                equals o.AccountId into ea
-                            from e in ea.DefaultIfEmpty()
-                            where e.PeriodId == M.Predicate.PeriodId &&
-                                a.ParentAccount == parentAccount
-                            select new ExpenseModel()
-                            {
-                                Name = a.AccountName,
-                                Description = a.AccountDescription,
-                                Amount = e.Amount,
-                                AccountId = a.AccountId,
-                                PeriodId = e.PeriodId,
-                                OperationId = e.Id
-                            };
+            var expenseElements = from a in accounts
+                                  where a.ParentAccount == parentAccount
+                                  select new ExpenseModel()
+                                  {
+                                      AccountName = a.AccountName,
+                                      Description = a.AccountDescription,
+                                      Amount = 0,
+                                      AccountCode = a.AccountCode,
+                                      ParentAccount = parentAccount,
+                                      AccountId = a.AccountId,
+                                      PeriodId = M.Predicate.PeriodId,
+                                      OperationId = 0
+                                  };
 
-            var TList = RecordSet.ToList();
+            var journal = from o in operations
+                          join a in accounts on o.AccountId equals a.AccountId
+                          where o.PeriodId == M.Predicate.PeriodId
+                            && a.ParentAccount == parentAccount
+                            && o.Deleted == false
+                          select new
+                          {
+                              AccountId = a.AccountId,
+                              AccountCode = a.AccountCode,
+                              Amount = o.Amount,
+                              OperationId = o.Id
+                          };
+
+            var result = new List<ExpenseModel>();
+
+            foreach (var el in expenseElements)
+            {
+                var accountId = el.AccountId;
+                var already = journal.Count(o => o.AccountId.Equals(accountId)) > 0
+                    ? true : false;
+                if (already)
+                {
+                    var j = journal.First(o => o.AccountId.Equals(accountId));
+                    el.Amount = j.Amount;
+                    el.OperationId = j.OperationId;
+                }
+                result.Add(el);
+            }
+
+            var TList = result.ToList();
             if (!string.IsNullOrEmpty(M.Sort.Predicate))
             {
                 TList = TList.OrderBy(string.Format("{0} {1}", M.Sort.Predicate, M.Sort.Reverse ? "DESC" : "ASC")).ToList();
