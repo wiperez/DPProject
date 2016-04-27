@@ -109,6 +109,13 @@ angular
 
                 $scope.reloadSalesGrid();
                 $scope.reloadPurchasesGrid();
+
+                var ePanel = angular.element('#expenses-panel').scope();
+                if (ePanel) ePanel.getExpenses({
+                    search: { Name: "", PeriodId: service.getSelectedPeriod() },
+                    pagination: { start: 0, totalItemCount: 0, number: 10 },
+                    sort: {}
+                });
             };
 
             $scope.getWeeksOfMonth = function () {
@@ -489,8 +496,8 @@ angular
 
     .controller('ExpensesController', [
 
-        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout', '$modal',
-        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout, $modal)
+        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout', '$modal', 'operationsService',
+        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout, $modal, service)
         {
             $scope.getExpenses = function (tableState) {
 
@@ -508,31 +515,6 @@ angular
 
                 tableState.pagination.number = 10;
 
-                /*$scope.gridDataSet = [
-                    { "Name": "Salarios", "Description": "", "Amount": 100, "PeriodId": null, "OperationId": 100, "AccountId": 200 },
-                    { "Name": "BANK CHARGES", "Description": "", "Amount": 2100, "PeriodId": null, "OperationId": 101, "AccountId": 201 },
-                    { "Name": "USATAX", "Description": "", "Amount": 10, "PeriodId": null, "OperationId": 102, "AccountId": 202 },
-                    { "Name": "SUN PASS", "Description": "", "Amount": 1100, "PeriodId": null, "OperationId": 103, "AccountId": 203 },
-                    { "Name": "TUNDRA", "Description": "", "Amount": 1200, "PeriodId": null, "OperationId": 104, "AccountId": 204 },
-                    { "Name": "TELEFONO", "Description": "", "Amount": 500, "PeriodId": null, "OperationId": 105, "AccountId": 205 },
-                    { "Name": "LICENCIAS", "Description": "", "Amount": 60, "PeriodId": null, "OperationId": 106, "AccountId": 206 },
-                    { "Name": "CELULAR", "Description": "", "Amount": 990, "PeriodId": null, "OperationId": 107, "AccountId": 207 },
-                    { "Name": "PALLELLAT Y FORLLIS", "Description": "", "Amount": 110, "PeriodId": null, "OperationId": 108, "AccountId": 208 },
-                    { "Name": "FPL", "Description": "", "Amount": 1001, "PeriodId": null, "OperationId": 109, "AccountId": 209 },
-                    { "Name": "PALACE", "Description": "", "Amount": 1050, "PeriodId": null, "OperationId": 110, "AccountId": 210 },
-                    { "Name": "WATER", "Description": "", "Amount": 1200, "PeriodId": null, "OperationId": 111, "AccountId": 211 },
-                    { "Name": "INTERNET", "Description": "", "Amount": 300, "PeriodId": null, "OperationId": 112, "AccountId": 212 },
-                    { "Name": "SEGURO MEDICO", "Description": "", "Amount": 310, "PeriodId": null, "OperationId": 113, "AccountId": 213 },
-                    { "Name": "SEGURO DOMINGO", "Description": "", "Amount": 500, "PeriodId": null, "OperationId": 114, "AccountId": 214 },
-                    { "Name": "BASURA", "Description": "", "Amount": 700, "PeriodId": null, "OperationId": 115, "AccountId": 215 },
-                    { "Name": "FAUSTO", "Description": "", "Amount": 800, "PeriodId": null, "OperationId": 116, "AccountId": 216 },
-                    { "Name": "PACA", "Description": "", "Amount": 900, "PeriodId": null, "OperationId": 117, "AccountId": 217 },
-                    { "Name": "RENTA", "Description": "", "Amount": 10, "PeriodId": null, "OperationId": 118, "AccountId": 218 },
-                    { "Name": "LEXUS", "Description": "", "Amount": 23, "PeriodId": null, "OperationId": 119, "AccountId": 219 },
-                    { "Name": "CHAPAS", "Description": "", "Amount": 76, "PeriodId": null, "OperationId": 120, "AccountId": 220 },
-                    { "Name": "SEGURO PROPIEDAD", "Description": "", "Amount": 55, "PeriodId": null, "OperationId": 121, "AccountId": 221 }
-                ];*/
-
                 // fired when table rows are selected
                 $scope.$watch('gridDataSet', function (rows) {
                     // get selected row
@@ -549,21 +531,18 @@ angular
 
                 //return; // quitar cuando ya puedan venir datos desde el server
 
+                if (console) console.log(tableState);
                 var params = {
                     predicate: tableState.search.predicateObject ? tableState.search.predicateObject : {Name:""},
                     pagination: tableState.pagination,
                     sort: tableState.sort
                 };
 
-                var selectedOption = $('.tool-bar-top').find('select option:selected');
-                var period = $('.tool-bar-top').find('option')
-                    .index(selectedOption) + 1;
-                params.predicate.PeriodId = period;
+                params.predicate.PeriodId = service.getSelectedPeriod();
 
                 var request = $resource("api/Journal/expenses", null, { 'postQuery': { method: "POST", isArray: false } });
 
                 request.postQuery(params).$promise.then(function (result) {
-                    if (console) console.log(result.Rows);
                     $scope.gridSelectedItem = null;
                     $scope.gridDataSet = result.Rows;
                     $scope.pages = result.NumberOfPages;

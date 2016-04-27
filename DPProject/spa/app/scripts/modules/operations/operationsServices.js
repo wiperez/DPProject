@@ -6,6 +6,14 @@ angular
         function ($modal, $resource) {
             var srv = {};
 
+            srv.getSelectedPeriod = function () {
+                var selectedOption = $('.tool-bar-top')
+                    .find('select option:selected');
+                var period = $('.tool-bar-top').find('option')
+                    .index(selectedOption) + 1;
+                return period;
+            };
+
             srv.getNumberOfWeeks = function (_month) {
                 var start = moment(_month, "MM/DD/YYYY").startOf('month').format('DD');
                 var end = moment(_month, "MM/DD/YYYY").endOf('month').format('DD');
