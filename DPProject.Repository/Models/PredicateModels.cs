@@ -24,7 +24,7 @@ namespace DPProject.Repository.Models
     public class ExpensePredicateModel
     {
         public int OperationId { get; set; }
-        public string Name { get; set; }
+        public string AccountName { get; set; }
         public string Description { get; set; }
         public int AccountId { get; set; }
         public int PeriodId { get; set; }

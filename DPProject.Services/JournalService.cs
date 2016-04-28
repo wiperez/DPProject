@@ -124,7 +124,13 @@ namespace DPProject.Services
                     el.Amount = j.Amount;
                     el.OperationId = j.OperationId;
                 }
-                result.Add(el);
+                if ((string.IsNullOrEmpty(M.Predicate.AccountName) ||
+                    el.AccountName.ToLower().Contains(M.Predicate.AccountName.ToLower()))
+                    && 
+                    (el.Amount.ToString().Contains(M.Predicate.Amount.ToString())))
+                {
+                    result.Add(el);
+                }
             }
 
             var TList = result.ToList();

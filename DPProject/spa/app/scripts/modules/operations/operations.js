@@ -529,9 +529,6 @@ angular
                     }
                 }, true);
 
-                //return; // quitar cuando ya puedan venir datos desde el server
-
-                if (console) console.log(tableState);
                 var params = {
                     predicate: tableState.search.predicateObject ? tableState.search.predicateObject : {Name:""},
                     pagination: tableState.pagination,

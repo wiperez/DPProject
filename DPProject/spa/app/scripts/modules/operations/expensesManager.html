@@ -26,14 +26,12 @@
                             <th class="expander"></th>
                             <th st-sort="AccountName" class="st-sort-label" title="Click to sort">Nombre</th>
                             <th st-sort="Amount" class="st-sort-label" title="Click to sort">Monto</th>
-                            <th st-sort="Description" class="st-sort-label" title="Click to sort">Descripci&oacute;n</th>
                         </tr>
                         <tr>
                             <!--ng-show="expandFilters"-->
                             <th></th>
                             <th><input class="form-control" st-search="AccountName" /></th>
                             <th><input class="form-control" st-search="Amount" /></th>
-                            <th><input class="form-control" st-search="Description" /></th>
                         </tr>
                     </thead>
 
@@ -44,7 +42,6 @@
                             </td>
                             <td>{{row.AccountName}}</td>
                             <td>{{row.Amount}}</td>
-                            <td>{{row.Description}}</td>
                         </tr>
                         <tr ng-repeat-end ng-show="row.isExpanded" class="detail-row">
                             <td colspan="9" class="td-transaction-detail">
