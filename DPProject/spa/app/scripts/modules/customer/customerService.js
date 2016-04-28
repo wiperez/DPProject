@@ -5,6 +5,7 @@ angular
     .service('customerService', ['$modal', '$resource', function ($modal, $resource) {
 
         var srv = {};
+
         var modalInstance = null;
 
         srv.getCustomers = function (_params) {
@@ -49,7 +50,11 @@ angular
     .module('app.customer')
     .controller('customerDialog', ['$scope', '$modalInstance', 'customerService', 'sweetAlert',
         function ($scope, $modalInstance, service, sweetAlert) {
+
+            $scope.customerGroups = $scope.$parent.customerGroups;
+            
             $scope.call = service.insert;
+
             $scope.customer = {
                 Id: 0,
                 Code: "",
@@ -61,8 +66,6 @@ angular
                 $scope.call = service.update;
                 angular.copy($scope.gridSelectedItem, $scope.customer);
             }
-
-            $scope.customerGroups = $scope.$parent.customerGroups;
 
             $scope.ok = function () {
                 $scope.saving = true;
@@ -84,10 +87,12 @@ angular
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
+
         }
     ])
     .controller('editCustomerDialog', ['$scope', '$modalInstance', 'customerService', 'sweetAlert',
         function ($scope, $modalInstance, service, sweetAlert) {
+
             $scope.customer = {
                 Code: "",
                 Name: "",
@@ -113,6 +118,7 @@ angular
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
+
         }
     ]);
 
