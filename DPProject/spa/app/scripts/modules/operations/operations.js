@@ -3,8 +3,8 @@
 angular
     .module('app.operations', [])
     .controller('OperationsController', [
-        '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', '$interval',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval)
+        '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', 'ShortcutFunctions',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $s)
         {
             $rootScope.sumBy = function (anArray, field) {
                 return _.sumBy(anArray, field);
@@ -15,7 +15,7 @@ angular
 
             $rootScope.getGridEl = function (n) {
                 var className = '.' + n + '-table';
-                return angular.element($(className)[0]);
+                return $s.el($(className)[0]);
             };
 
             $rootScope.getGrid = function (n) {
@@ -110,7 +110,7 @@ angular
                 $scope.reloadSalesGrid();
                 $scope.reloadPurchasesGrid();
 
-                var ePanel = angular.element('#expenses-panel').scope();
+                var ePanel = $s.scope('#expenses-panel');
                 if (ePanel) ePanel.getExpenses({
                     search: { Name: "", PeriodId: service.getSelectedPeriod() },
                     pagination: { start: 0, totalItemCount: 0, number: 10 },
@@ -554,8 +554,8 @@ angular
 
     ]).controller('ExpensesDialog', [
 
-        '$scope', '$rootScope', '$modalInstance', 'sweetAlert', '$resource', '$filter', '$timeout',
-        function ($scope, $rootScope, $modalInstance, sweetAlert, $resource, $filter, $timeout)
+        '$scope', '$rootScope', '$modalInstance', 'sweetAlert', '$resource', '$filter', '$timeout', 'ShortcutFunctions',
+        function ($scope, $rootScope, $modalInstance, sweetAlert, $resource, $filter, $timeout, $s)
         {
             $scope.expense = {
                 OperationId: 0,
@@ -568,7 +568,7 @@ angular
 
             var selRow = $('#expenses-table .st-selected');
             $scope.gridSelectedItem = selRow.length > 0 ?
-                angular.element(selRow).scope().row : $scope.expense;
+                $s.scope(selRow).row : $scope.expense;
             angular.copy($scope.gridSelectedItem, $scope.expense);
 
             $scope.insert = function (expense) {
@@ -596,8 +596,8 @@ angular
                     if ($scope.expense.OperationId !== 0) {
                         angular.copy($scope.expense, $scope.gridSelectedItem);
                     }
-                    var expMainScope = angular.element('#expenses-panel').scope()
-                    expMainScope.getExpenses(expMainScope.tableState);
+                    var upperScope = $s.scope('#expenses-panel')
+                    upperScope.getExpenses(upperScope.tableState);
                     $modalInstance.close();
                     $scope.saving = false;
                 })

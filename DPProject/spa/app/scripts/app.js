@@ -14,6 +14,7 @@
 
         'mygrid',
 
+        'app.services',
         'app.dashboard',
         'app.customer',
         'app.vendor',

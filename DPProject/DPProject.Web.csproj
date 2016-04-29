@@ -323,6 +323,7 @@
     <Content Include="spa\app\scripts\modules\vendor\vendor.js" />
     <Content Include="spa\app\scripts\modules\vendor\vendorsManager.html" />
     <Content Include="spa\app\scripts\modules\vendor\vendorService.js" />
+    <Content Include="spa\app\scripts\services.js" />
     <Content Include="spa\app\styles\img\green%402x.png" />
     <Content Include="spa\app\styles\img\green.png" />
     <Content Include="spa\app\styles\style.css" />
