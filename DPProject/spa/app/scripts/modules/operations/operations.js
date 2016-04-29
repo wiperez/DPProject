@@ -595,9 +595,9 @@ angular
                 $scope.call($scope.expense).then(function (response) {
                     if ($scope.expense.OperationId !== 0) {
                         angular.copy($scope.expense, $scope.gridSelectedItem);
-                    } else {
-                        $scope.$parent.getExpenses($scope.$parent.tableState);
                     }
+                    var expMainScope = angular.element('#expenses-panel').scope()
+                    expMainScope.getExpenses(expMainScope.tableState);
                     $modalInstance.close();
                     $scope.saving = false;
                 })
