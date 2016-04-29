@@ -128,9 +128,8 @@ namespace DPProject.Services
                     el.Amount = j.Amount;
                     el.OperationId = j.OperationId;
                     el.PeriodId = j.PeriodId;
-                    el.OperationDate = DateTime
-                        .Parse(string.Format("{0}-{1}-{2}",
-                        DateTime.Now.Year, DateTime.Now.Month, "01"));
+                    el.OperationDate = DateTime.Parse(string.Format("{0}-{1}-{2}",
+                        DateTime.Now.Year, j.PeriodId, "01"));
                 }
                 if ((string.IsNullOrEmpty(M.Predicate.AccountName) ||
                     el.AccountName.ToLower().Contains(M.Predicate.AccountName.ToLower()))
@@ -255,6 +254,9 @@ namespace DPProject.Services
         {
             var j = Repository.Find(M.OperationId);
             j.Amount = M.Amount;
+            j.PeriodId = M.PeriodId;
+            j.OperationDate = DateTime.Parse(string.Format("{0}-{1}-{2}", 
+                DateTime.Now.Year, M.PeriodId, "01"));
             j.Description = M.Description;
             Update(j);
             UnitOfWorkAsync.SaveChanges();
