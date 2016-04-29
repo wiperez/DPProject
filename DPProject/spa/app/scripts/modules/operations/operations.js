@@ -501,8 +501,7 @@ angular
         {
             $scope.getExpenses = function (tableState) {
 
-                $scope.processExpense = function (action) {
-                    $rootScope.action = action;
+                $scope.processExpense = function () {
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'spa/app/scripts/modules/operations/expensesDialog.html',
@@ -562,50 +561,50 @@ angular
                 OperationId: 0,
                 Name: '',
                 Description: '',
-                Amount: ''
+                Amount: 0,
+                OperationDate: '',
+                PeriodId: 0
             };
 
             var selRow = $('#expenses-table .st-selected');
             $scope.gridSelectedItem = selRow.length > 0 ?
                 angular.element(selRow).scope().row : $scope.expense;
+            angular.copy($scope.gridSelectedItem, $scope.expense);
 
             $scope.insert = function (expense) {
-                return $resource("api/Expense/").save(expense)
+                return $resource("api/Journal/expense").save(expense)
                     .$promise;
             };
 
             $scope.update = function (expense) {
-                var resource = $resource('/api/Expense/:OperationId', null, { 'update': { method: 'PUT' } });
-                resource.update({ Id: expense.OperationId }, expense)
+                var resource = $resource('/api/Journal/expense', null, { 'update': { method: 'PUT' } });
+                return resource.update({ Id: expense.OperationId }, expense)
                     .$promise;
             };
 
-            if ($rootScope.action === "update") {
-                angular.copy($scope.gridSelectedItem, $scope.expense);
-            }
-
             $scope.ok = function () {
+
                 $scope.saving = true;
 
-                if ($rootScope.action === 'update')
-                    $scope.call = $scope.update;
-                else
+                // Si no tiene OperationId, no existe, y la accion sera 'Insert'
+                if ($scope.expense.OperationId === 0)
                     $scope.call = $scope.insert;
+                else
+                    $scope.call = $scope.update;
 
-                $scope.call($scope)
-                    .then(function (response) {
-                        if ($rootScope.action == "update") {
-                            angular.copy($scope.expense, $scope.gridSelectedItem);
-                        } else {
-                            $rootScope.getExpenses($rootScope.tableState);
-                        }
-                        $modalInstance.close();
-                        $scope.saving = false;
-                    })
-                    .catch(function (response) {
-                        sweetAlert.resolveError(response);
-                        $scope.saving = false;
-                    });
+                $scope.call($scope.expense).then(function (response) {
+                    if ($scope.expense.OperationId !== 0) {
+                        angular.copy($scope.expense, $scope.gridSelectedItem);
+                    } else {
+                        $scope.$parent.getExpenses($scope.$parent.tableState);
+                    }
+                    $modalInstance.close();
+                    $scope.saving = false;
+                })
+                .catch(function (response) {
+                    sweetAlert.resolveError(response);
+                    $scope.saving = false;
+                });
             };
 
             $scope.cancel = function () {

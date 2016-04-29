@@ -22,6 +22,7 @@ namespace DPProject.Services
         int Insert(PurchaseOperationModel M);
 
         void Update(JournalModel M);
+        int Update(ExpenseModel M);
         int Update(SaleOperationModel m);
         int Update(PurchaseOperationModel m);
 
@@ -30,6 +31,7 @@ namespace DPProject.Services
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
         ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
         SmartTableModel<ExpenseModel> GetExpenses(SmartTableParamModel<ExpensePredicateModel> M);
+        int SaveExpense(ExpenseModel M);
 
         bool Delete(int operationId);
         
@@ -108,7 +110,9 @@ namespace DPProject.Services
                               AccountId = a.AccountId,
                               AccountCode = a.AccountCode,
                               Amount = o.Amount,
-                              OperationId = o.Id
+                              OperationId = o.Id,
+                              PeriodId = o.PeriodId,
+                              OperationDate = o.OperationDate
                           };
 
             var result = new List<ExpenseModel>();
@@ -123,6 +127,10 @@ namespace DPProject.Services
                     var j = journal.First(o => o.AccountId.Equals(accountId));
                     el.Amount = j.Amount;
                     el.OperationId = j.OperationId;
+                    el.PeriodId = j.PeriodId;
+                    el.OperationDate = DateTime
+                        .Parse(string.Format("{0}-{1}-{2}",
+                        DateTime.Now.Year, DateTime.Now.Month, "01"));
                 }
                 if ((string.IsNullOrEmpty(M.Predicate.AccountName) ||
                     el.AccountName.ToLower().Contains(M.Predicate.AccountName.ToLower()))
@@ -229,6 +237,28 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
 
             return jOper.Id;
+        }
+
+        public int SaveExpense(ExpenseModel M)
+        {
+            return Insert(new JournalModel()
+            {
+                AccountId = M.AccountId,
+                Amount = M.Amount,
+                Description = M.Description,
+                OperationDate = M.OperationDate,
+                PeriodId = M.PeriodId
+            });
+        }
+
+        public int Update(ExpenseModel M)
+        {
+            var j = Repository.Find(M.OperationId);
+            j.Amount = M.Amount;
+            j.Description = M.Description;
+            Update(j);
+            UnitOfWorkAsync.SaveChanges();
+            return j.Id;
         }
 
         public int Update(PurchaseOperationModel m)

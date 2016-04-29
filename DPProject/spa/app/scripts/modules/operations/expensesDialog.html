@@ -1,7 +1,7 @@
 ﻿<div class="inmodal">
     <div class="color-line"></div>
     <div class="modal-header">
-        <h4 class="modal-title">{{action == "insert" ? "Nuevo" : "Editar"}} Elemento de Gasto</h4> 
+        <h5 class="modal-title">Modificar/Agregar Elemento de Gasto</h5> 
     </div>
     <div class="modal-body row">
         <form action="" class="form-horizontal row-border col-sm-12" name="form" novalidate>
@@ -20,7 +20,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Descripci&oacute;n: </label>
                 <div class="col-sm-9 input-group">
-                    <input class="form-control" name="description" type="text" ng-model="expense.Description" ng-required="true" ng-maxlength="250" />
+                    <input class="form-control" name="description" type="text" ng-model="expense.Description" ng-maxlength="250" />
                 </div>
             </div>
         </form>

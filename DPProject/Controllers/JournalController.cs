@@ -158,6 +158,36 @@ namespace DPProject.Controllers
                 return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("expense")]
+        public IHttpActionResult SaveExpense(ExpenseModel M)
+        {
+            try
+            {
+                var result = Service.SaveExpense(M);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("expense")]
+        public IHttpActionResult UpdateExpense(ExpenseModel M)
+        {
+            try
+            {
+                Service.Update(M);
+                return Ok(new { response = "success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
     }
 
 }
