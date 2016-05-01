@@ -34,7 +34,8 @@ namespace DPProject.Services
         int SaveExpense(ExpenseModel M);
 
         bool Delete(int operationId);
-        
+        bool DeleteExpense(int operationId);
+
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -64,6 +65,21 @@ namespace DPProject.Services
                     OperationDate = j.OperationDate,
                     PeriodId = j.PeriodId
                 });
+                UnitOfWorkAsync.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteExpense(int operationId)
+        {
+            try
+            {
+                var j = Find(operationId);
+                Delete(j);
                 UnitOfWorkAsync.SaveChanges();
                 return true;
             }

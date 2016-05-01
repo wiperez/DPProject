@@ -10,7 +10,7 @@
                     <span class="pe-7s-users"></span>
                     <span class="bold ng-binding">Modificar</span>
                 </button>
-                <button class="btn btn-danger2" type="button" ng-click="delete()" ng-disabled="!gridSelectedItem">
+                <button class="btn btn-danger2" type="button" ng-click="delete()" ng-disabled="!gridSelectedItem || gridSelectedItem.Amount == 0">
                     <span class="pe-7s-delete-user"></span>
                     <span class="bold ng-binding">Eliminar</span>
                 </button>

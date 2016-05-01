@@ -547,6 +547,36 @@ angular
                     sweetAlert.resolveError(response);
                 });
             }
+
+            $scope.delete = function () {
+                var i = $scope.gridSelectedItem;
+                sweetAlert.swal({
+                    title: "¿Estás seguro?",
+                    text: "¡Realmente deseas eliminar este gasto del periodo!\n\n"
+                        + 'Gasto: ' + i.AccountName + '\n'
+                        + 'Monto: ' + i.Amount,
+                    type: "error",
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, ¡elimínalo!",
+                    closeOnConfirm: true
+                },
+                function (ok) {
+                    if (ok) {
+                        var JournalOperation = $resource('api/Journal/expense',
+                            null, { remove: { method: 'DELETE' } });
+                        JournalOperation.remove({
+                            operationId: i.OperationId
+                        }).$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                $scope.getExpenses($scope.tableState);
+                            }, 100);
+                        });
+                    }
+                });
+            };
         }
 
     ]).controller('ExpensesDialog', [

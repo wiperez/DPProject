@@ -188,6 +188,24 @@ namespace DPProject.Controllers
                 return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
             }
         }
+
+        [HttpDelete]
+        [Route("expense")]
+        public IHttpActionResult DeleteExpense(int operationId)
+        {
+            try
+            {
+                if (Service.DeleteExpense(operationId))
+                    return Ok(new { success = true });
+                else
+                    return Ok(new { success = false, message = "See the output for aditional information." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(ex);
+            }
+        }
+
     }
 
 }
