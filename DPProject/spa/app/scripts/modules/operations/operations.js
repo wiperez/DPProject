@@ -13,14 +13,10 @@ angular
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
 
-            $rootScope.getGridEl = function (n) {
-                var className = '.' + n + '-table';
-                return $s.el($(className)[0]);
-            };
-
             $rootScope.getGrid = function (n) {
+                var className = '.' + n + '-table';
                 var index = n + 'Params';
-                return $rootScope.getGridEl(n).scope()[index];
+                return $s.scope(className)[index];
             }
 
             $rootScope.getDataSet = function (n) {
