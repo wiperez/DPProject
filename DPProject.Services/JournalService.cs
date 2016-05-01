@@ -104,7 +104,9 @@ namespace DPProject.Services
                           join a in accounts on o.AccountId equals a.AccountId
                           where o.PeriodId == M.Predicate.PeriodId
                             && a.ParentAccount == parentAccount
-                            && o.Deleted == false
+                            && o.Deleted == false 
+                            && o.OperationDate.Month == M.Predicate.OperationDate.Month
+                            && o.OperationDate.Year == M.Predicate.OperationDate.Year 
                           select new
                           {
                               AccountId = a.AccountId,

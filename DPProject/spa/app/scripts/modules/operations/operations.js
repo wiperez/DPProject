@@ -530,6 +530,7 @@ angular
                     sort: tableState.sort
                 };
 
+                params.predicate.OperationDate = $.trim($rootScope.week.split("-")[0]);
                 params.predicate.PeriodId = service.getSelectedPeriod();
 
                 var request = $resource("api/Journal/expenses", null, { 'postQuery': { method: "POST", isArray: false } });
