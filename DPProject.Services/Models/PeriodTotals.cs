@@ -11,5 +11,7 @@ namespace DPProject.Services.Models
         public decimal initInvent { get; set; }
         public decimal finalInvent { get; set; }
         public decimal salaries { get; set; }
+        public decimal salesTotal { get; set; }
+        public decimal purchTotal { get; set; }
     }
 }

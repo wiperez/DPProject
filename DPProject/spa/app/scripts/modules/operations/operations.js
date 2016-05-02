@@ -77,6 +77,30 @@ angular
                 });
             };
 
+            $scope.getTotals = function () {
+                var w = $rootScope.week.toString()
+                    .replace(/\ /g, '');
+                var params = { week: w };
+                var Journal = $resource('api/Journal/totals',
+                    null, { periodTotals: { method: 'POST' } });
+                Journal.get(params).$promise.then(function (data) {
+                    if (console) console.log(data);
+                    var salesCost = new Number(data.initInvent) +
+                        new Number(data.purchTotal) +
+                        new Number(data.finalInvent);
+                    if (console) console.log(salesCost);
+                    $scope.initInvent = data.initInvent;
+                    $scope.finalInvent = data.finalInvent;
+                    $scope.salaries = data.salaries;
+                    $scope.profits = new Number(data.salesTotal) -
+                        new Number(salesCost) -
+                        new Number(data.salaries);
+                }).catch(function (response) {
+                    sweetAlert.resolveError(response);
+                    $scope.saving = false;
+                });;
+            };
+
             $scope.getWeekDate = function (_month, week) {
                 $rootScope.week = $scope.weeksOfMonth[week].value;
 
@@ -112,6 +136,8 @@ angular
                     pagination: { start: 0, totalItemCount: 0, number: 10 },
                     sort: {}
                 });
+
+                $scope.getTotals();
             };
 
             $scope.getWeeksOfMonth = function () {
@@ -271,24 +297,6 @@ angular
                     }
                 });
             };
-
-            $scope.getTotals = function () {
-                var w = $rootScope.week.toString()
-                    .replace(/\ /g, '').split("-")[0];
-                var params = { week: w };
-                var Journal = $resource('api/Journal/totals',
-                    null, { periodTotals: { method: 'POST' } });
-                Journal.get(params).$promise.then(function (data)
-                {
-                    $scope.initInvent = data.initInvent;
-                    $scope.finalInvent = data.finalInvent;
-                    $scope.salaries = data.salaries;
-                }).catch(function (response) {
-                    sweetAlert.resolveError(response);
-                    $scope.saving = false;
-                });;
-            };
-            $scope.getTotals();
 
         }
 

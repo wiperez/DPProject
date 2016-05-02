@@ -182,17 +182,29 @@ namespace DPProject.Services
 
         public PeriodTotals GetPeriodTotals(string week)
         {
-            var p = week.Split('/');
-            var d = DateTime.Parse(string.Format("{0}/{1}/{2}", p[2], p[0], p[1]));
-            var currMonth = d.Month;
-            var prevMonth = d.AddMonths(-1).Month;
-            var year = d.Year;
+            var weekStart = week.Split('-')[0];
+            var weekEnd = week.Split('-')[1];
+
+            var startDay = Convert.ToInt32(weekStart.Split('/')[1]);
+            var endDay = Convert.ToInt32(weekEnd.Split('/')[1]);
+
+            var dateParts = weekStart.Split('/');
+            var date = DateTime.Parse(string.Format("{0}/{1}/{2}", dateParts[2], dateParts[0], dateParts[1]));
+            var currMonth = date.Month;
+            var prevMonth = date.AddMonths(-1).Month;
+            var year = date.Year;
 
             var inventAccount = Repository.GetRepository<Account>()
                 .Query(a => a.AccountName.Equals("Inventario")).Select()
                 .First().AccountId;
             var salaryAccount = Repository.GetRepository<Account>()
                 .Query(a => a.AccountName.Equals("Salarios")).Select()
+                .First().AccountId;
+            var salesAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Ventas")).Select()
+                .First().AccountId;
+            var purchAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Compras")).Select()
                 .First().AccountId;
 
             var initInvent = Repository.Query(j => j.OperationDate.Day == 1
@@ -208,11 +220,26 @@ namespace DPProject.Services
                     && j.OperationDate.Year == year
                     && j.AccountId == salaryAccount).Select();
 
+            var salesTotal = Repository.Query(j => 
+                    j.OperationDate.Day >= startDay
+                    && j.OperationDate.Day <= endDay
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == salesAccount).Select().Sum(j => j.Amount);
+            var purchTotal = Repository.Query(j => 
+                    j.OperationDate.Day >= startDay
+                    && j.OperationDate.Day <= endDay
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == purchAccount).Select().Sum(j => j.Amount);
+
             return new PeriodTotals()
             {
                 initInvent = initInvent.Count() == 0 ? 0 : initInvent.First().Amount,
                 finalInvent = finalInvent.Count() == 0 ? 0 : finalInvent.First().Amount,
-                salaries = salaries.Count() == 0 ? 0 : salaries.First().Amount
+                salaries = salaries.Count() == 0 ? 0 : salaries.First().Amount,
+                salesTotal = salesTotal,
+                purchTotal = purchTotal
             };
         }
 
