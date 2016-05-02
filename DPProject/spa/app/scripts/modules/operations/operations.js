@@ -271,6 +271,25 @@ angular
                     }
                 });
             };
+
+            $scope.getTotals = function () {
+                var w = $rootScope.week.toString()
+                    .replace(/\ /g, '').split("-")[0];
+                var params = { week: w };
+                var Journal = $resource('api/Journal/totals',
+                    null, { periodTotals: { method: 'POST' } });
+                Journal.get(params).$promise.then(function (data)
+                {
+                    $scope.initInvent = data.initInvent;
+                    $scope.finalInvent = data.finalInvent;
+                    $scope.salaries = data.salaries;
+                }).catch(function (response) {
+                    sweetAlert.resolveError(response);
+                    $scope.saving = false;
+                });;
+            };
+            $scope.getTotals();
+
         }
 
     ])
@@ -598,7 +617,10 @@ angular
                 $s.scope(selRow).row : $scope.expense;
             angular.copy($scope.gridSelectedItem, $scope.expense);
 
-            $scope.insert = function (expense) {
+            $scope.insert = function (expense)
+            {
+                var d = $.trim($rootScope.week.split("-")[0]);
+                expense.OperationDate = $filter('date')(d, 'YYYY-MM-01');
                 return $resource("api/Journal/expense").save(expense)
                     .$promise;
             };
@@ -613,10 +635,10 @@ angular
 
                 $scope.saving = true;
 
-                // Si no tiene OperationId, no existe, y la accion sera 'Insert'
+                // Si no tiene OperationId, no existe, por tanto es 'Insert'
                 if ($scope.expense.OperationId === 0)
                     $scope.call = $scope.insert;
-                else
+                else // Si posee OperationId entonces es 'Update'
                     $scope.call = $scope.update;
 
                 $scope.call($scope.expense).then(function (response) {

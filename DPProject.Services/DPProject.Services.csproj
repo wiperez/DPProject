@@ -57,6 +57,7 @@
     <Compile Include="AccountService.cs" />
     <Compile Include="CustomerService.cs" />
     <Compile Include="JournalService.cs" />
+    <Compile Include="Models\PeriodTotals.cs" />
     <Compile Include="Models\SmartTableModel.cs" />
     <Compile Include="Models\SmartTableParamModel.cs" />
     <Compile Include="Models\PredicateModels.cs" />

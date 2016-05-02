@@ -32,6 +32,7 @@ namespace DPProject.Services
         ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
         SmartTableModel<ExpenseModel> GetExpenses(SmartTableParamModel<ExpensePredicateModel> M);
         int SaveExpense(ExpenseModel M);
+        PeriodTotals GetPeriodTotals(string week);
 
         bool Delete(int operationId);
         bool DeleteExpense(int operationId);
@@ -177,6 +178,42 @@ namespace DPProject.Services
         public ICollection<JournalModel> GetOperations(int page, int count)
         {
             throw new NotImplementedException();
+        }
+
+        public PeriodTotals GetPeriodTotals(string week)
+        {
+            var p = week.Split('/');
+            var d = DateTime.Parse(string.Format("{0}/{1}/{2}", p[2], p[0], p[1]));
+            var currMonth = d.Month;
+            var prevMonth = d.AddMonths(-1).Month;
+            var year = d.Year;
+
+            var inventAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Inventario")).Select()
+                .First().AccountId;
+            var salaryAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Salarios")).Select()
+                .First().AccountId;
+
+            var initInvent = Repository.Query(j => j.OperationDate.Day == 1
+                    && j.OperationDate.Month == prevMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == inventAccount).Select();
+            var finalInvent = Repository.Query(j => j.OperationDate.Day == 1
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == inventAccount).Select();
+            var salaries = Repository.Query(j => j.OperationDate.Day == 1
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == salaryAccount).Select();
+
+            return new PeriodTotals()
+            {
+                initInvent = initInvent.Count() == 0 ? 0 : initInvent.First().Amount,
+                finalInvent = finalInvent.Count() == 0 ? 0 : finalInvent.First().Amount,
+                salaries = salaries.Count() == 0 ? 0 : salaries.First().Amount
+            };
         }
 
         public ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams)

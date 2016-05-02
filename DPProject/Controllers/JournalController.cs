@@ -206,6 +206,20 @@ namespace DPProject.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("totals")]
+        public IHttpActionResult GetPeriodTotals(string week)
+        {
+            try
+            {
+                return Ok(Service.GetPeriodTotals(week));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
     }
 
 }

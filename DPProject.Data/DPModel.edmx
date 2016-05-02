@@ -283,7 +283,7 @@
           <Property Name="AccountId" Type="Int32" Nullable="false" />
           <Property Name="PeriodId" Type="Int32" Nullable="false" />
           <Property Name="OperationDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" DefaultValue="0" />
           <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Deleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Account" Relationship="DPModel.FK_JournalOperation_Account" FromRole="JournalOperation" ToRole="Account" />
