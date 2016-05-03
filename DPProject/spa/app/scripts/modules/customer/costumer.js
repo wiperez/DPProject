@@ -33,7 +33,6 @@ angular
                     $scope.gridSelectedItem = null;
                     $scope.gridDataSet = result.Rows;
                     $scope.pages = result.NumberOfPages;
-
                     tableState.pagination.totalItemCount = result.RowCount;
                     tableState.pagination.numberOfPages = result.NumberOfPages;
                 })

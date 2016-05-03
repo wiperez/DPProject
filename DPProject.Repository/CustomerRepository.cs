@@ -17,8 +17,8 @@ namespace DPProject.Repository
                 .Where(
                     i => (
                         (string.IsNullOrEmpty(P.Predicate.Code) || i.Code.Contains(P.Predicate.Code))
-                        && (string.IsNullOrEmpty(P.Predicate.Name) || i.Code.Contains(P.Predicate.Name))
-                        && (P.Predicate.Groupid == 0 || i.GroupId == P.Predicate.Groupid)
+                        && (string.IsNullOrEmpty(P.Predicate.Name) || i.Name.Contains(P.Predicate.Name))
+                        && (P.Predicate.GroupId == 0 || i.GroupId == P.Predicate.GroupId)
                     )
                 )
                 .Select(i => new CustomerModel() { 

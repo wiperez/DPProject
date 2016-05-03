@@ -84,11 +84,9 @@ angular
                 var Journal = $resource('api/Journal/totals',
                     null, { periodTotals: { method: 'POST' } });
                 Journal.get(params).$promise.then(function (data) {
-                    if (console) console.log(data);
                     var salesCost = new Number(data.initInvent) +
                         new Number(data.purchTotal) +
                         new Number(data.finalInvent);
-                    if (console) console.log(salesCost);
                     $scope.initInvent = data.initInvent;
                     $scope.finalInvent = data.finalInvent;
                     $scope.salaries = data.salaries;
