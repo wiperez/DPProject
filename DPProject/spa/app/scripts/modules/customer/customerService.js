@@ -43,6 +43,13 @@ angular
             return resource.update({ Id: _scope.customer.Id }, _scope.customer).$promise;
         };
 
+        srv.checkCustomerDeletion = function (customerId) {
+            var Customer = $resource('api/Customer/deletion/:customerId', null,
+                { check: { method: 'POST' } 
+            });
+            return Customer.check({ customerId: customerId }).$promise;
+        };
+
         return srv;
     }]);
 
@@ -74,6 +81,7 @@ angular
                     .then(function (response) {
                         if ($scope.action == "update") {
                             angular.copy($scope.customer, $scope.gridSelectedItem);
+                            $scope.getCustomers($scope.tableState);
                         }
                         $modalInstance.close();
                         $scope.saving = false;
@@ -82,37 +90,6 @@ angular
                         sweetAlert.resolveError(response);
                         $scope.saving = false;
                     });
-            };
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-
-        }
-    ])
-    .controller('editCustomerDialog', ['$scope', '$modalInstance', 'customerService', 'sweetAlert',
-        function ($scope, $modalInstance, service, sweetAlert) {
-
-            $scope.customer = {
-                Code: "",
-                Name: "",
-                GroupId: 1
-            };
-
-            $scope.customerGroups = $scope.$parent.customerGroups;
-
-            $scope.ok = function () {
-                $scope.saving = true;
-                service.update($scope.gridSelectedItem.Id, $scope.customer)
-                    .then(function (response) {
-                        $modalInstance.close();
-                        $scope.saving = false;
-                    })
-                    .cath(function (response) {
-                        sweetAlert.resolveError(response);
-                        $scope.saving = false;
-                    });
-
             };
 
             $scope.cancel = function () {

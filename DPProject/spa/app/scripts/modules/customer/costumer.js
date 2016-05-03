@@ -25,20 +25,23 @@ angular
             sweetAlert.resolveError(response);
         });
        
-        $scope.getCustomers = function (tableState) {
-            tableState.pagination.number = 10;  // Number of entries showed per page.
+       $scope.getCustomers = function (tableState) {
 
-            service.getCustomers(tableState)
-                .then(function (result) {
-                    $scope.gridSelectedItem = null;
-                    $scope.gridDataSet = result.Rows;
-                    $scope.pages = result.NumberOfPages;
-                    tableState.pagination.totalItemCount = result.RowCount;
-                    tableState.pagination.numberOfPages = result.NumberOfPages;
-                })
-                .catch(function (response) {
-                    sweetAlert.resolveError(response);
-                });
+           tableState.pagination.number = 10;  // Number of entries showed per page.
+           $scope.tableState = tableState;
+
+           service.getCustomers(tableState)
+               .then(function (result)
+            {
+                $scope.gridSelectedItem = null;
+                $scope.gridDataSet = result.Rows;
+                $scope.pages = result.NumberOfPages;
+                tableState.pagination.totalItemCount = result.RowCount;
+                tableState.pagination.numberOfPages = result.NumberOfPages;
+            })
+            .catch(function (response) {
+                sweetAlert.resolveError(response);
+            });
         };
 
         // fired when table rows are selected
@@ -61,8 +64,26 @@ angular
         };
 
         $scope.delete = function () {
-            sweetAlert.question("Atención", "¿Esta seguro que desea borrar este Cliente?", function () {
-                alert(1);
+            $scope.saving = true;
+            // Chequear si el cliente ha tenido ventas
+            service.checkCustomerDeletion($scope.gridSelectedItem.Id)
+                .then(function (data)
+            {
+                if (data.hasSales) {
+                    sweetAlert.question("¡Cuidado!", "¿Esta seguro que desea borrar este Cliente?\n"
+                        + "El mismo posee ventas asociadas que dejarán de ser contabilizadas.", function ()
+                    {
+                        alert('borrarlo');
+                    });
+                }
+                else {
+                    sweetAlert("¡Cuidado!", "El cliente dejará de estar disponible y tendrá " +
+                        "que volver a crearlo si lo necesitara más adelante.",
+                        "warning");
+                }
+            }).catch(function (response) {
+                sweetAlert.resolveError(response);
+                $scope.saving = false;
             });
         }
 

@@ -11,21 +11,20 @@
                     <thead>
                         <tr>
                             <th class="expander"></th>
-                            <!--<th st-sort="Id" class="st-sort-label" title="Click to sort">Id</th>-->
                             <th st-sort="Code" class="st-sort-label" title="Click to sort">Codigo</th>
                             <th st-sort="Name" class="st-sort-label" title="Click to sort">Nombre</th>
-                            <th st-sort="Groupid" class="st-sort-label" title="Click to sort">Grupo</th>
+                            <th st-sort="GroupName" class="st-sort-label" title="Click to sort">Grupo</th>
                         </tr>
                         <tr>
-                            <!--ng-show="expandFilters"-->
                             <th></th>
-                            <!--<th><input class="form-control" st-search="Id" /></th>-->
                             <th><input class="form-control" st-search="Code" /></th>
                             <th><input class="form-control" st-search="Name" /></th>
                             <th>
-                                <select class="form-control" st-search="GroupId" st-input-event="change">
+                                <select class="form-control" st-search="GroupId" 
+                                        st-input-event="change">
                                     <option value="0" selected></option>
-                                    <option value="{{item.CustomerGroupId}}" ng-repeat="item in customerGroups">{{item.Name}}</option>
+                                    <option value="{{item.CustomerGroupId}}" 
+                                            ng-repeat="item in customerGroups">{{item.Name}}</option>
                                 </select>
                             </th>
                         </tr>
@@ -33,10 +32,10 @@
 
                     <tbody>
                         <tr ng-repeat-start="row in gridDataSet" st-select-row="row">
-                            <td cs-detail="row" class="expander-action" title="{{(row.isExpanded ? 'Click to collapse' : 'Click to expand')}}">
+                            <td cs-detail="row" class="expander-action" 
+                                title="{{(row.isExpanded ? 'Click to collapse' : 'Click to expand')}}">
                                 <i class="{{(row.isExpanded ? 'fa fa-chevron-down' : 'fa fa-chevron-right')}}"></i>
                             </td>
-                            <!--<td>{{row.Id}}</td>-->
                             <td>{{row.Code}}</td>
                             <td>{{row.Name}}</td>
                             <td>{{row.GroupName}}</td>
@@ -47,7 +46,6 @@
                                     <div ng-show="row.Notes != null && row.Notes.trim() != ''">
                                         <!-- Details here -->
                                     </div>
-
                                     <div ng-show="row.Notes == null || row.Notes.trim() == ''">
                                         <h4 class="text-danger">There is no detail for this transaction</h4>
                                     </div>
@@ -58,7 +56,7 @@
 
                     <tbody ng-show="gridDataSet.length == 0">
                         <tr>
-                            <td colspan="7"><h4 class="text-danger"> There is no data that meet the current filter criteria.</h4></td>
+                            <td colspan="7"><h4 class="text-danger">There is no data that meet the current filter criteria.</h4></td>
                         </tr>
                     </tbody>
                     

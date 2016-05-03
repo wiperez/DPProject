@@ -21,6 +21,7 @@ namespace DPProject.Services
         IEnumerable<CustomerGroup> GetCustomerGroups();
         int Insert(CustomerModel M);
         void Update(CustomerModel M, int Id);
+        bool CheckCustomerDeletion(int customerId);
     }
 
     public class CustomerService : Service<Customer>, ICustomerService
@@ -85,5 +86,11 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
         }
 
+        public bool CheckCustomerDeletion(int customerId)
+        {
+            var sales = Repository.GetRepository<Sale>()
+                .Query().Select().Count(s => s.CustomerId.Equals(customerId));
+            return sales > 0;
+        }
     }
 }
