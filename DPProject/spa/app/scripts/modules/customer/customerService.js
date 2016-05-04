@@ -47,7 +47,7 @@ angular
             var Customer = $resource('api/Customer/deletion/:customerId', null,
                 { check: { method: 'POST' } 
             });
-            return Customer.check({ customerId: customerId }).$promise;
+            return Customer.check(customerId).$promise;
         };
 
         return srv;

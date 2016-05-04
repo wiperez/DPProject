@@ -72,8 +72,8 @@ namespace DPProject.Controllers
         }
 
         [HttpPost]
-        [Route("deletion/{customerId}")]
-        public IHttpActionResult CheckCustomerDeletion(int customerId)
+        [Route("deletion")]
+        public IHttpActionResult CheckCustomerDeletion([FromBody]int customerId)
         {
             try
             {

@@ -70,16 +70,40 @@ angular
                 .then(function (data)
             {
                 if (data.hasSales) {
-                    sweetAlert.question("¡Cuidado!", "¿Esta seguro que desea borrar este Cliente?\n"
-                        + "El mismo posee ventas asociadas que dejarán de ser contabilizadas.", function ()
-                    {
-                        alert('borrarlo');
+                    sweetAlert.swal({
+                        title: "¡Cuidado!",
+                        text: "¿Esta seguro que desea borrar este Cliente?\n"
+                            + "El mismo posee ventas asociadas que dejarán de ser contabilizadas.",
+                        type: "error",
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, ¡elimínalo!",
+                        closeOnConfirm: true
+                    },
+                    function (ok) {
+                        if (ok) {
+                            alert('desactivalo y marca como Deleted todas sus ventas');
+                        }
                     });
                 }
                 else {
-                    sweetAlert("¡Cuidado!", "El cliente dejará de estar disponible y tendrá " +
-                        "que volver a crearlo si lo necesitara más adelante.",
-                        "warning");
+                    sweetAlert.swal({
+                        title: "¡Cuidado!",
+                        text: "El cliente dejará de estar disponible y tendrá " +
+                            "que volver a crearlo si lo necesitara más adelante.",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, ¡elimínalo!",
+                        closeOnConfirm: true
+                    },
+                    function (ok) {
+                        if (ok) {
+                            alert('borralo definitivamente de la BD');
+                        }
+                    });
                 }
             }).catch(function (response) {
                 sweetAlert.resolveError(response);
