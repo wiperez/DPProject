@@ -11,6 +11,11 @@ using DPProject.Repository.Models;
 
 namespace DPProject.Controllers
 {
+    public class CustomerData
+    {
+        public int customerId { get; set; }
+    }
+
     [RoutePrefix("api/Customer")]
     public class CustomerController : XBaseApiController
     {
@@ -59,6 +64,21 @@ namespace DPProject.Controllers
             {
                 Service.Update(M, Id);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("deletion")]
+        public IHttpActionResult CheckCustomerDeletion([FromBody]int customerId)
+        {
+            try
+            {
+                var hasSales = Service.CheckCustomerDeletion(customerId);
+                return Ok(new { hasSales = hasSales });
             }
             catch (Exception ex)
             {

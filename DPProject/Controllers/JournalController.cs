@@ -143,6 +143,83 @@ namespace DPProject.Controllers
                 return BadRequest<object>(ex);
             }
         }
+
+        [HttpPost]
+        [Route("expenses")]
+        public IHttpActionResult GetExpenses(SmartTableParamModel<ExpensePredicateModel> M)
+        {
+            try
+            {
+                var result = Service.GetExpenses(M);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("expense")]
+        public IHttpActionResult SaveExpense(ExpenseModel M)
+        {
+            try
+            {
+                var result = Service.SaveExpense(M);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("expense")]
+        public IHttpActionResult UpdateExpense(ExpenseModel M)
+        {
+            try
+            {
+                Service.Update(M);
+                return Ok(new { response = "success" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("expense")]
+        public IHttpActionResult DeleteExpense(int operationId)
+        {
+            try
+            {
+                if (Service.DeleteExpense(operationId))
+                    return Ok(new { success = true });
+                else
+                    return Ok(new { success = false, message = "See the output for aditional information." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("totals")]
+        public IHttpActionResult GetPeriodTotals(string week)
+        {
+            try
+            {
+                return Ok(Service.GetPeriodTotals(week));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest<object>(new { ErrorCode = ex.HResult, Message = ex.Message });
+            }
+        }
+
     }
 
 }

@@ -311,12 +311,19 @@
     <Content Include="spa\app\scripts\modules\nggrid\nggrid.html" />
     <Content Include="spa\app\scripts\modules\nggrid\nggridDemo.js" />
     <Content Include="spa\app\scripts\modules\nggrid\tableDemos.js" />
+    <Content Include="spa\app\scripts\modules\operations\expensesManager.html" />
+    <Content Include="spa\app\scripts\modules\operations\expensesDialog.html" />
     <Content Include="spa\app\scripts\modules\operations\operationsManager.html" />
     <Content Include="spa\app\scripts\modules\operations\operationsServices.js" />
     <Content Include="spa\app\scripts\modules\operations\operations.js" />
     <Content Include="spa\app\scripts\modules\operations\purchasesDialog.html" />
     <Content Include="spa\app\scripts\modules\operations\salesDialog.html" />
     <Content Include="spa\app\scripts\modules\operations\weeklyOperations.html" />
+    <Content Include="spa\app\scripts\modules\vendor\newVendor.html" />
+    <Content Include="spa\app\scripts\modules\vendor\vendor.js" />
+    <Content Include="spa\app\scripts\modules\vendor\vendorsManager.html" />
+    <Content Include="spa\app\scripts\modules\vendor\vendorService.js" />
+    <Content Include="spa\app\scripts\services.js" />
     <Content Include="spa\app\styles\img\green%402x.png" />
     <Content Include="spa\app\styles\img\green.png" />
     <Content Include="spa\app\styles\style.css" />
@@ -325,6 +332,7 @@
     <Content Include="spa\app\templates\common\panel_tools.html" />
     <Content Include="spa\app\templates\dashboard.html" />
     <Content Include="spa\app\templates\pagination.custom.html" />
+    <Content Include="spa\app\view\test.html" />
     <Content Include="spa\bower_components\angular-bootstrap\ui-bootstrap-tpls.js" />
     <Content Include="spa\bower_components\angular-bootstrap\ui-bootstrap-tpls.min.js" />
     <Content Include="spa\bower_components\angular-bootstrap\ui-bootstrap.js" />
@@ -899,6 +907,7 @@
     <Content Include="spa\bower_components\moment\README.md" />
     <Content Include="spa\bower_components\ng-table\dist\ng-table.less" />
     <Content Include="spa\bower_components\ng-table\dist\ng-table.min.js.map" />
+    <Content Include="spa\app\scripts\modules\operations\expenses-dummy.json" />
     <None Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />

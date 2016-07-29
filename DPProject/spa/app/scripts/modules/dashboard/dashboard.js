@@ -8,6 +8,4 @@ angular
         $rootScope.subTitleDesc = ""
         $rootScope.toolBar = [];
 
-
-
     }]);

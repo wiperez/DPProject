@@ -58,6 +58,7 @@
     <Compile Include="JournalRepository.cs" />
     <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\CustomerModel.cs" />
+    <Compile Include="Models\ExpenseModel.cs" />
     <Compile Include="Models\JournalModel.cs" />
     <Compile Include="Models\PeriodModel.cs" />
     <Compile Include="Models\PredicateModels.cs" />

@@ -22,6 +22,7 @@ namespace DPProject.Services
         int Insert(PurchaseOperationModel M);
 
         void Update(JournalModel M);
+        int Update(ExpenseModel M);
         int Update(SaleOperationModel m);
         int Update(PurchaseOperationModel m);
 
@@ -29,9 +30,13 @@ namespace DPProject.Services
         ICollection<JournalModel> GetOperations(int page, int count);
         ICollection<SaleListModel> GetSales(SaleListParams listParams);
         ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams);
+        SmartTableModel<ExpenseModel> GetExpenses(SmartTableParamModel<ExpensePredicateModel> M);
+        int SaveExpense(ExpenseModel M);
+        PeriodTotals GetPeriodTotals(string week);
 
         bool Delete(int operationId);
-        
+        bool DeleteExpense(int operationId);
+
     }
 
     public class JournalService : Service<JournalOperation>, IJournalService
@@ -70,14 +75,172 @@ namespace DPProject.Services
             }
         }
 
+        public bool DeleteExpense(int operationId)
+        {
+            try
+            {
+                var j = Find(operationId);
+                Delete(j);
+                UnitOfWorkAsync.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public JournalModel Get(int id)
         {
             throw new NotImplementedException();
         }
 
+        public SmartTableModel<ExpenseModel> GetExpenses(SmartTableParamModel<ExpensePredicateModel> M)
+        {
+            var accounts = Repository.GetRepository<Account>().Queryable();
+            var operations = Repository.GetRepository<JournalOperation>().Queryable();
+
+            var parentAccount = accounts.First(a => a.AccountName.Equals("Gastos"))
+                .AccountId;
+
+            var expenseElements = from a in accounts
+                                  where a.ParentAccount == parentAccount
+                                  select new ExpenseModel()
+                                  {
+                                      AccountName = a.AccountName,
+                                      Description = a.AccountDescription,
+                                      Amount = 0,
+                                      AccountCode = a.AccountCode,
+                                      ParentAccount = parentAccount,
+                                      AccountId = a.AccountId,
+                                      PeriodId = M.Predicate.PeriodId,
+                                      OperationId = 0
+                                  };
+
+            var journal = from o in operations
+                          join a in accounts on o.AccountId equals a.AccountId
+                          where o.PeriodId == M.Predicate.PeriodId
+                            && a.ParentAccount == parentAccount
+                            && o.Deleted == false 
+                            && o.OperationDate.Month == M.Predicate.OperationDate.Month
+                            && o.OperationDate.Year == M.Predicate.OperationDate.Year 
+                          select new
+                          {
+                              AccountId = a.AccountId,
+                              AccountCode = a.AccountCode,
+                              Amount = o.Amount,
+                              OperationId = o.Id,
+                              PeriodId = o.PeriodId,
+                              OperationDate = o.OperationDate
+                          };
+
+            var result = new List<ExpenseModel>();
+
+            foreach (var el in expenseElements)
+            {
+                var accountId = el.AccountId;
+                var already = journal.Count(o => o.AccountId.Equals(accountId)) > 0
+                    ? true : false;
+                if (already)
+                {
+                    var j = journal.First(o => o.AccountId.Equals(accountId));
+                    el.Amount = j.Amount;
+                    el.OperationId = j.OperationId;
+                    el.PeriodId = j.PeriodId;
+                    el.OperationDate = DateTime.Parse(string.Format("{0}-{1}-{2}",
+                        DateTime.Now.Year, j.PeriodId, "01"));
+                }
+                if ((string.IsNullOrEmpty(M.Predicate.AccountName) ||
+                    el.AccountName.ToLower().Contains(M.Predicate.AccountName.ToLower()))
+                    && 
+                    (el.Amount.ToString().Contains(M.Predicate.Amount.ToString())))
+                {
+                    result.Add(el);
+                }
+            }
+
+            var TList = result.ToList();
+            if (!string.IsNullOrEmpty(M.Sort.Predicate))
+            {
+                TList = TList.OrderBy(string.Format("{0} {1}", M.Sort.Predicate, M.Sort.Reverse ? "DESC" : "ASC")).ToList();
+            }
+
+            return new SmartTableModel<ExpenseModel>()
+            {
+                Rows = TList.Skip(M.Pagination.Start).Take(M.Pagination.Number),
+                NumberOfPages = Convert.ToInt32(Math.Ceiling((float)TList.Count() / M.Pagination.Number)),
+                Start = M.Pagination.Start,
+                Number = M.Pagination.Number,
+                RowCount = TList.Count()
+            };
+        }
+
         public ICollection<JournalModel> GetOperations(int page, int count)
         {
             throw new NotImplementedException();
+        }
+
+        public PeriodTotals GetPeriodTotals(string week)
+        {
+            var weekStart = week.Split('-')[0];
+            var weekEnd = week.Split('-')[1];
+
+            var startDay = Convert.ToInt32(weekStart.Split('/')[1]);
+            var endDay = Convert.ToInt32(weekEnd.Split('/')[1]);
+
+            var dateParts = weekStart.Split('/');
+            var date = DateTime.Parse(string.Format("{0}/{1}/{2}", dateParts[2], dateParts[0], dateParts[1]));
+            var currMonth = date.Month;
+            var prevMonth = date.AddMonths(-1).Month;
+            var year = date.Year;
+
+            var inventAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Inventario")).Select()
+                .First().AccountId;
+            var salaryAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Salarios")).Select()
+                .First().AccountId;
+            var salesAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Ventas")).Select()
+                .First().AccountId;
+            var purchAccount = Repository.GetRepository<Account>()
+                .Query(a => a.AccountName.Equals("Compras")).Select()
+                .First().AccountId;
+
+            var initInvent = Repository.Query(j => j.OperationDate.Day == 1
+                    && j.OperationDate.Month == prevMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == inventAccount).Select();
+            var finalInvent = Repository.Query(j => j.OperationDate.Day == 1
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == inventAccount).Select();
+            var salaries = Repository.Query(j => j.OperationDate.Day == 1
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == salaryAccount).Select();
+
+            var salesTotal = Repository.Query(j => 
+                    j.OperationDate.Day >= startDay
+                    && j.OperationDate.Day <= endDay
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == salesAccount).Select().Sum(j => j.Amount);
+            var purchTotal = Repository.Query(j => 
+                    j.OperationDate.Day >= startDay
+                    && j.OperationDate.Day <= endDay
+                    && j.OperationDate.Month == currMonth
+                    && j.OperationDate.Year == year
+                    && j.AccountId == purchAccount).Select().Sum(j => j.Amount);
+
+            return new PeriodTotals()
+            {
+                initInvent = initInvent.Count() == 0 ? 0 : initInvent.First().Amount,
+                finalInvent = finalInvent.Count() == 0 ? 0 : finalInvent.First().Amount,
+                salaries = salaries.Count() == 0 ? 0 : salaries.First().Amount,
+                salesTotal = salesTotal,
+                purchTotal = purchTotal
+            };
         }
 
         public ICollection<PurchaseListModel> GetPurchases(PurchaseListParams listParams)
@@ -155,6 +318,31 @@ namespace DPProject.Services
             UnitOfWorkAsync.SaveChanges();
 
             return jOper.Id;
+        }
+
+        public int SaveExpense(ExpenseModel M)
+        {
+            return Insert(new JournalModel()
+            {
+                AccountId = M.AccountId,
+                Amount = M.Amount,
+                Description = M.Description,
+                OperationDate = M.OperationDate,
+                PeriodId = M.PeriodId
+            });
+        }
+
+        public int Update(ExpenseModel M)
+        {
+            var j = Repository.Find(M.OperationId);
+            j.Amount = M.Amount;
+            j.PeriodId = M.PeriodId;
+            j.OperationDate = DateTime.Parse(string.Format("{0}-{1}-{2}", 
+                DateTime.Now.Year, M.PeriodId, "01"));
+            j.Description = M.Description;
+            Update(j);
+            UnitOfWorkAsync.SaveChanges();
+            return j.Id;
         }
 
         public int Update(PurchaseOperationModel m)

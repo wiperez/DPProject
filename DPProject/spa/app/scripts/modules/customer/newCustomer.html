@@ -1,4 +1,4 @@
-﻿<div class="inmodal">
+﻿<div class="inmodal" id="customer-modal">
     <div class="color-line"></div>
     <div class="modal-header">
         <h4 class="modal-title">{{action == "insert" ? "Nuevo" : "Editar"}} Cliente</h4> 
@@ -21,7 +21,8 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">Grupo: </label>
                 <div class="col-sm-9 input-group">
-                    <select class="form-control" ng-model="customer.GroupId" ng-options="t.Id as t.Name for t in customerGroups"></select>
+                    <select class="form-control" ng-model="customer.GroupId" 
+                            ng-options="t.CustomerGroupId as t.Name for t in customerGroups"></select>
                 </div>
             </div>
         </form>

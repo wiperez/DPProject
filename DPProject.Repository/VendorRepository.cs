@@ -11,6 +11,7 @@ namespace DPProject.Repository
 {
     public static class VendorRepository
     {
+
         public static IEnumerable<VendorModel> GetVendors(this IRepositoryAsync<Vendor> repository, SmartTableParamModel<VendorPredicateModel> P)
         {
             return repository.Queryable()
@@ -25,6 +26,18 @@ namespace DPProject.Repository
                     VendorId = i.VendorId,
                     Description = i.Description,
                     Name = i.Name
+                });
+        }
+
+        public static IEnumerable<VendorModel> GetVendors(this IRepositoryAsync<Vendor> repository)
+        {
+            return repository.Queryable()
+                .OrderBy(i => i.Name)
+                .Select(i => new VendorModel()
+                {
+                    VendorId = i.VendorId,
+                    Name = i.Name,
+                    Description = i.Description
                 });
         }
 

@@ -3,8 +3,8 @@
 angular
     .module('app.operations', [])
     .controller('OperationsController', [
-        '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', '$interval',
-        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $interval)
+        '$http', '$scope', '$rootScope', 'sweetAlert', 'operationsService', 'NgTableParams', '$modal', '$resource', '$timeout', '$filter', 'ShortcutFunctions',
+        function ($http, $scope, $rootScope, sweetAlert, service, NgTableParams, $modal, $resource, $timeout, $filter, $s)
         {
             $rootScope.sumBy = function (anArray, field) {
                 return _.sumBy(anArray, field);
@@ -13,14 +13,10 @@ angular
             $scope.periods = service.getPeriods();
             $rootScope.periodDate = _.find($scope.periods, { key: moment().startOf('month').format('MM/DD/YYYY') });
 
-            $rootScope.getGridEl = function (n) {
-                var className = '.' + n + '-table';
-                return angular.element($(className)[0]);
-            };
-
             $rootScope.getGrid = function (n) {
+                var className = '.' + n + '-table';
                 var index = n + 'Params';
-                return $rootScope.getGridEl(n).scope()[index];
+                return $s.scope(className)[index];
             }
 
             $rootScope.getDataSet = function (n) {
@@ -81,6 +77,28 @@ angular
                 });
             };
 
+            $scope.getTotals = function () {
+                var w = $rootScope.week.toString()
+                    .replace(/\ /g, '');
+                var params = { week: w };
+                var Journal = $resource('api/Journal/totals',
+                    null, { periodTotals: { method: 'POST' } });
+                Journal.get(params).$promise.then(function (data) {
+                    var salesCost = new Number(data.initInvent) +
+                        new Number(data.purchTotal) +
+                        new Number(data.finalInvent);
+                    $scope.initInvent = data.initInvent;
+                    $scope.finalInvent = data.finalInvent;
+                    $scope.salaries = data.salaries;
+                    $scope.profits = new Number(data.salesTotal) -
+                        new Number(salesCost) -
+                        new Number(data.salaries);
+                }).catch(function (response) {
+                    sweetAlert.resolveError(response);
+                    $scope.saving = false;
+                });;
+            };
+
             $scope.getWeekDate = function (_month, week) {
                 $rootScope.week = $scope.weeksOfMonth[week].value;
 
@@ -109,6 +127,15 @@ angular
 
                 $scope.reloadSalesGrid();
                 $scope.reloadPurchasesGrid();
+
+                var ePanel = $s.scope('#expenses-panel');
+                if (ePanel) ePanel.getExpenses({
+                    search: { Name: "", PeriodId: service.getSelectedPeriod() },
+                    pagination: { start: 0, totalItemCount: 0, number: 10 },
+                    sort: {}
+                });
+
+                $scope.getTotals();
             };
 
             $scope.getWeeksOfMonth = function () {
@@ -268,9 +295,12 @@ angular
                     }
                 });
             };
+
         }
 
-    ]).controller('SalesOperationController', [
+    ])
+
+    .controller('SalesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
@@ -374,7 +404,9 @@ angular
                 $scope.saleOperation.customerGroup = $item.GroupName;
             };
         }
-    ]).controller('PurchasesOperationController', [
+    ])
+
+    .controller('PurchasesOperationController', [
         '$scope', '$rootScope', 'sweetAlert', 'operationsService', '$resource', '$filter', '$timeout',
         function ($scope, $rootScope, sweetAlert, operationsService, $resource, $filter, $timeout)
         {
@@ -481,4 +513,158 @@ angular
                 $scope.purchaseOperation.vendorId = $item.VendorId;
             };
         }
+    ])
+
+    .controller('ExpensesController', [
+
+        '$scope', '$rootScope', 'sweetAlert', '$resource', '$filter', '$timeout', '$modal', 'operationsService',
+        function ($scope, $rootScope, sweetAlert, $resource, $filter, $timeout, $modal, service)
+        {
+            $scope.getExpenses = function (tableState) {
+
+                $scope.processExpense = function () {
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'spa/app/scripts/modules/operations/expensesDialog.html',
+                        scope: $rootScope,
+                        controller: 'ExpensesDialog',
+                        windowClass: "hmodal-info",
+                        size: 'md'
+                    });
+                };
+
+                tableState.pagination.number = 10;
+
+                // fired when table rows are selected
+                $scope.$watch('gridDataSet', function (rows) {
+                    // get selected row
+                    if (!angular.isUndefined(rows)) {
+                        $scope.gridSelectedItem = null;
+                        rows.filter(function (r) {
+                            if (r.isSelected) {
+                                $scope.gridSelectedItem = r;
+                                return;
+                            }
+                        });
+                    }
+                }, true);
+
+                var params = {
+                    predicate: tableState.search.predicateObject ? tableState.search.predicateObject : {Name:""},
+                    pagination: tableState.pagination,
+                    sort: tableState.sort
+                };
+
+                params.predicate.OperationDate = $.trim($rootScope.week.split("-")[0]);
+                params.predicate.PeriodId = service.getSelectedPeriod();
+
+                var request = $resource("api/Journal/expenses", null, { 'postQuery': { method: "POST", isArray: false } });
+
+                request.postQuery(params).$promise.then(function (result) {
+                    $scope.gridSelectedItem = null;
+                    $scope.gridDataSet = result.Rows;
+                    $scope.pages = result.NumberOfPages;
+                    tableState.pagination.totalItemCount = result.RowCount;
+                    tableState.pagination.numberOfPages = result.NumberOfPages;
+                    $scope.tableState = tableState;
+                })
+                .catch(function (response) {
+                    sweetAlert.resolveError(response);
+                });
+            }
+
+            $scope.delete = function () {
+                var i = $scope.gridSelectedItem;
+                sweetAlert.swal({
+                    title: "¿Estás seguro?",
+                    text: "¡Realmente deseas eliminar este gasto del periodo!\n\n"
+                        + 'Gasto: ' + i.AccountName + '\n'
+                        + 'Monto: ' + i.Amount,
+                    type: "error",
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, ¡elimínalo!",
+                    closeOnConfirm: true
+                },
+                function (ok) {
+                    if (ok) {
+                        var JournalOperation = $resource('api/Journal/expense',
+                            null, { remove: { method: 'DELETE' } });
+                        JournalOperation.remove({
+                            operationId: i.OperationId
+                        }).$promise
+                        .then(function (data) {
+                            $timeout(function () {
+                                $scope.getExpenses($scope.tableState);
+                            }, 100);
+                        });
+                    }
+                });
+            };
+        }
+
+    ]).controller('ExpensesDialog', [
+
+        '$scope', '$rootScope', '$modalInstance', 'sweetAlert', '$resource', '$filter', '$timeout', 'ShortcutFunctions',
+        function ($scope, $rootScope, $modalInstance, sweetAlert, $resource, $filter, $timeout, $s)
+        {
+            $scope.expense = {
+                OperationId: 0,
+                Name: '',
+                Description: '',
+                Amount: 0,
+                OperationDate: '',
+                PeriodId: 0
+            };
+
+            var selRow = $('#expenses-table .st-selected');
+            $scope.gridSelectedItem = selRow.length > 0 ?
+                $s.scope(selRow).row : $scope.expense;
+            angular.copy($scope.gridSelectedItem, $scope.expense);
+
+            $scope.insert = function (expense)
+            {
+                var d = $.trim($rootScope.week.split("-")[0]);
+                expense.OperationDate = $filter('date')(d, 'YYYY-MM-01');
+                return $resource("api/Journal/expense").save(expense)
+                    .$promise;
+            };
+
+            $scope.update = function (expense) {
+                var resource = $resource('/api/Journal/expense', null, { 'update': { method: 'PUT' } });
+                return resource.update({ Id: expense.OperationId }, expense)
+                    .$promise;
+            };
+
+            $scope.ok = function () {
+
+                $scope.saving = true;
+
+                // Si no tiene OperationId, no existe, por tanto es 'Insert'
+                if ($scope.expense.OperationId === 0)
+                    $scope.call = $scope.insert;
+                else // Si posee OperationId entonces es 'Update'
+                    $scope.call = $scope.update;
+
+                $scope.call($scope.expense).then(function (response) {
+                    if ($scope.expense.OperationId !== 0) {
+                        angular.copy($scope.expense, $scope.gridSelectedItem);
+                    }
+                    var upperScope = $s.scope('#expenses-panel')
+                    upperScope.getExpenses(upperScope.tableState);
+                    $modalInstance.close();
+                    $scope.saving = false;
+                })
+                .catch(function (response) {
+                    sweetAlert.resolveError(response);
+                    $scope.saving = false;
+                });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+        
     ]);

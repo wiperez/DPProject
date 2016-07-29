@@ -25,21 +25,23 @@ angular
             sweetAlert.resolveError(response);
         });
        
-        $scope.getCustomers = function (tableState) {
-            tableState.pagination.number = 10;  // Number of entries showed per page.
+       $scope.getCustomers = function (tableState) {
 
-            service.getCustomers(tableState)
-                .then(function (result) {
-                    $scope.gridSelectedItem = null;
-                    $scope.gridDataSet = result.Rows;
-                    $scope.pages = result.NumberOfPages;
+           tableState.pagination.number = 10;  // Number of entries showed per page.
+           $scope.tableState = tableState;
 
-                    tableState.pagination.totalItemCount = result.RowCount;
-                    tableState.pagination.numberOfPages = result.NumberOfPages;
-                })
-                .catch(function (response) {
-                    sweetAlert.resolveError(response);
-                });
+           service.getCustomers(tableState)
+               .then(function (result)
+            {
+                $scope.gridSelectedItem = null;
+                $scope.gridDataSet = result.Rows;
+                $scope.pages = result.NumberOfPages;
+                tableState.pagination.totalItemCount = result.RowCount;
+                tableState.pagination.numberOfPages = result.NumberOfPages;
+            })
+            .catch(function (response) {
+                sweetAlert.resolveError(response);
+            });
         };
 
         // fired when table rows are selected
@@ -62,8 +64,50 @@ angular
         };
 
         $scope.delete = function () {
-            sweetAlert.question("Atención", "¿Esta seguro que desea borrar este Cliente?", function () {
-                alert(1);
+            $scope.saving = true;
+            // Chequear si el cliente ha tenido ventas
+            service.checkCustomerDeletion($scope.gridSelectedItem.Id)
+                .then(function (data)
+            {
+                if (data.hasSales) {
+                    sweetAlert.swal({
+                        title: "¡Cuidado!",
+                        text: "¿Esta seguro que desea borrar este Cliente?\n"
+                            + "El mismo posee ventas asociadas que dejarán de ser contabilizadas.",
+                        type: "error",
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, ¡elimínalo!",
+                        closeOnConfirm: true
+                    },
+                    function (ok) {
+                        if (ok) {
+                            alert('desactivalo y marca como Deleted todas sus ventas');
+                        }
+                    });
+                }
+                else {
+                    sweetAlert.swal({
+                        title: "¡Cuidado!",
+                        text: "El cliente dejará de estar disponible y tendrá " +
+                            "que volver a crearlo si lo necesitara más adelante.",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, ¡elimínalo!",
+                        closeOnConfirm: true
+                    },
+                    function (ok) {
+                        if (ok) {
+                            alert('borralo definitivamente de la BD');
+                        }
+                    });
+                }
+            }).catch(function (response) {
+                sweetAlert.resolveError(response);
+                $scope.saving = false;
             });
         }
 

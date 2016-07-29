@@ -16,6 +16,7 @@ namespace DPProject.Data
     {
         public JournalOperation()
         {
+            this.Amount = 0m;
             this.Purchases = new HashSet<Purchase>();
             this.Sales = new HashSet<Sale>();
         }

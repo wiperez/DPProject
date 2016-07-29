@@ -1,0 +1,72 @@
+﻿<div ng-controller="ExpensesController">
+
+    <h1>{{moduleTitle}}</h1>
+
+    <div id="expenses-panel" class="hpanel hblue" st-table="gridDataSet" st-pipe="getExpenses">
+        <div class="panel-heading hbuilt">Elementos de gastos</div>
+        <div class="panel-body">
+            <div class="expenses-toolbar">
+                <button class="btn btn-success" type="button" ng-click="processExpense()" ng-disabled="!gridSelectedItem">
+                    <span class="pe-7s-users"></span>
+                    <span class="bold ng-binding">Modificar</span>
+                </button>
+                <button class="btn btn-danger2" type="button" ng-click="delete()" ng-disabled="!gridSelectedItem || gridSelectedItem.Amount == 0">
+                    <span class="pe-7s-delete-user"></span>
+                    <span class="bold ng-binding">Eliminar</span>
+                </button>
+            </div><br />
+            <div class="table-container" style="min-height:280px;">
+                <table id="expenses-table" class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="expander"></th>
+                            <th st-sort="AccountName" class="st-sort-label" title="Click to sort">Nombre</th>
+                            <th st-sort="Amount" class="st-sort-label" title="Click to sort">Monto</th>
+                        </tr>
+                        <tr>
+                            <!--ng-show="expandFilters"-->
+                            <th></th>
+                            <th><input class="form-control" st-search="AccountName" /></th>
+                            <th><input class="form-control" st-search="Amount" /></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr ng-repeat-start="row in gridDataSet" st-select-row="row">
+                            <td cs-detail="row" class="expander-action" title="{{(row.isExpanded ? 'Click to collapse' : 'Click to expand')}}">
+                                <i class="{{(row.isExpanded ? 'fa fa-chevron-down' : 'fa fa-chevron-right')}}"></i>
+                            </td>
+                            <td>{{row.AccountName}}</td>
+                            <td>{{row.Amount}}</td>
+                        </tr>
+                        <tr ng-repeat-end ng-show="row.isExpanded" class="detail-row">
+                            <td colspan="9" class="td-transaction-detail">
+                                <div class="well">
+                                    <div ng-show="row.Notes != null && row.Notes.trim() != ''">
+                                        <!-- Details here -->
+                                    </div>
+
+                                    <div ng-show="row.Notes == null || row.Notes.trim() == ''">
+                                        <h4 class="text-danger">There is no detail for this transaction</h4>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                    <tbody ng-show="gridDataSet.length == 0">
+                        <tr>
+                            <td colspan="7"><h4 class="text-danger"> There is no data that meet the current filter criteria.</h4></td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div st-items-by-page="10" st-pagination="" st-template="spa/app/templates/pagination.custom.html"></div>
+        </div>
+    </div>
+
+</div>
+

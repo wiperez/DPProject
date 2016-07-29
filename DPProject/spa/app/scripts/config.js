@@ -5,7 +5,6 @@
  */
 
 function configState($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) {
-
     // Optimize load start with remove binding information inside the DOM element
     $compileProvider.debugInfoEnabled(true);
 
@@ -19,15 +18,24 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         url: "/dashboard",
         templateUrl: "/spa/app/templates/dashboard.html",
         data: {
-            pageTitle: 'Dashboard',
+            pageTitle: 'Dashboard'
         }
     })
+
     // Customer Manager
     .state('customer', {
         url: "/customer",
         templateUrl: "/spa/app/scripts/modules/customer/customerManager.html",
         data: {
-            pageTitle: 'Clientes',
+            pageTitle: 'Clientes'
+        }
+    })
+
+    .state('vendors', {
+        url: "/vendors",
+        templateUrl: "/spa/app/scripts/modules/vendor/vendorsManager.html",
+        data: {
+            pageTitle: 'Proveedores'
         }
     })
 
@@ -36,25 +44,13 @@ function configState($stateProvider, $urlRouterProvider, $compileProvider, $loca
         url: "/operations",
         templateUrl: "/spa/app/scripts/modules/operations/operationsManager.html",
         data: {
-            pageTitle: 'Operaciones',
-        }
-    })
-
-    // Operations Manager
-    .state('nggrid', {
-        url: "/nggrid",
-        templateUrl: "/spa/app/scripts/modules/nggrid/nggrid.html",
-        data: {
-            pageTitle: 'gridtest',
+            pageTitle: 'Operaciones'
         }
     });
 
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
 }
 
-angular
-    .module('homer')
-    .config(configState)
-    .run(function($rootScope, $state) {
-        $rootScope.$state = $state;
-    });
+angular.module('homer').config(configState).run(function($rootScope, $state) {
+    $rootScope.$state = $state;
+});

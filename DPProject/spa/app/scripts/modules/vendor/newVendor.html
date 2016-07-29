@@ -1,0 +1,32 @@
+﻿<div class="inmodal">
+    <div class="color-line"></div>
+    <div class="modal-header">
+        <h4 class="modal-title">{{action == "insert" ? "Nuevo" : "Editar"}} Proveedor</h4> 
+    </div>
+    <div class="modal-body row">
+        <form action="" class="form-horizontal row-border col-sm-12" name="form" novalidate>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Nombre:</label>
+                <div class="col-sm-9 input-group">
+                    <input class="form-control" name="name" type="text" ng-model="vendor.Name" ng-required="true" ng-maxlength="50" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Descripci&oacute;n: </label>
+                <div class="col-sm-9 input-group">
+                    <input class="form-control" name="description" type="text" ng-model="vendor.Description" ng-required="true" ng-maxlength="250" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <span ng-show="form.description.$error.maxlength" class="pull-left error-msg">
+            La descripción del Proveedor no puede exceder 250 caracteres.
+        </span>
+        <span ng-show="form.name.$error.maxlength" class="pull-left error-msg">
+            El nombre del Proveedor no puede exceder 50 caracteres.
+        </span>
+        <button type="button" class="btn btn-default" ng-click="cancel()" ng-disabled="saving">Cerrar</button>
+        <button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="form.$invalid || saving">Guardar</button>
+    </div>
+</div>
